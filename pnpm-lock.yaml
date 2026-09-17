@@ -178,6 +178,28 @@ importers:
         specifier: ^2.6.1
         version: 2.9.1
 
+  packages/lookup:
+    dependencies:
+      '@asli/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+      '@asli/matching':
+        specifier: workspace:*
+        version: link:../matching
+      '@aws-sdk/lib-dynamodb':
+        specifier: ^3.699.0
+        version: 3.1134.0(@aws-sdk/client-dynamodb@3.1134.0)
+    devDependencies:
+      '@aws-sdk/client-dynamodb':
+        specifier: ^3.699.0
+        version: 3.1134.0
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@22.20.3)(jsdom@25.0.1)(terser@5.51.2)
+
   packages/matching:
     dependencies:
       '@asli/contracts':
