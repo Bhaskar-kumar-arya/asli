@@ -14,12 +14,12 @@
 | Lane | Pri | Status | Merged to main | Deployed to int | Notes |
 |---|---|---|---|---|---|
 | T00 | P0 | ⬜ | | | |
-| T01 | P0 | ⬜ | | | Endpoint verdict: |
+| T01 | P0 | 🟨 | | | Endpoint verdict: **ENDPOINT_OK**. Blocked on human AWS-console actions for Bedrock model access, AVP/Translate/Textract account restrictions, SES sender identity. See T01 Handoff. |
 | T02 | P0 | 🟨 | | | Code complete on lane/T02 (contracts + shared-stack + api-routes + seed scripts), `pnpm -r lint/test/build` green, `cdk synth` verified. Not merged, not deployed - `cdk deploy dev-shared` needs human approval. |
 | A1 | P0 | ⬜ | | | |
 | A2 | P0 | ⬜ | | | |
 | A3 | P0/P2 | ⬜ | | | |
-| B | P0 | ⬜ | | | |
+| B | P0 | 🟨 | | | Implementation + all 10 required test cases + 100% branch coverage on classifyMatch/decide done on lane/B. Blocked only on required human review of the tier table (task's own acceptance criteria). |
 | C | P0 | ⬜ | | | |
 | D1 | P0 | ⬜ | | | |
 | D2 | P0 | ⬜ | | | |
