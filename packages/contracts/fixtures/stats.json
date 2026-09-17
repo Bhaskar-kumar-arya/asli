@@ -1,0 +1,68 @@
+[
+  {
+    "PK": "STATS#LAG",
+    "SK": "ALL",
+    "document": {
+      "generatedAt": "2026-09-17T06:00:00.000Z",
+      "ingestion": {
+        "lastRunAt": "2026-09-17T05:00:00.000Z",
+        "rowsByCategory": { "NSQ": 812, "SPURIOUS": 47 },
+        "failures": 0
+      },
+      "scans": {
+        "count": 1345,
+        "latencyP50Ms": 2100,
+        "latencyP95Ms": 4800,
+        "failures": 12,
+        "edits": 96
+      },
+      "matching": {
+        "tierCounts": { "FLAGGED": 28, "VERIFY": 61, "NO_ALERT_FOUND": 1256 },
+        "matchesCreated": 89
+      },
+      "alerts": {
+        "pushSent": 74,
+        "pushFailed": 3,
+        "emailSent": 89,
+        "emailFailed": 1
+      },
+      "cost": {
+        "tokensByPurpose": { "strip": 412000, "bill": 98000, "reason": 15000 },
+        "costPer1000ScansUsd": 3.42
+      }
+    }
+  },
+  {
+    "PK": "STATS#MONTH",
+    "SK": "2025-08",
+    "document": {
+      "generatedAt": "2026-09-01T06:00:00.000Z",
+      "ingestion": {
+        "lastRunAt": "2025-09-01T05:00:00.000Z",
+        "rowsByCategory": { "NSQ": 63, "SPURIOUS": 4 },
+        "failures": 0
+      },
+      "scans": {
+        "count": 210,
+        "latencyP50Ms": 1980,
+        "latencyP95Ms": 4300,
+        "failures": 2,
+        "edits": 14
+      },
+      "matching": {
+        "tierCounts": { "FLAGGED": 3, "VERIFY": 9, "NO_ALERT_FOUND": 198 },
+        "matchesCreated": 12
+      },
+      "alerts": {
+        "pushSent": 10,
+        "pushFailed": 0,
+        "emailSent": 12,
+        "emailFailed": 0
+      },
+      "cost": {
+        "tokensByPurpose": { "strip": 61000, "bill": 15000, "reason": 2000 },
+        "costPer1000ScansUsd": 3.51
+      }
+    }
+  }
+]
