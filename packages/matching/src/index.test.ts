@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { MATCHING_PACKAGE_PLACEHOLDER } from './index';
+import { decide } from './index';
 
 describe('matching package scaffold', () => {
   it('builds and runs', () => {
-    expect(MATCHING_PACKAGE_PLACEHOLDER).toBe(true);
+    const result = decide({ batchNumber: 'X', source: 'manual' }, [], { monthCount: 0, latestMonth: '2025-01' });
+    expect(result.tier).toBe('NO_ALERT_FOUND');
   });
 });
