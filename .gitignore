@@ -1,0 +1,13 @@
+node_modules/
+dist/
+build/
+cdk.out/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+coverage/
+.vite/
+*.tsbuildinfo
+.pnpm-store/

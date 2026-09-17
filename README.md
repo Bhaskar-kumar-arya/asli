@@ -38,3 +38,29 @@ STAGE=int pnpm --filter infra cdk deploy --all
 
 ## Built with
 Claude Code was used to write most of the code. See submission/WRITEUP.md.
+
+## Running a lane
+
+Each lane = one Claude Code session working in its own git worktree and branch.
+
+1. Create the worktree from the repo root:
+   ```
+   scripts/new-worktree.sh <ID>          # e.g. scripts/new-worktree.sh A1
+   ```
+   This creates `../asli-<ID>` on branch `lane/<ID>`.
+2. Start Claude Code in that folder with:
+   > Read CLAUDE.md, then plan/tasks/<ID>-*.md, then the docs it lists. Do the task. Update the Handoff section before you stop.
+3. Install and build once inside the worktree:
+   ```
+   pnpm install
+   pnpm -r build && pnpm -r test
+   ```
+4. To add infrastructure, drop one file into `infra/lib/lanes/<id>.ts` exporting `register(app, stage)` — see `infra/lib/lanes/README.md`. Nobody else edits `infra/bin/app.ts`.
+5. Deploy your own stack, importing shared resources from `SHARED_STAGE` (default `dev-shared`):
+   ```
+   STAGE=dev-<id> pnpm --filter infra cdk deploy --all
+   ```
+   Never deploy to `int` unless your task is T02, X, or Z1.
+6. Before ending a session: `pnpm -r lint && pnpm -r test`, then update the Handoff section at the bottom of your task file and append anything learned to `submission/LEARNING_LOG.md`.
+
+See `plan/BUILD_PLAN.md` for lane dependencies and `plan/now.md` / `plan/INTEGRATION_LOG.md` for current status.
