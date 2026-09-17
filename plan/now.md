@@ -8,7 +8,7 @@
 ## Ready to start next
 | Lane | Note |
 |---|---|
-| A1, A2, C, D1, D2, D3, F, G1, G2, H, I, S | **`contracts-v1` is tagged, `dev-shared` is deployed and seeded, and `@asli/matching`'s real implementation is merged to `main`** (human-reviewed 2026-09-18, see B Handoff) - fully unblocked now, including real `cdk deploy` (SSM imports resolve) and real tier decisions (no more stub). A3 (PDF/Textract fallback) can likely drop to P2 - T01 confirmed `ENDPOINT_OK` with strong evidence. Note: Verified Permissions isn't deployed yet (`ENABLE_AVP=false`, see T02 Handoff) - H can build against the stub authz mode until that's resolved. |
+| A2, C, D1, D2, D3, F, G1, G2, H, I, S | **`contracts-v1` is tagged, `dev-shared` is deployed and seeded, and `@asli/matching`'s real implementation is merged to `main`** (human-reviewed 2026-09-18, see B Handoff) - fully unblocked now, including real `cdk deploy` (SSM imports resolve) and real tier decisions (no more stub). A3 (PDF/Textract fallback) can likely drop to P2 - T01 confirmed `ENDPOINT_OK` with strong evidence. Note: Verified Permissions isn't deployed yet (`ENABLE_AVP=false`, see T02 Handoff) - H can build against the stub authz mode until that's resolved. A2 specifically: `@asli/ingestion`'s `services/ingestion/src/cdsco/**` (A1, see below) is ready to import - `createCdscoClient`, `parseSnapshot`, `normalizeRows`. |
 
 ## Blocked
 | Lane | Blocked on |
@@ -19,5 +19,6 @@
 ## Recently finished
 | Lane | Finished | Notes |
 |---|---|---|
+| A1 | 2026-09-18 | **DONE, not yet merged to `main`** (on `lane/A1`). CDSCO endpoint client/parser (`services/ingestion/src/cdsco/**`): fetches `filteredNsqDrugTable`/`filteredSpuriousDrugTable` politely, saves raw responses to S3, parses into schema-valid `FlaggedBatch[]`. Parser tests pass against T01's real fixtures (217 NSQ + 4 Spurious rows). Deployed `LaneA1Stack-dev-a1` for real and invoked it against the live CDSCO endpoint - confirmed real S3 write. See plan/tasks/A1-cdsco-client-parser.md Handoff. |
 | B | 2026-09-18 | **DONE. Merged to `main`.** Human reviewed `classify.ts` against docs/MATCHING.md's tier table in chat and approved. All 10 required test cases, 100% branch coverage on `classifyMatch`/`decide`, property tests, and benchmark pass. `@asli/matching` is now the real implementation on `main` - C, F, G2, A1 no longer need a stub. See plan/tasks/B-matching-library.md Handoff. |
 | T02 | 2026-09-17 22:35 IST | **DONE. Merged to `main`.** `SharedStack` deployed to `dev-shared` (verified: 26 SSM params present), VAPID keys generated, fixtures seeded, `contracts-v1` tagged and pushed. Verified Permissions deferred (`ENABLE_AVP=false`) pending the same AWS account restriction T01 found - redeploy without the flag once that clears. Also: force-pushed over a stale parallel `origin/lane/T02` from an earlier, never-deployed attempt on a different device (human confirmed it was abandoned) - see T02 Handoff Gotchas.
