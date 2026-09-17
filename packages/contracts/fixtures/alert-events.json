@@ -1,0 +1,96 @@
+[
+  {
+    "eventId": "evt-retroactive-001",
+    "trigger": "RETROACTIVE",
+    "cabinetId": "cab-mom-001",
+    "medId": "med-glimepiride-001",
+    "medicineLabel": "Mom - morning tablet",
+    "tier": "FLAGGED",
+    "alert": {
+      "alertRef": "QkFUQ0gjR1RMMTI1OHxBTEVSVCMyMDI1LTAzI05TUSNkNTIxZDU3ZmUxNDRkMzFhMTVhYjYzZDQwYjE4MTk4MmY3MTJjMWVlYjcwODQwYWU0ODZhNWYxMDcyOWY5ZGJj",
+      "alertMonth": "2025-03",
+      "category": "NSQ",
+      "productName": "Amoxicillin 500mg Capsules",
+      "batchRaw": "GTL 1258",
+      "manufacturerRaw": "M/s. Gidsha Pharmaceuticals Pvt. Ltd.",
+      "expMonth": "2026-10",
+      "reasonCode": "ASSAY",
+      "reasonRaw": "Assay (content of the drug) found outside limits",
+      "reportingSource": "STATE_LAB",
+      "reportingLab": "State Drug Testing Laboratory, Chandigarh",
+      "sourceUrl": "https://cdscoonline.gov.in/CDSCO/filteredNsqDrugTable?month=Mar-2025&source=All&tab=nsq",
+      "demo": false
+    },
+    "createdAt": "2026-09-15T07:30:10.000Z"
+  },
+  {
+    "eventId": "evt-retroactive-002",
+    "trigger": "RETROACTIVE",
+    "cabinetId": "cab-mom-001",
+    "medId": "med-glimepiride-001",
+    "medicineLabel": "Mom - morning tablet",
+    "tier": "FLAGGED",
+    "alert": {
+      "alertRef": "QkFUQ0gjR1RMMTI1OHxBTEVSVCMyMDI1LTA1I1NQVVJJT1VTIzcyMGY0YzNmYmI1ZWU3OTNmZDhhMzI1ZWJlMjdkMGI5ODE1MGIwZTg0ZTY4Y2I1ZGFkOGExYWJhN2JiOTFlZGQ",
+      "alertMonth": "2025-05",
+      "category": "SPURIOUS",
+      "productName": "Amoxicillin 500mg Capsules",
+      "batchRaw": "GTL1258",
+      "manufacturerRaw": "Gidsha Pharma",
+      "reasonCode": "SPURIOUS",
+      "reasonRaw": "Found to be spurious - not manufactured by the firm on the label",
+      "reportingSource": "STATE_LAB",
+      "reportingLab": "Central Drugs Testing Laboratory, Mumbai",
+      "sourceUrl": "https://cdscoonline.gov.in/CDSCO/filteredNsqDrugTable?month=May-2025&source=All&tab=spurious",
+      "demo": false
+    },
+    "createdAt": "2026-09-15T07:30:10.000Z"
+  },
+  {
+    "eventId": "evt-new-alert-001",
+    "trigger": "NEW_ALERT",
+    "cabinetId": "cab-vikram-siblings-002",
+    "medId": "med-cough-syrup-009",
+    "medicineLabel": "Dad - cough syrup",
+    "tier": "VERIFY",
+    "alert": {
+      "alertRef": "QkFUQ0gjMDA1N3xBTEVSVCMyMDI1LTAyI05TUSM3YjIzMmZlMjRjNmM5NGMwMDE1M2ZkOThlNTM4OGUzY2FlYWQ2MzJkYWM0ZTlmN2EzMjkxMmI3MGJlNTVjMGMy",
+      "alertMonth": "2025-02",
+      "category": "NSQ",
+      "productName": "Paracetamol 650mg Tablets",
+      "batchRaw": "00 57",
+      "manufacturerRaw": "Zenova Labs Pvt. Ltd.",
+      "reasonCode": "DISINTEGRATION",
+      "reasonRaw": "Disintegration test failed",
+      "reportingSource": "STATE_LAB",
+      "reportingLab": "Regional Drug Testing Laboratory, Guwahati",
+      "sourceUrl": "https://cdscoonline.gov.in/CDSCO/filteredNsqDrugTable?month=Feb-2025&source=All&tab=nsq",
+      "demo": false
+    },
+    "createdAt": "2026-09-17T09:05:00.000Z"
+  },
+  {
+    "eventId": "evt-demo-001",
+    "trigger": "DEMO",
+    "cabinetId": "cab-demo-001",
+    "medId": "med-demo-strip-001",
+    "medicineLabel": "Demo strip",
+    "tier": "FLAGGED",
+    "alert": {
+      "alertRef": "QkFUQ0gjR1RMMTI1OHxBTEVSVCMyMDI1LTAzI05TUSNkNTIxZDU3ZmUxNDRkMzFhMTVhYjYzZDQwYjE4MTk4MmY3MTJjMWVlYjcwODQwYWU0ODZhNWYxMDcyOWY5ZGJj",
+      "alertMonth": "2025-03",
+      "category": "NSQ",
+      "productName": "Amoxicillin 500mg Capsules",
+      "batchRaw": "GTL 1258",
+      "manufacturerRaw": "M/s. Gidsha Pharmaceuticals Pvt. Ltd.",
+      "expMonth": "2026-10",
+      "reasonCode": "ASSAY",
+      "reasonRaw": "Assay (content of the drug) found outside limits",
+      "reportingSource": "STATE_LAB",
+      "reportingLab": "State Drug Testing Laboratory, Chandigarh",
+      "sourceUrl": "https://cdscoonline.gov.in/CDSCO/filteredNsqDrugTable?month=Mar-2025&source=All&tab=nsq",
+      "demo": true
+    },
+    "createdAt": "2026-09-17T10:00:00.000Z"
+  }
+]

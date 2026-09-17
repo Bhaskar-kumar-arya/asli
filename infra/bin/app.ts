@@ -12,7 +12,7 @@ const stage = requireStage();
 // (SHARED_STAGE, default "dev-shared"). Other stages import its outputs via SSM instead
 // of redeploying it - see infra/lib/ssm.ts.
 if (stage === (process.env.SHARED_STAGE ?? 'dev-shared')) {
-  new SharedStack(app, stackName('SharedStack', stage), { env: cdkEnv() });
+  new SharedStack(app, stackName('SharedStack', stage), { env: cdkEnv(), stage });
 }
 
 registerLanes(app, stage, path.join(__dirname, '..', 'lib', 'lanes'));

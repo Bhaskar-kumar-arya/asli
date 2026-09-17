@@ -1,0 +1,2697 @@
+openapi: 3.0.3
+info:
+  title: Asli API
+  version: "1"
+  description: CDSCO NSQ/Spurious batch checker - see docs/API.md for the source of truth.
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT (Cognito idToken)
+  schemas:
+    ApiError:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum:
+                - BAD_REQUEST
+                - UNAUTHORIZED
+                - FORBIDDEN
+                - NOT_FOUND
+                - CONFLICT
+                - RATE_LIMITED
+                - EXTRACTION_FAILED
+                - INTERNAL
+            message:
+              type: string
+            requestId:
+              type: string
+          required:
+            - code
+            - message
+            - requestId
+      required:
+        - error
+    MedicineIdentity:
+      type: object
+      properties:
+        productName:
+          type: string
+        brandName:
+          type: string
+        batchNumber:
+          type: string
+          minLength: 1
+        manufacturer:
+          type: string
+        mfgMonth:
+          type: string
+          pattern: ^\d{4}-(0[1-9]|1[0-2])$
+        expMonth:
+          type: string
+          pattern: ^\d{4}-(0[1-9]|1[0-2])$
+        strength:
+          type: string
+        dosageForm:
+          type: string
+        mrp:
+          type: string
+        quantity:
+          type: integer
+          minimum: 0
+          exclusiveMinimum: true
+        source:
+          type: string
+          enum: &a1
+            - strip_vision
+            - bill_vision
+            - qr
+            - manual
+            - pharmacy_csv
+        fieldConfidence:
+          type: object
+          properties:
+            batchNumber:
+              type: number
+              minimum: 0
+              maximum: 1
+            manufacturer:
+              type: number
+              minimum: 0
+              maximum: 1
+            productName:
+              type: number
+              minimum: 0
+              maximum: 1
+            expMonth:
+              type: number
+              minimum: 0
+              maximum: 1
+      required:
+        - batchNumber
+        - source
+    AlertSummary:
+      type: object
+      properties:
+        alertRef:
+          type: string
+        alertMonth:
+          type: string
+          pattern: ^\d{4}-(0[1-9]|1[0-2])$
+        category:
+          type: string
+          enum: &a2
+            - NSQ
+            - SPURIOUS
+        productName:
+          type: string
+        batchRaw:
+          type: string
+        manufacturerRaw:
+          type: string
+        mfgMonth:
+          type: string
+          pattern: ^\d{4}-(0[1-9]|1[0-2])$
+        expMonth:
+          type: string
+          pattern: ^\d{4}-(0[1-9]|1[0-2])$
+        reasonCode:
+          type: string
+          enum: &a3
+            - DISSOLUTION
+            - ASSAY
+            - IDENTIFICATION
+            - DISINTEGRATION
+            - STERILITY
+            - PARTICULATE
+            - MICROBIAL
+            - RELATED_SUBSTANCES
+            - PH
+            - DESCRIPTION
+            - UNIFORMITY
+            - LABELLING
+            - SPURIOUS
+            - OTHER
+        reasonRaw:
+          type: string
+        reportingSource:
+          type: string
+        reportingLab:
+          type: string
+        sourceUrl:
+          type: string
+          format: uri
+        demo:
+          type: boolean
+      required:
+        - alertRef
+        - alertMonth
+        - category
+        - productName
+        - batchRaw
+        - manufacturerRaw
+        - reasonCode
+        - reasonRaw
+        - reportingSource
+        - sourceUrl
+        - demo
+    CheckItemResult:
+      type: object
+      properties:
+        identity:
+          type: object
+          properties:
+            productName:
+              type: string
+            brandName:
+              type: string
+            batchNumber:
+              type: string
+              minLength: 1
+            manufacturer:
+              type: string
+            mfgMonth:
+              type: string
+              pattern: ^\d{4}-(0[1-9]|1[0-2])$
+            expMonth:
+              type: string
+              pattern: ^\d{4}-(0[1-9]|1[0-2])$
+            strength:
+              type: string
+            dosageForm:
+              type: string
+            mrp:
+              type: string
+            quantity:
+              type: integer
+              minimum: 0
+              exclusiveMinimum: true
+            source:
+              type: string
+              enum: *a1
+            fieldConfidence:
+              type: object
+              properties:
+                batchNumber:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+                manufacturer:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+                productName:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+                expMonth:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+          required:
+            - batchNumber
+            - source
+        tier:
+          type: string
+          enum: &a4
+            - FLAGGED
+            - VERIFY
+            - NO_ALERT_FOUND
+        reasonCodes:
+          type: array
+          items:
+            type: string
+            enum: &a5
+              - BATCH_EXACT
+              - BATCH_NEAR
+              - MFR_STRONG
+              - MFR_WEAK
+              - MFR_UNKNOWN
+              - MFR_FROM_BRAND_MAP
+              - EXPIRY_DIFFERS
+              - LOW_READ_CONFIDENCE
+        matches:
+          type: array
+          items:
+            type: object
+            properties:
+              alertRef:
+                type: string
+              alertMonth:
+                type: string
+                pattern: ^\d{4}-(0[1-9]|1[0-2])$
+              category:
+                type: string
+                enum: *a2
+              productName:
+                type: string
+              batchRaw:
+                type: string
+              manufacturerRaw:
+                type: string
+              mfgMonth:
+                type: string
+                pattern: ^\d{4}-(0[1-9]|1[0-2])$
+              expMonth:
+                type: string
+                pattern: ^\d{4}-(0[1-9]|1[0-2])$
+              reasonCode:
+                type: string
+                enum: *a3
+              reasonRaw:
+                type: string
+              reportingSource:
+                type: string
+              reportingLab:
+                type: string
+              sourceUrl:
+                type: string
+                format: uri
+              demo:
+                type: boolean
+            required:
+              - alertRef
+              - alertMonth
+              - category
+              - productName
+              - batchRaw
+              - manufacturerRaw
+              - reasonCode
+              - reasonRaw
+              - reportingSource
+              - sourceUrl
+              - demo
+        checkedAgainst:
+          type: object
+          properties:
+            monthCount:
+              type: integer
+              minimum: 0
+            latestMonth:
+              type: string
+              pattern: ^\d{4}-(0[1-9]|1[0-2])$
+          required:
+            - monthCount
+            - latestMonth
+        guidanceKey:
+          type: string
+      required:
+        - identity
+        - tier
+        - reasonCodes
+        - matches
+        - checkedAgainst
+        - guidanceKey
+    CreateUploadRequest:
+      type: object
+      properties:
+        kind:
+          type: string
+          enum:
+            - strip
+            - bill
+            - pharmacy
+        contentType:
+          type: string
+      required:
+        - kind
+        - contentType
+    CreateUploadResponse:
+      type: object
+      properties:
+        uploadId:
+          type: string
+        url:
+          type: string
+          format: uri
+        fields:
+          type: object
+          additionalProperties:
+            type: string
+        expiresAt:
+          type: string
+          format: date-time
+      required:
+        - uploadId
+        - url
+        - expiresAt
+    ScanRequest:
+      type: object
+      properties:
+        uploadId:
+          type: string
+        kind:
+          type: string
+          enum:
+            - strip
+            - bill
+        qrText:
+          type: string
+      required:
+        - uploadId
+        - kind
+    ScanResponse:
+      type: object
+      properties:
+        scanId:
+          type: string
+        method:
+          type: string
+          enum:
+            - strip_vision
+            - bill_vision
+            - qr
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              productName:
+                type: string
+              brandName:
+                type: string
+              batchNumber:
+                type: string
+                minLength: 1
+              manufacturer:
+                type: string
+              mfgMonth:
+                type: string
+                pattern: ^\d{4}-(0[1-9]|1[0-2])$
+              expMonth:
+                type: string
+                pattern: ^\d{4}-(0[1-9]|1[0-2])$
+              strength:
+                type: string
+              dosageForm:
+                type: string
+              mrp:
+                type: string
+              quantity:
+                type: integer
+                minimum: 0
+                exclusiveMinimum: true
+              source:
+                type: string
+                enum: *a1
+              fieldConfidence:
+                type: object
+                properties:
+                  batchNumber:
+                    type: number
+                    minimum: 0
+                    maximum: 1
+                  manufacturer:
+                    type: number
+                    minimum: 0
+                    maximum: 1
+                  productName:
+                    type: number
+                    minimum: 0
+                    maximum: 1
+                  expMonth:
+                    type: number
+                    minimum: 0
+                    maximum: 1
+            required:
+              - batchNumber
+              - source
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              identity:
+                type: object
+                properties:
+                  productName:
+                    type: string
+                  brandName:
+                    type: string
+                  batchNumber:
+                    type: string
+                    minLength: 1
+                  manufacturer:
+                    type: string
+                  mfgMonth:
+                    type: string
+                    pattern: ^\d{4}-(0[1-9]|1[0-2])$
+                  expMonth:
+                    type: string
+                    pattern: ^\d{4}-(0[1-9]|1[0-2])$
+                  strength:
+                    type: string
+                  dosageForm:
+                    type: string
+                  mrp:
+                    type: string
+                  quantity:
+                    type: integer
+                    minimum: 0
+                    exclusiveMinimum: true
+                  source:
+                    type: string
+                    enum: *a1
+                  fieldConfidence:
+                    type: object
+                    properties:
+                      batchNumber:
+                        type: number
+                        minimum: 0
+                        maximum: 1
+                      manufacturer:
+                        type: number
+                        minimum: 0
+                        maximum: 1
+                      productName:
+                        type: number
+                        minimum: 0
+                        maximum: 1
+                      expMonth:
+                        type: number
+                        minimum: 0
+                        maximum: 1
+                required:
+                  - batchNumber
+                  - source
+              tier:
+                type: string
+                enum: *a4
+              reasonCodes:
+                type: array
+                items:
+                  type: string
+                  enum: *a5
+              matches:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    alertRef:
+                      type: string
+                    alertMonth:
+                      type: string
+                      pattern: ^\d{4}-(0[1-9]|1[0-2])$
+                    category:
+                      type: string
+                      enum: *a2
+                    productName:
+                      type: string
+                    batchRaw:
+                      type: string
+                    manufacturerRaw:
+                      type: string
+                    mfgMonth:
+                      type: string
+                      pattern: ^\d{4}-(0[1-9]|1[0-2])$
+                    expMonth:
+                      type: string
+                      pattern: ^\d{4}-(0[1-9]|1[0-2])$
+                    reasonCode:
+                      type: string
+                      enum: *a3
+                    reasonRaw:
+                      type: string
+                    reportingSource:
+                      type: string
+                    reportingLab:
+                      type: string
+                    sourceUrl:
+                      type: string
+                      format: uri
+                    demo:
+                      type: boolean
+                  required:
+                    - alertRef
+                    - alertMonth
+                    - category
+                    - productName
+                    - batchRaw
+                    - manufacturerRaw
+                    - reasonCode
+                    - reasonRaw
+                    - reportingSource
+                    - sourceUrl
+                    - demo
+              checkedAgainst:
+                type: object
+                properties:
+                  monthCount:
+                    type: integer
+                    minimum: 0
+                  latestMonth:
+                    type: string
+                    pattern: ^\d{4}-(0[1-9]|1[0-2])$
+                required:
+                  - monthCount
+                  - latestMonth
+              guidanceKey:
+                type: string
+            required:
+              - identity
+              - tier
+              - reasonCodes
+              - matches
+              - checkedAgainst
+              - guidanceKey
+        warnings:
+          type: array
+          items:
+            type: string
+            enum:
+              - LOW_READ_CONFIDENCE
+              - NO_BATCH_ON_LINE
+              - NOT_A_MEDICINE
+      required:
+        - scanId
+        - method
+        - items
+        - results
+        - warnings
+    CheckRequest:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              productName:
+                type: string
+              brandName:
+                type: string
+              batchNumber:
+                type: string
+                minLength: 1
+              manufacturer:
+                type: string
+              mfgMonth:
+                type: string
+                pattern: ^\d{4}-(0[1-9]|1[0-2])$
+              expMonth:
+                type: string
+                pattern: ^\d{4}-(0[1-9]|1[0-2])$
+              strength:
+                type: string
+              dosageForm:
+                type: string
+              mrp:
+                type: string
+              quantity:
+                type: integer
+                minimum: 0
+                exclusiveMinimum: true
+              source:
+                type: string
+                enum: *a1
+              fieldConfidence:
+                type: object
+                properties:
+                  batchNumber:
+                    type: number
+                    minimum: 0
+                    maximum: 1
+                  manufacturer:
+                    type: number
+                    minimum: 0
+                    maximum: 1
+                  productName:
+                    type: number
+                    minimum: 0
+                    maximum: 1
+                  expMonth:
+                    type: number
+                    minimum: 0
+                    maximum: 1
+            required:
+              - batchNumber
+              - source
+          minItems: 1
+          maxItems: 50
+      required:
+        - items
+    CheckResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              identity:
+                type: object
+                properties:
+                  productName:
+                    type: string
+                  brandName:
+                    type: string
+                  batchNumber:
+                    type: string
+                    minLength: 1
+                  manufacturer:
+                    type: string
+                  mfgMonth:
+                    type: string
+                    pattern: ^\d{4}-(0[1-9]|1[0-2])$
+                  expMonth:
+                    type: string
+                    pattern: ^\d{4}-(0[1-9]|1[0-2])$
+                  strength:
+                    type: string
+                  dosageForm:
+                    type: string
+                  mrp:
+                    type: string
+                  quantity:
+                    type: integer
+                    minimum: 0
+                    exclusiveMinimum: true
+                  source:
+                    type: string
+                    enum: *a1
+                  fieldConfidence:
+                    type: object
+                    properties:
+                      batchNumber:
+                        type: number
+                        minimum: 0
+                        maximum: 1
+                      manufacturer:
+                        type: number
+                        minimum: 0
+                        maximum: 1
+                      productName:
+                        type: number
+                        minimum: 0
+                        maximum: 1
+                      expMonth:
+                        type: number
+                        minimum: 0
+                        maximum: 1
+                required:
+                  - batchNumber
+                  - source
+              tier:
+                type: string
+                enum: *a4
+              reasonCodes:
+                type: array
+                items:
+                  type: string
+                  enum: *a5
+              matches:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    alertRef:
+                      type: string
+                    alertMonth:
+                      type: string
+                      pattern: ^\d{4}-(0[1-9]|1[0-2])$
+                    category:
+                      type: string
+                      enum: *a2
+                    productName:
+                      type: string
+                    batchRaw:
+                      type: string
+                    manufacturerRaw:
+                      type: string
+                    mfgMonth:
+                      type: string
+                      pattern: ^\d{4}-(0[1-9]|1[0-2])$
+                    expMonth:
+                      type: string
+                      pattern: ^\d{4}-(0[1-9]|1[0-2])$
+                    reasonCode:
+                      type: string
+                      enum: *a3
+                    reasonRaw:
+                      type: string
+                    reportingSource:
+                      type: string
+                    reportingLab:
+                      type: string
+                    sourceUrl:
+                      type: string
+                      format: uri
+                    demo:
+                      type: boolean
+                  required:
+                    - alertRef
+                    - alertMonth
+                    - category
+                    - productName
+                    - batchRaw
+                    - manufacturerRaw
+                    - reasonCode
+                    - reasonRaw
+                    - reportingSource
+                    - sourceUrl
+                    - demo
+              checkedAgainst:
+                type: object
+                properties:
+                  monthCount:
+                    type: integer
+                    minimum: 0
+                  latestMonth:
+                    type: string
+                    pattern: ^\d{4}-(0[1-9]|1[0-2])$
+                required:
+                  - monthCount
+                  - latestMonth
+              guidanceKey:
+                type: string
+            required:
+              - identity
+              - tier
+              - reasonCodes
+              - matches
+              - checkedAgainst
+              - guidanceKey
+      required:
+        - results
+    AlertDetail:
+      type: object
+      properties:
+        alertRef:
+          type: string
+        alertMonth:
+          type: string
+          pattern: ^\d{4}-(0[1-9]|1[0-2])$
+        category:
+          type: string
+          enum: *a2
+        productName:
+          type: string
+        batchRaw:
+          type: string
+        manufacturerRaw:
+          type: string
+        mfgMonth:
+          type: string
+          pattern: ^\d{4}-(0[1-9]|1[0-2])$
+        expMonth:
+          type: string
+          pattern: ^\d{4}-(0[1-9]|1[0-2])$
+        reasonCode:
+          type: string
+          enum: *a3
+        reasonRaw:
+          type: string
+        reportingSource:
+          type: string
+        reportingLab:
+          type: string
+        sourceUrl:
+          type: string
+          format: uri
+        demo:
+          type: boolean
+        snapshotKey:
+          type: string
+        ingestedAt:
+          type: string
+          format: date-time
+      required:
+        - alertRef
+        - alertMonth
+        - category
+        - productName
+        - batchRaw
+        - manufacturerRaw
+        - reasonCode
+        - reasonRaw
+        - reportingSource
+        - sourceUrl
+        - demo
+        - snapshotKey
+        - ingestedAt
+    CabinetList:
+      type: object
+      properties:
+        cabinets:
+          type: array
+          items:
+            type: object
+            properties:
+              cabinetId:
+                type: string
+              name:
+                type: string
+              createdBy:
+                type: string
+              createdAt:
+                type: string
+                format: date-time
+              role:
+                type: string
+                enum: &a6
+                  - OWNER
+                  - EDITOR
+                  - VIEWER
+            required:
+              - cabinetId
+              - name
+              - createdBy
+              - createdAt
+              - role
+        nextToken:
+          type: string
+      required:
+        - cabinets
+    CreateCabinetRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+      required:
+        - name
+    Cabinet:
+      type: object
+      properties:
+        cabinetId:
+          type: string
+        name:
+          type: string
+        createdBy:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - cabinetId
+        - name
+        - createdBy
+        - createdAt
+    CabinetDetail:
+      type: object
+      properties:
+        cabinet:
+          type: object
+          properties:
+            cabinetId:
+              type: string
+            name:
+              type: string
+            createdBy:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+          required:
+            - cabinetId
+            - name
+            - createdBy
+            - createdAt
+        members:
+          type: array
+          items:
+            type: object
+            properties:
+              userId:
+                type: string
+              role:
+                type: string
+                enum: *a6
+              alertsEnabled:
+                type: boolean
+              joinedAt:
+                type: string
+                format: date-time
+            required:
+              - userId
+              - role
+              - alertsEnabled
+              - joinedAt
+        medicines:
+          type: array
+          items:
+            type: object
+            properties:
+              medId:
+                type: string
+              identity:
+                type: object
+                properties:
+                  productName:
+                    type: string
+                  brandName:
+                    type: string
+                  batchNumber:
+                    type: string
+                    minLength: 1
+                  manufacturer:
+                    type: string
+                  mfgMonth:
+                    type: string
+                    pattern: ^\d{4}-(0[1-9]|1[0-2])$
+                  expMonth:
+                    type: string
+                    pattern: ^\d{4}-(0[1-9]|1[0-2])$
+                  strength:
+                    type: string
+                  dosageForm:
+                    type: string
+                  mrp:
+                    type: string
+                  quantity:
+                    type: integer
+                    minimum: 0
+                    exclusiveMinimum: true
+                  source:
+                    type: string
+                    enum: *a1
+                  fieldConfidence:
+                    type: object
+                    properties:
+                      batchNumber:
+                        type: number
+                        minimum: 0
+                        maximum: 1
+                      manufacturer:
+                        type: number
+                        minimum: 0
+                        maximum: 1
+                      productName:
+                        type: number
+                        minimum: 0
+                        maximum: 1
+                      expMonth:
+                        type: number
+                        minimum: 0
+                        maximum: 1
+                required:
+                  - batchNumber
+                  - source
+              label:
+                type: string
+              forPerson:
+                type: string
+              addedBy:
+                type: string
+              addedAt:
+                type: string
+                format: date-time
+              lastCheckedAt:
+                type: string
+                format: date-time
+              latestTier:
+                type: string
+                enum: &a7
+                  - FLAGGED
+                  - VERIFY
+                  - NO_ALERT_FOUND
+                  - PENDING
+            required:
+              - medId
+              - identity
+              - addedBy
+              - addedAt
+              - latestTier
+        matches:
+          type: array
+          items:
+            type: object
+            properties:
+              medId:
+                type: string
+              alertRef:
+                type: string
+              tier:
+                type: string
+                enum:
+                  - FLAGGED
+                  - VERIFY
+              category:
+                type: string
+                enum: *a2
+              alertMonth:
+                type: string
+                pattern: ^\d{4}-(0[1-9]|1[0-2])$
+              createdAt:
+                type: string
+                format: date-time
+            required:
+              - medId
+              - alertRef
+              - tier
+              - category
+              - alertMonth
+              - createdAt
+      required:
+        - cabinet
+        - members
+        - medicines
+        - matches
+    AddMedicineRequest:
+      type: object
+      properties:
+        identity:
+          type: object
+          properties:
+            productName:
+              type: string
+            brandName:
+              type: string
+            batchNumber:
+              type: string
+              minLength: 1
+            manufacturer:
+              type: string
+            mfgMonth:
+              type: string
+              pattern: ^\d{4}-(0[1-9]|1[0-2])$
+            expMonth:
+              type: string
+              pattern: ^\d{4}-(0[1-9]|1[0-2])$
+            strength:
+              type: string
+            dosageForm:
+              type: string
+            mrp:
+              type: string
+            quantity:
+              type: integer
+              minimum: 0
+              exclusiveMinimum: true
+            source:
+              type: string
+              enum: *a1
+            fieldConfidence:
+              type: object
+              properties:
+                batchNumber:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+                manufacturer:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+                productName:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+                expMonth:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+          required:
+            - batchNumber
+            - source
+        label:
+          type: string
+        forPerson:
+          type: string
+      required:
+        - identity
+    MedicineWithStatus:
+      type: object
+      properties:
+        medId:
+          type: string
+        identity:
+          type: object
+          properties:
+            productName:
+              type: string
+            brandName:
+              type: string
+            batchNumber:
+              type: string
+              minLength: 1
+            manufacturer:
+              type: string
+            mfgMonth:
+              type: string
+              pattern: ^\d{4}-(0[1-9]|1[0-2])$
+            expMonth:
+              type: string
+              pattern: ^\d{4}-(0[1-9]|1[0-2])$
+            strength:
+              type: string
+            dosageForm:
+              type: string
+            mrp:
+              type: string
+            quantity:
+              type: integer
+              minimum: 0
+              exclusiveMinimum: true
+            source:
+              type: string
+              enum: *a1
+            fieldConfidence:
+              type: object
+              properties:
+                batchNumber:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+                manufacturer:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+                productName:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+                expMonth:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+          required:
+            - batchNumber
+            - source
+        label:
+          type: string
+        forPerson:
+          type: string
+        addedBy:
+          type: string
+        addedAt:
+          type: string
+          format: date-time
+        lastCheckedAt:
+          type: string
+          format: date-time
+        latestTier:
+          type: string
+          enum: *a7
+      required:
+        - medId
+        - identity
+        - addedBy
+        - addedAt
+        - latestTier
+    CreateInviteRequest:
+      type: object
+      properties:
+        role:
+          type: string
+          enum: *a6
+      required:
+        - role
+    Invite:
+      type: object
+      properties:
+        code:
+          type: string
+        role:
+          type: string
+          enum: *a6
+        expiresAt:
+          type: string
+          format: date-time
+      required:
+        - code
+        - role
+        - expiresAt
+    UpdateMemberRequest:
+      type: object
+      properties:
+        role:
+          type: string
+          enum: *a6
+        alertsEnabled:
+          type: boolean
+    Member:
+      type: object
+      properties:
+        userId:
+          type: string
+        role:
+          type: string
+          enum: *a6
+        alertsEnabled:
+          type: boolean
+        joinedAt:
+          type: string
+          format: date-time
+      required:
+        - userId
+        - role
+        - alertsEnabled
+        - joinedAt
+    PushSubscriptionRequest:
+      type: object
+      properties:
+        endpoint:
+          type: string
+          format: uri
+        keys:
+          type: object
+          properties:
+            p256dh:
+              type: string
+            auth:
+              type: string
+          required:
+            - p256dh
+            - auth
+        userAgent:
+          type: string
+      required:
+        - endpoint
+        - keys
+        - userAgent
+    VapidPublicKeyResponse:
+      type: object
+      properties:
+        publicKey:
+          type: string
+      required:
+        - publicKey
+    GuidanceTemplate:
+      type: object
+      properties:
+        key:
+          type: string
+        lang:
+          type: string
+          enum:
+            - en
+            - hi
+            - kn
+        title:
+          type: string
+        body:
+          type: string
+        whatToDoNext:
+          type: array
+          items:
+            type: string
+        reviewedBy:
+          type: string
+        reviewedAt:
+          type: string
+          format: date-time
+      required:
+        - key
+        - lang
+        - title
+        - body
+        - whatToDoNext
+    ProblemReportRequest:
+      type: object
+      properties:
+        identity:
+          type: object
+          properties:
+            productName:
+              type: string
+            brandName:
+              type: string
+            batchNumber:
+              type: string
+              minLength: 1
+            manufacturer:
+              type: string
+            mfgMonth:
+              type: string
+              pattern: ^\d{4}-(0[1-9]|1[0-2])$
+            expMonth:
+              type: string
+              pattern: ^\d{4}-(0[1-9]|1[0-2])$
+            strength:
+              type: string
+            dosageForm:
+              type: string
+            mrp:
+              type: string
+            quantity:
+              type: integer
+              minimum: 0
+              exclusiveMinimum: true
+            source:
+              type: string
+              enum: *a1
+            fieldConfidence:
+              type: object
+              properties:
+                batchNumber:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+                manufacturer:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+                productName:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+                expMonth:
+                  type: number
+                  minimum: 0
+                  maximum: 1
+          required:
+            - batchNumber
+            - source
+        alertRef:
+          type: string
+        problemType:
+          type: string
+        note:
+          type: string
+          maxLength: 280
+      required:
+        - identity
+        - problemType
+    ProblemReportResponse:
+      type: object
+      properties:
+        pvpi:
+          type: object
+          properties:
+            howToReport:
+              type: string
+            links:
+              type: array
+              items:
+                type: string
+                format: uri
+          required:
+            - howToReport
+            - links
+      required:
+        - pvpi
+    PublicStats:
+      type: object
+      properties:
+        generatedAt:
+          type: string
+          format: date-time
+        monthsCovered:
+          type: integer
+          minimum: 0
+        latestMonth:
+          type: string
+          pattern: ^\d{4}-(0[1-9]|1[0-2])$
+        totalFlaggedBatches:
+          type: integer
+          minimum: 0
+        cabinetsProtected:
+          type: integer
+          minimum: 0
+        medicinesTracked:
+          type: integer
+          minimum: 0
+      required:
+        - generatedAt
+        - monthsCovered
+        - latestMonth
+        - totalFlaggedBatches
+        - cabinetsProtected
+        - medicinesTracked
+    InsightsResponse:
+      type: object
+      properties:
+        generatedAt:
+          type: string
+          format: date-time
+        byCategory:
+          type: object
+          properties:
+            NSQ: &a8
+              type: integer
+              minimum: 0
+            SPURIOUS: *a8
+        byMonth:
+          type: array
+          items:
+            type: object
+            properties:
+              month:
+                type: string
+                pattern: ^\d{4}-(0[1-9]|1[0-2])$
+              count:
+                type: integer
+                minimum: 0
+            required:
+              - month
+              - count
+        topReasonCodes:
+          type: array
+          items:
+            type: object
+            properties:
+              reasonCode:
+                type: string
+                enum: *a3
+              count:
+                type: integer
+                minimum: 0
+            required:
+              - reasonCode
+              - count
+      required:
+        - generatedAt
+        - byCategory
+        - byMonth
+        - topReasonCodes
+    MetricsSummary:
+      type: object
+      properties:
+        accuracy:
+          type: object
+          properties:
+            sampleSize:
+              type: integer
+              minimum: 0
+            precision:
+              type: number
+              minimum: 0
+              maximum: 1
+            recall:
+              type: number
+              minimum: 0
+              maximum: 1
+            measuredAt:
+              type: string
+              format: date-time
+          required:
+            - sampleSize
+        cost:
+          type: object
+          properties:
+            costPer1000ScansUsd:
+              type: number
+              minimum: 0
+            measuredAt:
+              type: string
+              format: date-time
+      required:
+        - accuracy
+        - cost
+    PharmacyCheckRequest:
+      anyOf:
+        - type: object
+          properties:
+            uploadId:
+              type: string
+          required:
+            - uploadId
+        - type: object
+          properties:
+            csv:
+              type: string
+          required:
+            - csv
+    PharmacyCheckResponse:
+      type: object
+      properties:
+        rows:
+          type: array
+          items:
+            type: object
+            properties:
+              identity:
+                type: object
+                properties:
+                  productName:
+                    type: string
+                  brandName:
+                    type: string
+                  batchNumber:
+                    type: string
+                    minLength: 1
+                  manufacturer:
+                    type: string
+                  mfgMonth:
+                    type: string
+                    pattern: ^\d{4}-(0[1-9]|1[0-2])$
+                  expMonth:
+                    type: string
+                    pattern: ^\d{4}-(0[1-9]|1[0-2])$
+                  strength:
+                    type: string
+                  dosageForm:
+                    type: string
+                  mrp:
+                    type: string
+                  quantity:
+                    type: integer
+                    minimum: 0
+                    exclusiveMinimum: true
+                  source:
+                    type: string
+                    enum: *a1
+                  fieldConfidence:
+                    type: object
+                    properties:
+                      batchNumber:
+                        type: number
+                        minimum: 0
+                        maximum: 1
+                      manufacturer:
+                        type: number
+                        minimum: 0
+                        maximum: 1
+                      productName:
+                        type: number
+                        minimum: 0
+                        maximum: 1
+                      expMonth:
+                        type: number
+                        minimum: 0
+                        maximum: 1
+                required:
+                  - batchNumber
+                  - source
+              tier:
+                type: string
+                enum: *a4
+              reasonCodes:
+                type: array
+                items:
+                  type: string
+                  enum: *a5
+              matches:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    alertRef:
+                      type: string
+                    alertMonth:
+                      type: string
+                      pattern: ^\d{4}-(0[1-9]|1[0-2])$
+                    category:
+                      type: string
+                      enum: *a2
+                    productName:
+                      type: string
+                    batchRaw:
+                      type: string
+                    manufacturerRaw:
+                      type: string
+                    mfgMonth:
+                      type: string
+                      pattern: ^\d{4}-(0[1-9]|1[0-2])$
+                    expMonth:
+                      type: string
+                      pattern: ^\d{4}-(0[1-9]|1[0-2])$
+                    reasonCode:
+                      type: string
+                      enum: *a3
+                    reasonRaw:
+                      type: string
+                    reportingSource:
+                      type: string
+                    reportingLab:
+                      type: string
+                    sourceUrl:
+                      type: string
+                      format: uri
+                    demo:
+                      type: boolean
+                  required:
+                    - alertRef
+                    - alertMonth
+                    - category
+                    - productName
+                    - batchRaw
+                    - manufacturerRaw
+                    - reasonCode
+                    - reasonRaw
+                    - reportingSource
+                    - sourceUrl
+                    - demo
+              checkedAgainst:
+                type: object
+                properties:
+                  monthCount:
+                    type: integer
+                    minimum: 0
+                  latestMonth:
+                    type: string
+                    pattern: ^\d{4}-(0[1-9]|1[0-2])$
+                required:
+                  - monthCount
+                  - latestMonth
+              guidanceKey:
+                type: string
+              quantity:
+                type: integer
+                minimum: 0
+            required:
+              - identity
+              - tier
+              - reasonCodes
+              - matches
+              - checkedAgainst
+              - guidanceKey
+        flaggedUnits:
+          type: integer
+          minimum: 0
+      required:
+        - rows
+        - flaggedUnits
+    DemoReplayRequest:
+      type: object
+      properties:
+        fixtureKey:
+          type: string
+      required:
+        - fixtureKey
+    DemoReplayResponse:
+      type: object
+      properties:
+        executionArn:
+          type: string
+      required:
+        - executionArn
+  parameters: {}
+paths:
+  /v1/uploads:
+    post:
+      tags:
+        - uploads
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUploadRequest"
+      responses:
+        "200":
+          description: Upload URL
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateUploadResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /v1/scans:
+    post:
+      tags:
+        - scans
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScanRequest"
+      responses:
+        "200":
+          description: Scan result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScanResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /v1/checks:
+    post:
+      tags:
+        - checks
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CheckRequest"
+      responses:
+        "200":
+          description: Check results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CheckResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /v1/alerts/{alertRef}:
+    get:
+      tags:
+        - alerts
+      security:
+        - bearerAuth: []
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: alertRef
+          in: path
+      responses:
+        "200":
+          description: Alert detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlertDetail"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /v1/cabinets:
+    get:
+      tags:
+        - cabinets
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Cabinet list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CabinetList"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+    post:
+      tags:
+        - cabinets
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCabinetRequest"
+      responses:
+        "200":
+          description: Created cabinet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cabinet"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /v1/cabinets/{cabinetId}:
+    get:
+      tags:
+        - cabinets
+      security:
+        - bearerAuth: []
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: cabinetId
+          in: path
+      responses:
+        "200":
+          description: Cabinet detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CabinetDetail"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /v1/cabinets/{cabinetId}/medicines:
+    post:
+      tags:
+        - cabinets
+      security:
+        - bearerAuth: []
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: cabinetId
+          in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddMedicineRequest"
+      responses:
+        "200":
+          description: Added medicine
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MedicineWithStatus"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /v1/cabinets/{cabinetId}/medicines/{medId}:
+    delete:
+      tags:
+        - cabinets
+      security:
+        - bearerAuth: []
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: cabinetId
+          in: path
+        - schema:
+            type: string
+          required: true
+          name: medId
+          in: path
+      responses:
+        "204":
+          description: Removed
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /v1/cabinets/{cabinetId}/invites:
+    post:
+      tags:
+        - members
+      security:
+        - bearerAuth: []
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: cabinetId
+          in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateInviteRequest"
+      responses:
+        "200":
+          description: Invite
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Invite"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /v1/invites/{code}/accept:
+    post:
+      tags:
+        - members
+      security:
+        - bearerAuth: []
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: code
+          in: path
+      responses:
+        "200":
+          description: Cabinet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cabinet"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /v1/cabinets/{cabinetId}/members/{userId}:
+    patch:
+      tags:
+        - members
+      security:
+        - bearerAuth: []
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: cabinetId
+          in: path
+        - schema:
+            type: string
+          required: true
+          name: userId
+          in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateMemberRequest"
+      responses:
+        "200":
+          description: Member
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Member"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+    delete:
+      tags:
+        - members
+      security:
+        - bearerAuth: []
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: cabinetId
+          in: path
+        - schema:
+            type: string
+          required: true
+          name: userId
+          in: path
+      responses:
+        "204":
+          description: Removed
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /v1/push/subscriptions:
+    post:
+      tags:
+        - push
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PushSubscriptionRequest"
+      responses:
+        "201":
+          description: Subscribed
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+    delete:
+      tags:
+        - push
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                endpoint:
+                  type: string
+              required:
+                - endpoint
+      responses:
+        "204":
+          description: Unsubscribed
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /v1/push/vapid-public-key:
+    get:
+      tags:
+        - push
+      responses:
+        "200":
+          description: VAPID public key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VapidPublicKeyResponse"
+  /v1/push/test:
+    post:
+      tags:
+        - push
+      security:
+        - bearerAuth: []
+      responses:
+        "202":
+          description: Test push queued
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /v1/content/guidance/{guidanceKey}:
+    get:
+      tags:
+        - content
+      parameters:
+        - schema:
+            type: string
+          required: true
+          name: guidanceKey
+          in: path
+        - schema:
+            type: string
+            enum:
+              - en
+              - hi
+              - kn
+          required: false
+          name: lang
+          in: query
+      responses:
+        "200":
+          description: Guidance template
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuidanceTemplate"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /v1/reports:
+    post:
+      tags:
+        - reports
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProblemReportRequest"
+      responses:
+        "200":
+          description: PvPI pointer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemReportResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /v1/public/stats:
+    get:
+      tags:
+        - public
+      responses:
+        "200":
+          description: Public stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicStats"
+  /v1/public/insights:
+    get:
+      tags:
+        - public
+      responses:
+        "200":
+          description: Insights
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InsightsResponse"
+  /v1/public/metrics:
+    get:
+      tags:
+        - public
+      responses:
+        "200":
+          description: Metrics summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MetricsSummary"
+  /v1/pharmacy/checks:
+    post:
+      tags:
+        - pharmacy
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PharmacyCheckRequest"
+      responses:
+        "200":
+          description: Pharmacy check results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PharmacyCheckResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /v1/admin/demo/replay-month:
+    post:
+      tags:
+        - admin
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DemoReplayRequest"
+      responses:
+        "200":
+          description: Started demo replay
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DemoReplayResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
