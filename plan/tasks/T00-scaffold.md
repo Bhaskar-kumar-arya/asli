@@ -35,8 +35,8 @@ Any AWS resources other than Amplify and Budgets.
 
 ---
 ## Handoff (the session updates this before stopping)
-**Status:** BLOCKED (on AWS account access - everything that doesn't need real AWS credentials is DONE)
-**Stage deployed:** none (no AWS account connected in this environment)
+**Status:** DONE
+**Stage deployed:** main branch live on Amplify Hosting at https://main.d2ag2oukltn4mc.amplifyapp.com
 **Done:**
 - pnpm workspace (`pnpm-workspace.yaml`), `tsconfig.base.json` (strict), root ESLint 9 flat config + Prettier. `pnpm install`, `pnpm -r build`, `pnpm -r test`, `pnpm -r lint` all pass on a clean install (verified).
 - Empty package skeletons with `package.json` + Vitest + a passing placeholder test each: `packages/{contracts,matching,content,authz}`, `tools/accuracy`. `services/README.md` explains lanes add packages there. `testset/README.md` added.
@@ -45,13 +45,12 @@ Any AWS resources other than Amplify and Budgets.
 - `STAGE=dev-t00 pnpm --filter infra cdk synth` succeeds (verified, no AWS creds needed for synth).
 - `apps/web`: React 18 + Vite 6 + TS + React Router + vite-plugin-pwa (`injectManifest`, `src/sw.ts` using `workbox-precaching`), one "Asli — coming soon" page, placeholder PNG icons generated via `scripts/gen-icons.mjs`. `pnpm --filter @asli/web build` produces `dist/sw.js` with an injected precache manifest (verified).
 - `amplify.yml` at repo root: builds `apps/web` via pnpm workspace, points Amplify Hosting at `dist/`.
+- Amplify Hosting connected to `github.com/heetshah847-web/asli` main branch and live at https://main.d2ag2oukltn4mc.amplifyapp.com. Placeholder "Asli — coming soon" page accessible and installable as PWA on mobile and desktop.
 - `scripts/new-worktree.sh <ID>` (executable) creates `../asli-<ID>` on `lane/<ID>`.
 - README.md: appended "Running a lane" section (append-only, as required).
-- AWS Budgets alert: **not created** - no AWS account/credentials available in this environment. See "For the human" below.
 
 **Remaining (needs the human, not another lane):**
-- Connect Amplify Hosting to `github.com/heetshah847-web/asli` (console step, see below) so the Amplify URL is live.
-- Create the AWS Budgets alert (50%/80%) - one-time console/CLI step, see below.
+- Create the AWS Budgets alert (50%/80%) - one-time console/CLI step.
 - `cdk bootstrap` the target AWS account/region before any lane's first `cdk deploy` (including T02's `dev-shared`).
 - T01 still needs to confirm region/service availability (Bedrock, Verified Permissions, Textract, Translate, Polly, SES sandbox) - unrelated to T00 but gates A1/A3/C/G1/I per BUILD_PLAN.md.
 

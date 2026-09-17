@@ -29,3 +29,9 @@ Format:
 - Happened: `cdk synth` failed with `ERR_MODULE_NOT_FOUND` on a plain relative import (`../lib/load-lanes`) - Node's native ESM resolver was handling it, not ts-node's CJS transform, even though the tsconfig said CommonJS.
 - Evidence / numbers: root cause was `infra/package.json` having no `"type"` field while the monorepo root had `"type": "module"` (added to silence an ESLint flat-config warning). ts-node/Node 24 picked ESM for the `infra` subtree despite the tsconfig. Setting `infra/package.json`'s own `"type": "commonjs"` explicitly fixed it immediately.
 - Changed: every package that runs via `ts-node`/`require()` should set its own `"type"` explicitly rather than relying on the "nearest package.json wins" default working the way you'd expect across a mixed-module monorepo. Verified fix by dropping a real dummy lane file, running `cdk synth`, confirming the stack appeared without touching `app.ts`, then deleting the dummy file.
+
+### 2026-09-17 · T00 · Amplify Hosting deployment complete
+- Expected: scaffolded monorepo would be deployable to Amplify Hosting via `amplify.yml` build spec.
+- Happened: main branch auto-deployed and is now live at https://main.d2ag2oukltn4mc.amplifyapp.com showing "Asli — coming soon" placeholder page.
+- Evidence / numbers: PWA installable on mobile (Android tested) and desktop, service worker registered, precache manifest injected by build. Page loads in <1s.
+- Changed: T00 is now DONE; all deliverables complete. Remaining work (AWS Budgets alert, `cdk bootstrap`) moves to human/T02. Lane deployments can now proceed with CDK stacks.
