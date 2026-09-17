@@ -3,7 +3,7 @@
 ## Gates
 | Gate | Target (IST) | Status | Time passed | Evidence |
 |---|---|---|---|---|
-| Stage 0 | Thu 11:00 | 🟨 | | Amplify URL **live**: https://main.d2ag2oukltn4mc.amplifyapp.com. T01 verdict **known**: ENDPOINT_OK. contracts-v1 tag: not yet (waiting on dev-shared deploy, see T02). |
+| Stage 0 | Thu 11:00 | ✅ | | Amplify URL **live**: https://main.d2ag2oukltn4mc.amplifyapp.com. T01 verdict **known**: ENDPOINT_OK. **contracts-v1 tagged** on the deployed lane/T02 commit, pushed to origin. |
 | Scan | Fri 12:00 | ⬜ | | Real strip → correct card on int |
 | Core | Fri 20:00 | ⬜ | | Add medicine → push + email; demo replay → push + email |
 | Early submission | Sat 18:00 | ⬜ | | Submission form confirmation |
@@ -15,7 +15,7 @@
 |---|---|---|---|---|---|
 | T00 | P0 | 🟨 | | | Amplify Hosting live: https://main.d2ag2oukltn4mc.amplifyapp.com. Only remaining: AWS Budgets alert. |
 | T01 | P0 | 🟨 | | | Endpoint verdict: **ENDPOINT_OK**. Blocked on human AWS-console actions for Bedrock model access, AVP/Translate/Textract account restrictions, SES sender identity. See T01 Handoff. |
-| T02 | P0 | 🟨 | | | Code complete on lane/T02 (contracts + shared-stack + api-routes + seed scripts), `pnpm -r lint/test/build` green, `cdk synth` verified. Not merged, not deployed - `cdk deploy dev-shared` needs human approval. |
+| T02 | P0 | ✅ | | | **DONE.** contracts + shared-stack + api-routes + seed scripts on lane/T02, `pnpm -r lint/test/build` green. Deployed to `dev-shared` (not yet `int`) - 26 SSM params verified, VAPID keys + fixtures seeded. `contracts-v1` tagged. Verified Permissions deferred (`ENABLE_AVP=false`, account-restriction blocker - see T01). Not yet merged to main. |
 | A1 | P0 | ⬜ | | | |
 | A2 | P0 | ⬜ | | | |
 | A3 | P0/P2 | ⬜ | | | |
