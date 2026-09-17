@@ -293,21 +293,29 @@ export class SharedStack extends Stack {
     });
 
     // ---- Verified Permissions ----
-    const policyStore = new avp.CfnPolicyStore(this, 'PolicyStore', {
-      validationSettings: { mode: 'STRICT' },
-      description: `Asli cabinet-sharing authz (${stage})`,
-      schema: { cedarJson: JSON.stringify(AVP_SCHEMA) },
-    });
-    for (const [name, statement] of Object.entries(AVP_POLICIES)) {
-      new avp.CfnPolicy(this, `Policy-${name}`, {
-        policyStoreId: policyStore.attrPolicyStoreId,
-        definition: { static: { description: `${name}.cedar`, statement } },
+    // Skippable via ENABLE_AVP=false: this account currently gets
+    // AccessDeniedException ("needs a subscription for the service") on
+    // CreatePolicyStore (see plan/tasks/T01-spikes.md Handoff), which would
+    // otherwise roll back this entire stack (CloudFormation is all-or-nothing
+    // per deploy). Redeploy without the flag once that account restriction
+    // clears to add these resources in a follow-up deploy.
+    if (process.env.ENABLE_AVP !== 'false') {
+      const policyStore = new avp.CfnPolicyStore(this, 'PolicyStore', {
+        validationSettings: { mode: 'STRICT' },
+        description: `Asli cabinet-sharing authz (${stage})`,
+        schema: { cedarJson: JSON.stringify(AVP_SCHEMA) },
+      });
+      for (const [name, statement] of Object.entries(AVP_POLICIES)) {
+        new avp.CfnPolicy(this, `Policy-${name}`, {
+          policyStoreId: policyStore.attrPolicyStoreId,
+          definition: { static: { description: `${name}.cedar`, statement } },
+        });
+      }
+      new ssm.StringParameter(this, 'AvpPolicyStoreIdParam', {
+        parameterName: ssmName(stage, SSM_PATHS.avp.policyStoreId),
+        stringValue: policyStore.attrPolicyStoreId,
       });
     }
-    new ssm.StringParameter(this, 'AvpPolicyStoreIdParam', {
-      parameterName: ssmName(stage, SSM_PATHS.avp.policyStoreId),
-      stringValue: policyStore.attrPolicyStoreId,
-    });
 
     // ---- Bedrock vision model placeholder (T01 fills the real value in) ----
     new ssm.StringParameter(this, 'BedrockVisionModelIdParam', {
