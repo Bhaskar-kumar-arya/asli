@@ -16,7 +16,7 @@
 | T00 | P0 | 🟨 | | | Amplify Hosting live: https://main.d2ag2oukltn4mc.amplifyapp.com. Only remaining: AWS Budgets alert. |
 | T01 | P0 | 🟨 | | | Endpoint verdict: **ENDPOINT_OK**. Blocked on human AWS-console actions for Bedrock model access, AVP/Translate/Textract account restrictions, SES sender identity. See T01 Handoff. |
 | T02 | P0 | ✅ | 2026-09-18 | | **DONE, merged to main.** contracts + shared-stack + api-routes + seed scripts, `pnpm -r lint/test/build` green. Deployed to `dev-shared` - 26 SSM params verified, VAPID keys + fixtures seeded. `contracts-v1` tagged. Verified Permissions deferred (`ENABLE_AVP=false`, account-restriction blocker - see T01). |
-| A1 | P0 | ⬜ | | | |
+| A1 | P0 | 🟨 | | dev-a1 | **DONE, not yet merged to main** (on `lane/A1`). CDSCO endpoint client/parser: real T01-fixture-verified parsing (217 NSQ + 4 Spurious rows), `pnpm -r lint/test/build` green (49 new tests). Real `LaneA1Stack-dev-a1` deploy invoked end-to-end against the live CDSCO endpoint, confirmed S3 write. |
 | A2 | P0 | ⬜ | | | |
 | A3 | P0/P2 | ⬜ | | | |
 | B | P0 | ✅ | 2026-09-18 | | **DONE, merged to main.** All 10 required test cases + 100% branch coverage on classifyMatch/decide, property tests, benchmark. Human reviewed classify.ts against the tier table in chat and approved (task's own acceptance criterion). `@asli/matching` is now real, not a stub. |
