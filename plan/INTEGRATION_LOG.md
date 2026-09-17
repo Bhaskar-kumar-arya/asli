@@ -15,11 +15,11 @@
 |---|---|---|---|---|---|
 | T00 | P0 | 🟨 | | | Amplify Hosting live: https://main.d2ag2oukltn4mc.amplifyapp.com. Only remaining: AWS Budgets alert. |
 | T01 | P0 | 🟨 | | | Endpoint verdict: **ENDPOINT_OK**. Blocked on human AWS-console actions for Bedrock model access, AVP/Translate/Textract account restrictions, SES sender identity. See T01 Handoff. |
-| T02 | P0 | ✅ | | | **DONE.** contracts + shared-stack + api-routes + seed scripts on lane/T02, `pnpm -r lint/test/build` green. Deployed to `dev-shared` (not yet `int`) - 26 SSM params verified, VAPID keys + fixtures seeded. `contracts-v1` tagged. Verified Permissions deferred (`ENABLE_AVP=false`, account-restriction blocker - see T01). Not yet merged to main. |
+| T02 | P0 | ✅ | 2026-09-18 | | **DONE, merged to main.** contracts + shared-stack + api-routes + seed scripts, `pnpm -r lint/test/build` green. Deployed to `dev-shared` - 26 SSM params verified, VAPID keys + fixtures seeded. `contracts-v1` tagged. Verified Permissions deferred (`ENABLE_AVP=false`, account-restriction blocker - see T01). |
 | A1 | P0 | ⬜ | | | |
 | A2 | P0 | ⬜ | | | |
 | A3 | P0/P2 | ⬜ | | | |
-| B | P0 | 🟨 | | | Implementation + all 10 required test cases + 100% branch coverage on classifyMatch/decide done on lane/B. Blocked only on required human review of the tier table (task's own acceptance criteria). |
+| B | P0 | ✅ | 2026-09-18 | | **DONE, merged to main.** All 10 required test cases + 100% branch coverage on classifyMatch/decide, property tests, benchmark. Human reviewed classify.ts against the tier table in chat and approved (task's own acceptance criterion). `@asli/matching` is now real, not a stub. |
 | C | P0 | ⬜ | | | |
 | D1 | P0 | ⬜ | | | |
 | D2 | P0 | ⬜ | | | |
@@ -42,3 +42,5 @@
 ## Merge log
 | Time | Lane | Commit | e2e | Notes |
 |---|---|---|---|---|
+| 2026-09-18 | T02 | merge commit, `lane/T02` → `main` | n/a | contracts-v1 + shared-stack, prerequisite for B and all Wave 1 lanes. |
+| 2026-09-18 | B | merge commit, `lane/B` → `main` | n/a | Matching library, human-reviewed. |
