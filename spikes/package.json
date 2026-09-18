@@ -1,0 +1,20 @@
+{
+  "name": "asli-spikes",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "T01 throwaway spike scripts - see plan/tasks/T01-spikes.md. Not a workspace package (kept out of pnpm-workspace.yaml on purpose).",
+  "dependencies": {
+    "@aws-sdk/client-bedrock": "^3.1134.0",
+    "@aws-sdk/client-bedrock-runtime": "^3.1134.0",
+    "@aws-sdk/client-polly": "^3.1134.0",
+    "@aws-sdk/client-sesv2": "^3.1134.0",
+    "@aws-sdk/client-textract": "^3.1134.0",
+    "@aws-sdk/client-translate": "^3.1134.0",
+    "@aws-sdk/client-verifiedpermissions": "^3.1134.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
