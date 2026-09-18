@@ -1,8 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { ACCURACY_HARNESS_PLACEHOLDER } from './index';
+import { LabelSchema } from './index';
 
-describe('accuracy harness scaffold', () => {
-  it('builds and runs', () => {
-    expect(ACCURACY_HARNESS_PLACEHOLDER).toBe(true);
+describe('accuracy harness public exports', () => {
+  it('re-exports the label schema', () => {
+    const label = LabelSchema.parse({
+      kind: 'strip',
+      truth: { batchNumber: 'GTL1258' },
+      conditions: { foil: true, lighting: 'good', angle: 'flat', blur: false },
+    });
+    expect(label.kind).toBe('strip');
   });
 });
