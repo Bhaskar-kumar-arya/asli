@@ -9,14 +9,15 @@ import type { RouteObject } from 'react-router-dom';
 import { scanRoutes } from '../features/scan/routes';
 // D3 adds:
 import { cabinetRoutes } from '../features/cabinet/routes';
-// J adds: import { dashboardRoutes } from '../features/dashboard/routes';
+// J adds:
+import { dashboardRoutes } from '../features/dashboard/routes';
 // M adds: import { insightsRoutes } from '../features/insights/routes';
 // N adds: import { pharmacyRoutes } from '../features/pharmacy/routes';
 
 export const featureRoutes: RouteObject[] = [
   ...scanRoutes, // D2
   ...cabinetRoutes, // D3
-  // ...dashboardRoutes, // J
+  ...dashboardRoutes, // J
   // ...insightsRoutes, // M
   // ...pharmacyRoutes, // N
 ];
