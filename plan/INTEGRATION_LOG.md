@@ -27,7 +27,7 @@
 | E | P1 | ⬜ | | | Photos: 0/30 strips, 0/10 bills |
 | F | P0 | ⬜ | | | |
 | G1 | P0 | 🟨 | | | IN PROGRESS. Subscriptions API + push-sender/email-sender Lambdas + wording-enforced templates written, 26 unit tests, `pnpm -r lint/test/build` green, `cdk synth` clean. Not deployed yet. |
-| G2 | P0 | ⬜ | | | |
+| G2 | P0 | 🟨 | | | **IN PROGRESS** (on `lane/G2`, own worktree `asli-G2`). New-alert fan-out: stream consumer on FlaggedBatches (GSI3 candidate lookup, conditional MATCH puts, latestTier bump, `AlertEvent` publish), 60-day backfill notification guard (age-of-`alertMonth`, not execution-tag - `IngestionState.sourceType` can't distinguish backfill from daily). `pnpm -r lint/test/build` green (19 new tests), `cdk synth` clean. Not yet deployed/verified against real AWS. |
 | H | P1 | ⬜ | | | |
 | I | P1 | ⬜ | | | Review: hi ⬜ kn ⬜ |
 | S | P1 | ⬜ | | | |
