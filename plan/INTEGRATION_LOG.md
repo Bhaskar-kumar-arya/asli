@@ -25,7 +25,7 @@
 | D2 | P0 | ⬜ | | | |
 | D3 | P0 | ⬜ | | | |
 | E | P1 | ⬜ | | | Photos: 0/30 strips, 0/10 bills |
-| F | P0 | ⬜ | | | |
+| F | P0 | 🟨 | | | **IN PROGRESS, not yet deployed.** Cabinet CRUD handlers + retroactive check stream consumer, local authz stub (H's package still a placeholder), 34 unit tests, `pnpm -r lint/test/build` green, `cdk synth LaneFStack-dev-f` clean. Real deploy needs human approval (auto-mode classifier blocked it this session). |
 | G1 | P0 | ⬜ | | | |
 | G2 | P0 | ⬜ | | | |
 | H | P1 | ⬜ | | | |

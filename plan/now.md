@@ -4,11 +4,12 @@
 | Lane | Folder | Started | Status |
 |---|---|---|---|
 | T01 | asli-T01 (worktree, branch lane/T01) | 2026-09-17 19:35 IST | BLOCKED - endpoint (`ENDPOINT_OK`) and PDF-listing spikes done with real evidence; Bedrock/Translate/Textract/Verified Permissions all blocked by AWS account restrictions that need a human console action (see Blocked). |
+| F | asli-F (worktree, branch lane/F) | 2026-09-18 | IN PROGRESS - code + 34 unit tests done, `pnpm -r lint/test/build` green, `cdk synth LaneFStack-dev-f` clean. Real `cdk deploy` blocked by this session's auto-mode classifier (needs human to run/approve). See plan/tasks/F-cabinet-api-retroactive.md Handoff. |
 
 ## Ready to start next
 | Lane | Note |
 |---|---|
-| A2, C, D1, D2, D3, F, G1, G2, H, I, S | **`contracts-v1` is tagged, `dev-shared` is deployed and seeded, and `@asli/matching`'s real implementation is merged to `main`** (human-reviewed 2026-09-18, see B Handoff) - fully unblocked now, including real `cdk deploy` (SSM imports resolve) and real tier decisions (no more stub). A3 (PDF/Textract fallback) can likely drop to P2 - T01 confirmed `ENDPOINT_OK` with strong evidence. Note: Verified Permissions isn't deployed yet (`ENABLE_AVP=false`, see T02 Handoff) - H can build against the stub authz mode until that's resolved. A2 specifically: `@asli/ingestion`'s `services/ingestion/src/cdsco/**` (A1, see below) is ready to import - `createCdscoClient`, `parseSnapshot`, `normalizeRows`. |
+| A2, C, D1, D2, D3, G1, G2, H, I, S | **`contracts-v1` is tagged, `dev-shared` is deployed and seeded, and `@asli/matching`'s real implementation is merged to `main`** (human-reviewed 2026-09-18, see B Handoff) - fully unblocked now, including real `cdk deploy` (SSM imports resolve) and real tier decisions (no more stub). A3 (PDF/Textract fallback) can likely drop to P2 - T01 confirmed `ENDPOINT_OK` with strong evidence. Note: Verified Permissions isn't deployed yet (`ENABLE_AVP=false`, see T02 Handoff) - H can build against the stub authz mode until that's resolved. A2 specifically: `@asli/ingestion`'s `services/ingestion/src/cdsco/**` (A1, see below) is ready to import - `createCdscoClient`, `parseSnapshot`, `normalizeRows`. |
 
 ## Blocked
 | Lane | Blocked on |
