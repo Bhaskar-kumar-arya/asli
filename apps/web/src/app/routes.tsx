@@ -11,13 +11,15 @@ import { scanRoutes } from '../features/scan/routes';
 import { cabinetRoutes } from '../features/cabinet/routes';
 // J adds:
 import { dashboardRoutes } from '../features/dashboard/routes';
-// M adds: import { insightsRoutes } from '../features/insights/routes';
-// N adds: import { pharmacyRoutes } from '../features/pharmacy/routes';
+// M adds:
+import { insightsRoutes } from '../features/insights/routes';
+// N adds:
+import { pharmacyRoutes } from '../features/pharmacy/routes';
 
 export const featureRoutes: RouteObject[] = [
   ...scanRoutes, // D2
   ...cabinetRoutes, // D3
   ...dashboardRoutes, // J
-  // ...insightsRoutes, // M
-  // ...pharmacyRoutes, // N
+  ...insightsRoutes, // M
+  ...pharmacyRoutes, // N
 ];

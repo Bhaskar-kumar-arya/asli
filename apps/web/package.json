@@ -12,12 +12,16 @@
   },
   "dependencies": {
     "@asli/contracts": "workspace:*",
+    "@asli/content": "workspace:*",
+    "@asli/qr-parse": "workspace:*",
     "aws-amplify": "^6.9.1",
     "i18next": "^24.0.5",
+    "jsqr": "^1.4.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-i18next": "^15.1.3",
-    "react-router-dom": "^6.28.0"
+    "react-router-dom": "^6.28.0",
+    "recharts": "^2.13.3"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",
