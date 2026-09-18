@@ -51,3 +51,30 @@ Keep `main` green and `int` deployed with every finished lane, and prove the gat
 **Contract change requests:**
 - none (the Cognito auth-flow and F IAM fixes were infra-construct fixes, not `packages/contracts` changes)
 **Learning log entries added:** no (do this next session - the three findings above are worth recording)
+
+---
+## Update (2026-09-19, Wave 2 int deploy pass)
+**Status:** Wave 2 (J, K, L, M, N) verified against real `int` data. Z1/Z2 deliberately not started per instruction.
+**Stage deployed:** `int` now also has `LaneJStack-int`, `LaneLStack-int`, `LaneMStack-int`, `LaneNStack-int` (K is client-only, no infra). `LaneSStack-int` (already deployed) had `compute-stats` invoked for real against real backfilled data for the first time.
+**Done:**
+- Wired lane L's `ReportProblemButton` into `ResultCard.tsx` (lane C) and `MedicineDetailPage.tsx` (lane F) - one import + one JSX line each, per L's Handoff.
+- Destroyed `LaneLStack-dev-l` (route-conflict pattern), then deployed `LaneJStack-int`, `LaneLStack-int`, `LaneMStack-int`, `LaneNStack-int`.
+- Found and fixed a real CloudFormation bug in J's `LambdaErrorRateAlarm` (two Metrics Insights `SELECT` queries combined via math in one alarm - unsupported, `CREATE_FAILED: Invalid metrics list`) - fixed in `infra/lib/lanes/j-dashboard.ts` (J's file, mechanical infra-only fix), redeployed clean.
+- Invoked lane S's `compute-stats` Lambda directly against `int`'s FlaggedBatches table (1032 rows already ingested, never backfilled into stats before) - `/v1/public/stats` now shows real numbers.
+- Found and fixed a real cross-lane bug: M's `GET /v1/public/insights` 500'd against the real stats data because it assumed a nested `ImpactStatsDocument` shape that S's `compute-stats` doesn't actually write (S writes the overall stats and each month as separate DynamoDB items, not one nested document) - fixed in `services/insights/src/handlers/public-insights.ts` (M's file) to query and assemble from S's actual storage shape, redeployed clean, re-verified M's headline exactly matches S's total.
+- Verified N's `POST /v1/pharmacy/checks` live: a real 200-row CSV with real seeded batch numbers, warm executions 3.0-3.4s (<5s bar).
+- Verified L's `POST /v1/reports` live: real batch identity, 201 with real PvPI routes, stored item confirmed to hold no personal data.
+- `pnpm -r lint && pnpm -r test && pnpm -r build` green repo-wide after every change.
+- Updated `plan/INTEGRATION_LOG.md` (Lane status table for J/K/L/M/N/S, a dated note, and a Merge log row) and the Handoff sections of `plan/tasks/{J,L,M,N,S}-*.md`.
+**Remaining:**
+- `scripts/seed-demo.ts` / `fixtures/demo/replay-1.json` still not started (carried over from the prior session).
+- No live Cognito test-user password was available this session (the `e2e-test@asli.internal` user exists but its credentials weren't retrievable, and resetting its password was outside this session's permission scope) - N's and L's handlers were verified by direct Lambda invocation with a synthetic JWT-authorizer claim instead of a real sign-in; `tests/e2e` itself was not re-run (nothing about the Scan/Core gates changed this session). A future session with the test-user password should re-run `tests/e2e` and re-verify N/L through the real HTTP API + Cognito path for full end-to-end confidence.
+- A human should compare S's now-real numbers against docs/PRODUCT.md's Evidence table and decide whether to update it.
+- Z1/Z2 deliberately not started per instruction - now unblocked, ready for a future session.
+- K, N's invoice-photo path, and any other Bedrock-dependent path remain blocked account-wide (see T01).
+**Gotchas / decisions:**
+- CloudWatch Alarms support only one Metrics Insights (`SELECT ... FROM SCHEMA(...)`) query per alarm - combining two via a further metric-math expression is rejected by CloudFormation only at real deploy time, not at `cdk synth`.
+- Cross-lane "reads another lane's DynamoDB item shape" integrations (M reading S's Stats-table items) can't be caught by either lane's own unit tests, since each lane's tests use its own fixtures shaped by its own assumption about the other's format - only a real call against real data written by the other lane's real Lambda surfaces the mismatch. Worth deliberately testing these paths for real during every integration pass, not just synthing/unit-testing each lane in isolation.
+- Directly invoking a Lambda with a crafted `requestContext.authorizer.jwt.claims.sub` (bypassing the HTTP API/Cognito) is a reasonable substitute for a real signed-in request when no live test-user credential is available - same technique the prior session used for H's authz handlers.
+**Contract change requests:** none.
+**Learning log entries added:** yes (see submission/LEARNING_LOG.md, 2026-09-19 X entries).

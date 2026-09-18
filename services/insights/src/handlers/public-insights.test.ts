@@ -61,7 +61,20 @@ describe('GET /v1/public/insights handler', () => {
   });
 
   it('returns an InsightsResponse-conformant body plus chart detail', async () => {
-    sendMock.mockResolvedValue({ Item: { PK: 'STATS#IMPACT', SK: 'ALL', document } });
+    // Mirrors the real storage shape written by services/stats/src/handlers/compute-stats.ts:
+    // one STATS#IMPACT/ALL item whose `document` is the overall ImpactStats (not a nested
+    // ImpactStatsDocument), plus one STATS#IMPACT/<month> item per month.
+    sendMock.mockResolvedValue({
+      Items: [
+        { PK: 'STATS#IMPACT', SK: 'ALL', generatedAt: document.generatedAt, document: document.overall },
+        ...Object.entries(document.byMonth).map(([month, stats]) => ({
+          PK: 'STATS#IMPACT',
+          SK: month,
+          generatedAt: document.generatedAt,
+          document: stats,
+        })),
+      ],
+    });
 
     const res = await handler();
     expect(res.statusCode).toBe(200);
@@ -92,7 +105,7 @@ describe('GET /v1/public/insights handler', () => {
   });
 
   it('returns a zeroed body before compute-stats has ever run', async () => {
-    sendMock.mockResolvedValue({});
+    sendMock.mockResolvedValue({ Items: [] });
 
     const res = await handler();
     const body = JSON.parse(res.body as string);

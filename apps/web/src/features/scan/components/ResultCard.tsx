@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { CheckItemResult } from '@asli/contracts';
 import { Button } from '../../../shell/components/Button';
+import { ReportProblemButton } from '../../report';
 import { getResultCopy } from '../lib/content';
 import { playReadAloud } from '../lib/readAloud';
 import { DemoLabel } from './DemoLabel';
@@ -80,6 +81,7 @@ export function ResultCard({ result, lang = 'en', onSave, saveLabel = 'Save to f
             {saveLabel}
           </Button>
         ) : null}
+        <ReportProblemButton identity={result.identity} alertRef={match?.alertRef} />
       </div>
     </section>
   );

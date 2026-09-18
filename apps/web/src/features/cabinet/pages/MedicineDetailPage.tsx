@@ -7,6 +7,7 @@ import { ApiRequestError } from '../api/client';
 import { StatusChip } from '../components/StatusChip';
 import { formatMonth } from '../lib/tierCopy';
 import { reasonPlainText } from '../lib/reasonCopy';
+import { ReportProblemButton } from '../../report';
 import '../cabinet.css';
 
 export function MedicineDetailPage() {
@@ -146,6 +147,7 @@ export function MedicineDetailPage() {
         Remove from family medicines
       </button>
       {removeError && <p role="alert">{removeError}</p>}
+      <ReportProblemButton identity={medicine.identity} alertRef={matches[0]?.alertRef} />
     </section>
   );
 }

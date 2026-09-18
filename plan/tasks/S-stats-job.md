@@ -28,8 +28,10 @@ Charts (M).
 
 ---
 ## Handoff (the session updates this before stopping)
-**Status:** IN PROGRESS (code-complete, not yet deployed/verified against real data)
-**Stage deployed:** none - no AWS deploy permission available this session; `cdk synth LaneSStack-dev-s` (via `STAGE=dev-s SHARED_STAGE=dev-shared npx cdk synth --app "npx tsx bin/app.ts" LaneSStack-dev-s`) synths clean against `dev-shared`'s real SSM parameters (flagged-batches/cabinets/stats tables, raw bucket, shared HTTP API).
+**Status:** DONE - `compute-stats` run for real against `int`'s backfilled data 2026-09-19 by X (Wave 2 int deploy pass); already deployed to `int` from the prior session.
+**Stage deployed:** `int` (`LaneSStack-int`, deployed prior session).
+
+**Update (2026-09-19, X, Wave 2 int deploy pass):** `int`'s FlaggedBatches table already held 1032 real ingested rows across 11 months from A1/A2's earlier ingestion runs, but `compute-stats` had never been invoked against them. Invoked `LaneSStack-int-ComputeStatsHandlerB91D540A-9rtGIihTKO5T` directly (`{}` payload) - returned `{"rows":1032,"months":11}`. `GET /v1/public/stats` now returns real numbers (`totalFlaggedBatches: 1032, cabinetsProtected: 4, medicinesTracked: 3, monthsCovered: 11, latestMonth: 2026-02`) instead of zeros, and both lane M's insights headline and lane J's dashboard could be (and were, for M) cross-checked against these real numbers. **Still remaining:** a human should compare these against docs/PRODUCT.md's Evidence table (49/48, 52/52, 70/70) and decide whether/how to update that doc - not done this session, that's a product-doc call, not an engineering one.
 **Done:**
 - `services/stats/**`: `computeImpactStats` (docs/PRODUCT.md "Evidence" - rows, within-expiry share, manufacture-to-alert and alert-to-expiry lag distributions with mean/median/p10/p90/max, missing-date rows excluded-but-counted, counts by reasonCode/reportingSource/category, overall + per alertMonth). 13 unit tests (`pnpm -r test`), `pnpm -r lint`/`tsc --noEmit` clean.
 - `compute-stats` Lambda: scans FlaggedBatches (paginated) and Cabinets (paginated, counts META/MED# items), writes `STATS#IMPACT`/`ALL` + `STATS#IMPACT`/`<month>` items, a `STATS#PUBLIC`/`ALL` cache of the contract's `PublicStats`, and a `stats/latest.json` S3 summary. Invoked by A2's `invoke-stats.ts` via SSM `/asli/<stage>/lambda/statsJobArn` (that path was already hardcoded in A2's handler awaiting lane S - see `services/ingestion/src/handlers/invoke-stats.ts`).

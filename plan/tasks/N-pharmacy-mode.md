@@ -18,8 +18,10 @@ CLAUDE.md, docs/API.md (pharmacy), docs/SCANNING.md (bill), docs/MATCHING.md
 
 ---
 ## Handoff (the session updates this before stopping)
-**Status:** DONE (not yet deployed to any stage)
-**Stage deployed:** none
+**Status:** DONE - deployed to `int` and both acceptance criteria's CSV path verified live 2026-09-19 by X (Wave 2 int deploy pass).
+**Stage deployed:** `int` (`LaneNStack-int`). Deployed 2026-09-19 by X.
+
+**Update (2026-09-19, X, Wave 2 int deploy pass):** Verified the CSV acceptance criterion against real `int` data: invoked `LaneNStack-int-PharmacyChecksHandler78DB8A5D-mqMKq7Nz5Lm4` directly with a real 200-row CSV (3 rows using real seeded FlaggedBatches batch numbers, 197 filler rows) via a synthetic JWT-authorizer event (no live Cognito test-user password available this session). 200 OK, 200 rows returned; the one row with a correct manufacturer came back FLAGGED with a real CDSCO source; the other two seeded rows correctly came back NO_ALERT_FOUND because their manufacturer field was a placeholder rather than the real one (correct matching behavior - manufacturer mismatch downgrades confidence - not a bug). CloudWatch REPORT lines: cold invocation 4.8s (incl. 392ms init), two warm invocations 3.4s and 3.0s - comfortably under the 5s bar once warm. Invoice-photo path still unverified for real (needs a real Bedrock call, still blocked account-wide per T01). See plan/INTEGRATION_LOG.md's N row for full detail.
 **Done:**
 - `services/pharmacy/**`: `POST /v1/pharmacy/checks` handler for both request shapes (`{csv}` and `{uploadId}`), CSV parser (`src/csv.ts`, header-mapped, case-insensitive, `MAX_ROWS=500`), rate limit (10/hour), metrics, logging. 11 unit tests passing.
 - Invoice-photo path reuses lane C's Bedrock bill-extraction pipeline by deep-importing `@asli/scan/src/{check-item,scans/bedrock-client,scans/model-id,scans/post-process,reference/alias-map,reference/brand-candidates,uploads/presign}` rather than re-implementing extraction (per this task's own instruction). Photo is deleted from S3 immediately after extraction either way (docs/PRIVACY.md).

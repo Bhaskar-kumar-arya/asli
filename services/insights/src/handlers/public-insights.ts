@@ -1,5 +1,5 @@
 import type { APIGatewayProxyStructuredResultV2 } from 'aws-lambda';
-import { GetCommand } from '@aws-sdk/lib-dynamodb';
+import { QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { InsightsResponseSchema, type Category, type ReasonCode } from '@asli/contracts';
 import type { ImpactStats, ImpactStatsDocument, LagStats } from '@asli/stats';
 import { getDdb, requireEnv } from '../db';
@@ -63,10 +63,41 @@ function toDetail(document: ImpactStatsDocument): InsightsDetail {
   };
 }
 
+/**
+ * Lane S's compute-stats (services/stats/src/handlers/compute-stats.ts) writes the overall
+ * stats under `STATS#IMPACT`/`ALL` (`document` = an `ImpactStats`, NOT a full
+ * `ImpactStatsDocument`) and each month's stats as its own `STATS#IMPACT`/`<month>` item -
+ * there is no single item with a nested `overall`/`byMonth` shape. This assembles the
+ * `ImpactStatsDocument` this handler's own `toDetail` expects from those separate items
+ * (fixed by X during the int integration pass, 2026-09-19 - a real `GET /v1/public/insights`
+ * call against real backfilled data 500'd with "Cannot convert undefined or null to object"
+ * because this handler previously read `STATS#IMPACT`/`ALL`'s `document` as if it already had
+ * `byMonth` nested inside it).
+ */
+async function loadImpactStatsDocument(statsTable: string): Promise<ImpactStatsDocument | undefined> {
+  const res = await getDdb().send(
+    new QueryCommand({
+      TableName: statsTable,
+      KeyConditionExpression: 'PK = :pk',
+      ExpressionAttributeValues: { ':pk': 'STATS#IMPACT' },
+    }),
+  );
+  const items = res.Items ?? [];
+  const allItem = items.find((item) => item.SK === 'ALL');
+  if (!allItem) return undefined;
+
+  const byMonth: Record<string, ImpactStats> = {};
+  for (const item of items) {
+    if (item.SK === 'ALL') continue;
+    byMonth[item.SK as string] = item.document as ImpactStats;
+  }
+
+  return { generatedAt: allItem.generatedAt as string, overall: allItem.document as ImpactStats, byMonth };
+}
+
 /** GET /v1/public/insights (docs/API.md, public - no JWT authorizer attached). */
 export async function handler(): Promise<APIGatewayProxyStructuredResultV2> {
   const statsTable = requireEnv('STATS_TABLE');
-  const res = await getDdb().send(new GetCommand({ TableName: statsTable, Key: { PK: 'STATS#IMPACT', SK: 'ALL' } }));
-  const document = res.Item?.document as ImpactStatsDocument | undefined;
+  const document = await loadImpactStatsDocument(statsTable);
   return jsonResponse(200, document ? toDetail(document) : emptyDetail());
 }

@@ -87,33 +87,30 @@ export function register(app: App, stage: string): void {
     treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
   }).addAlarmAction(new cloudwatchActions.SnsAction(opsTopic));
 
-  // Account-wide Lambda error rate, via a CloudWatch Metrics Insights query (no single
+  // Account-wide Lambda errors, via a CloudWatch Metrics Insights query (no single
   // "all Asli functions" dimension exists, so this reads the built-in AWS/Lambda namespace
   // across every function in the account rather than listing each lane's function by name).
+  // NOTE (fixed by X during int deploy, 2026-09-19): the original version combined two
+  // Metrics Insights SELECT queries (errors, invocations) via a further math expression
+  // (errorRatePct) into one alarm - CloudFormation rejected this with "Invalid metrics list"
+  // on real deploy (CloudWatch Alarms support only one Metrics Insights query per alarm, not
+  // several combined arithmetically - undocumented in this repo, only surfaced by a real
+  // `cdk deploy`). Reduced to a raw account-wide error-count alarm (single Metrics Insights
+  // query, no ratio) rather than an error-rate percentage - J should revisit if it wants the
+  // rate back, e.g. by emitting a per-scan error-rate EMF metric instead of computing it here.
   new cloudwatch.CfnAlarm(stack, 'LambdaErrorRateAlarm', {
-    alarmName: `asli-${stage}-lambda-error-rate`,
-    alarmDescription: 'Lambda error rate > 5% over 5 minutes, account-wide (docs/OBSERVABILITY_AND_COST.md)',
+    alarmName: `asli-${stage}-lambda-errors`,
+    alarmDescription:
+      'Lambda errors > 10 over 5 minutes, account-wide (docs/OBSERVABILITY_AND_COST.md) - reduced from an error-rate percentage to a raw count; see the NOTE above this alarm in j-dashboard.ts',
     metrics: [
       {
         id: 'errors',
         expression: 'SELECT SUM(Errors) FROM SCHEMA("AWS/Lambda")',
         period: 300,
-        returnData: false,
-      },
-      {
-        id: 'invocations',
-        expression: 'SELECT SUM(Invocations) FROM SCHEMA("AWS/Lambda")',
-        period: 300,
-        returnData: false,
-      },
-      {
-        id: 'errorRatePct',
-        expression: 'IF(invocations > 0, (errors / invocations) * 100, 0)',
-        period: 300,
         returnData: true,
       },
     ],
-    threshold: 5,
+    threshold: 10,
     evaluationPeriods: 1,
     comparisonOperator: 'GreaterThanThreshold',
     treatMissingData: 'notBreaching',

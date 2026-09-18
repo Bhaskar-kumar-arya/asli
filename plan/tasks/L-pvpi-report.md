@@ -20,8 +20,10 @@ CLAUDE.md, docs/PRODUCT.md (Out of scope: crowd warnings), docs/DATA_MODEL.md (R
 
 ---
 ## Handoff (the session updates this before stopping)
-**Status:** IN PROGRESS (deployed and smoke-tested; not yet wired into result/detail screens)
-**Stage deployed:** `dev-l` (`LaneLStack-dev-l`, imports shared resources from `dev-shared`). Deployed via `STAGE=dev-l SHARED_STAGE=dev-shared cdk deploy LaneLStack-dev-l` - only this lane's stack, not the other lanes that also happen to synth under the shared `dev-l` STAGE name.
+**Status:** DONE - wired into result/detail screens, deployed to `int`, and verified live end-to-end 2026-09-19 by X (Wave 2 int deploy pass).
+**Stage deployed:** `int` (`LaneLStack-int`). `dev-l` was destroyed first (shared HTTP API route conflict, same pattern as A2/C/H) then `LaneLStack-int` deployed 2026-09-19 by X.
+
+**Update (2026-09-19, X, Wave 2 int deploy pass):** Wired `ReportProblemButton` into both files this lane deliberately left alone: `apps/web/src/features/scan/components/ResultCard.tsx` (one import + `<ReportProblemButton identity={result.identity} alertRef={match?.alertRef} />` next to the existing action buttons) and `apps/web/src/features/cabinet/pages/MedicineDetailPage.tsx` (one import + `<ReportProblemButton identity={medicine.identity} alertRef={matches[0]?.alertRef} />`). `pnpm -r lint/test/build` green after (52 web tests passing, no regressions). Verified `POST /v1/reports` live against real `int` data: invoked `LaneLStack-int-CreateReportHandlerFF4B1434-fAk8Sjd9vHVj` directly with a real seeded batch identity (`C125R01`) and a synthetic JWT-authorizer claim (no live Cognito test-user password available this session) - 201 returned with real PvPI routes, and the stored `asli-dev-shared-reports` item confirmed to hold only `batchNorm`/`problemType`/`note`/`alertRef`/`createdAt`, no personal data. See plan/INTEGRATION_LOG.md's L row for full detail.
 
 **Verified PvPI routes (2026-09-18):**
 - Toll-free helpline: **1800-180-3024** (Mon–Fri 9:00 AM–5:30 PM IST, voicemail outside hours) - confirmed on both https://www.ipc.gov.in/PvPI/adr.html and the PvPI FAQ page (https://www.ipc.gov.in/mandates/pvpi/pharmacovigilance-skill-development-programme/8-category-en/429-pvpi-frequently-asked-questions.html).
