@@ -1,0 +1,22 @@
+{
+  "name": "@asli/e2e",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --pool=forks",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@asli/contracts": "workspace:*",
+    "@aws-sdk/client-cloudformation": "^3.699.0",
+    "@aws-sdk/client-cloudwatch-logs": "^3.699.0",
+    "@aws-sdk/client-cognito-identity-provider": "^3.699.0",
+    "@aws-sdk/client-ssm": "^3.699.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

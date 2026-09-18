@@ -33,7 +33,12 @@ export function register(app: App, stage: string): void {
   });
 
   const flaggedBatchesTableName = importParam(stack, shared, SSM_PATHS.table('flagged-batches'));
-  const flaggedBatchesTable = dynamodb.Table.fromTableName(stack, 'FlaggedBatchesTable', flaggedBatchesTableName);
+  // fromTableAttributes (not fromTableName) so grantReadData below also covers the GSI1
+  // index ARN - the retroactive check queries GSI1 to find skeleton-match candidates.
+  const flaggedBatchesTable = dynamodb.Table.fromTableAttributes(stack, 'FlaggedBatchesTable', {
+    tableName: flaggedBatchesTableName,
+    globalIndexes: ['GSI1'],
+  });
 
   const ingestionStateTableName = importParam(stack, shared, SSM_PATHS.table('ingestion-state'));
   const ingestionStateTable = dynamodb.Table.fromTableName(stack, 'IngestionStateTable', ingestionStateTableName);

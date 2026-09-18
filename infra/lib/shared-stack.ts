@@ -221,7 +221,9 @@ export class SharedStack extends Stack {
       removalPolicy,
     });
     const userPoolClient = userPool.addClient('WebClient', {
-      authFlows: { userSrp: true },
+      // userPassword is needed alongside userSrp so test tooling (tests/e2e, tools/accuracy)
+      // can sign in a test user non-interactively - see plan/INTEGRATION_LOG.md.
+      authFlows: { userSrp: true, userPassword: true },
       generateSecret: false,
       oAuth: {
         flows: { authorizationCodeGrant: true },
