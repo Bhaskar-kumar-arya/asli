@@ -8,13 +8,19 @@
   "scripts": {
     "build": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "gen:openapi": "tsx scripts/generate-openapi.ts"
   },
   "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^7.3.4",
+    "@aws-sdk/client-dynamodb": "^3.699.0",
+    "@aws-sdk/util-dynamodb": "^3.699.0",
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "tsx": "^4.19.2",
     "typescript": "^5.7.2",
-    "vitest": "^2.1.8"
+    "vitest": "^2.1.8",
+    "yaml": "^2.6.1"
   }
 }

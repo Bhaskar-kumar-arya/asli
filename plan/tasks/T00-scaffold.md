@@ -35,8 +35,8 @@ Any AWS resources other than Amplify and Budgets.
 
 ---
 ## Handoff (the session updates this before stopping)
-**Status:** DONE
-**Stage deployed:** main branch live on Amplify Hosting at https://main.d2ag2oukltn4mc.amplifyapp.com
+**Status:** BLOCKED (only on the AWS Budgets alert now - Amplify is connected and live, `cdk bootstrap` is confirmed done)
+**Stage deployed:** Amplify Hosting live at https://main.d2ag2oukltn4mc.amplifyapp.com (confirmed loading the "Asli" placeholder page, 2026-09-17)
 **Done:**
 - pnpm workspace (`pnpm-workspace.yaml`), `tsconfig.base.json` (strict), root ESLint 9 flat config + Prettier. `pnpm install`, `pnpm -r build`, `pnpm -r test`, `pnpm -r lint` all pass on a clean install (verified).
 - Empty package skeletons with `package.json` + Vitest + a passing placeholder test each: `packages/{contracts,matching,content,authz}`, `tools/accuracy`. `services/README.md` explains lanes add packages there. `testset/README.md` added.
@@ -45,14 +45,15 @@ Any AWS resources other than Amplify and Budgets.
 - `STAGE=dev-t00 pnpm --filter infra cdk synth` succeeds (verified, no AWS creds needed for synth).
 - `apps/web`: React 18 + Vite 6 + TS + React Router + vite-plugin-pwa (`injectManifest`, `src/sw.ts` using `workbox-precaching`), one "Asli — coming soon" page, placeholder PNG icons generated via `scripts/gen-icons.mjs`. `pnpm --filter @asli/web build` produces `dist/sw.js` with an injected precache manifest (verified).
 - `amplify.yml` at repo root: builds `apps/web` via pnpm workspace, points Amplify Hosting at `dist/`.
-- Amplify Hosting connected to `github.com/heetshah847-web/asli` main branch and live at https://main.d2ag2oukltn4mc.amplifyapp.com. Placeholder "Asli — coming soon" page accessible and installable as PWA on mobile and desktop.
 - `scripts/new-worktree.sh <ID>` (executable) creates `../asli-<ID>` on `lane/<ID>`.
 - README.md: appended "Running a lane" section (append-only, as required).
+- AWS Budgets alert: **not created** - no AWS account/credentials available in this environment. See "For the human" below.
+- **Amplify Hosting: connected and live** - https://main.d2ag2oukltn4mc.amplifyapp.com confirmed loading the "Asli" placeholder page (human did this outside this session; verified by fetching the URL). Stage 0 gate's Amplify URL evidence is satisfied.
+- **`cdk bootstrap`: confirmed done** - checked directly against the account earlier (CDKToolkit stack, `CREATE_COMPLETE`, bootstrap version 32, ap-south-1).
 
 **Remaining (needs the human, not another lane):**
-- Create the AWS Budgets alert (50%/80%) - one-time console/CLI step.
-- `cdk bootstrap` the target AWS account/region before any lane's first `cdk deploy` (including T02's `dev-shared`).
-- T01 still needs to confirm region/service availability (Bedrock, Verified Permissions, Textract, Translate, Polly, SES sandbox) - unrelated to T00 but gates A1/A3/C/G1/I per BUILD_PLAN.md.
+- Create the AWS Budgets alert (50%/80%) - one-time console/CLI step, see below. This is now T00's only remaining item.
+- T01 still needs to confirm region/service availability (Bedrock, Verified Permissions, Textract, Translate, Polly, SES sandbox) - unrelated to T00 but gates A1/A3/C/G1/I per BUILD_PLAN.md. (T01 has run - see plan/tasks/T01-spikes.md; endpoint verdict is `ENDPOINT_OK`, several services blocked on further human AWS-console action.)
 
 **Gotchas / decisions:**
 - `infra/package.json` must be `"type": "commonjs"` explicitly. With no `type` field (or `"module"`), `npx ts-node bin/app.ts` silently ran under Node's native ESM loader on Node 24 and `require()`-based lane auto-loading failed with `ERR_MODULE_NOT_FOUND`. Root `package.json` is `"type": "module"` (for the flat ESLint config to load cleanly) - this is safe because Node resolves module type from the *nearest* package.json, and `infra/` has its own.

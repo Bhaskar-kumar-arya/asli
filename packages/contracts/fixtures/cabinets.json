@@ -1,0 +1,124 @@
+{
+  "cabinets": [
+    {
+      "PK": "CAB#cab-mom-001",
+      "SK": "META",
+      "name": "Mom's medicines",
+      "createdBy": "user-asha-001",
+      "createdAt": "2026-09-10T08:15:00.000Z"
+    }
+  ],
+  "members": [
+    {
+      "PK": "CAB#cab-mom-001",
+      "SK": "MEMBER#user-asha-001",
+      "role": "OWNER",
+      "alertsEnabled": true,
+      "joinedAt": "2026-09-10T08:15:00.000Z",
+      "GSI1PK": "USER#user-asha-001",
+      "GSI1SK": "CAB#cab-mom-001"
+    },
+    {
+      "PK": "CAB#cab-mom-001",
+      "SK": "MEMBER#user-vikram-002",
+      "role": "EDITOR",
+      "alertsEnabled": true,
+      "joinedAt": "2026-09-10T09:00:00.000Z",
+      "GSI1PK": "USER#user-vikram-002",
+      "GSI1SK": "CAB#cab-mom-001"
+    },
+    {
+      "PK": "CAB#cab-mom-001",
+      "SK": "MEMBER#user-priya-003",
+      "role": "VIEWER",
+      "alertsEnabled": true,
+      "joinedAt": "2026-09-10T09:05:00.000Z",
+      "GSI1PK": "USER#user-priya-003",
+      "GSI1SK": "CAB#cab-mom-001"
+    }
+  ],
+  "invites": [
+    {
+      "PK": "CAB#cab-mom-001",
+      "SK": "INVITE#7F3K9Q",
+      "role": "VIEWER",
+      "expiresAt": 1799999999,
+      "createdBy": "user-asha-001",
+      "GSI2PK": "INVITE#7F3K9Q"
+    }
+  ],
+  "medicines": [
+    {
+      "PK": "CAB#cab-mom-001",
+      "SK": "MED#med-glimepiride-001",
+      "identity": {
+        "productName": "Amoxicillin 500mg Capsules",
+        "batchNumber": "GTL 1258",
+        "manufacturer": "Gidsha Pharmaceuticals",
+        "source": "strip_vision",
+        "fieldConfidence": {
+          "batchNumber": 0.95,
+          "manufacturer": 0.9
+        }
+      },
+      "label": "Mom - morning tablet",
+      "forPerson": "Mom",
+      "addedBy": "user-asha-001",
+      "addedAt": "2026-09-15T07:30:00.000Z",
+      "lastCheckedAt": "2026-09-15T07:30:05.000Z",
+      "latestTier": "FLAGGED",
+      "GSI3PK": "SKEL#6T11258",
+      "GSI3SK": "CAB#cab-mom-001#MED#med-glimepiride-001"
+    },
+    {
+      "PK": "CAB#cab-mom-001",
+      "SK": "MED#med-paracetamol-002",
+      "identity": {
+        "productName": "Paracetamol 500mg Tablets",
+        "batchNumber": "XZ9981",
+        "manufacturer": "Cipla Ltd",
+        "source": "manual"
+      },
+      "label": "Mom - fever tablet",
+      "forPerson": "Mom",
+      "addedBy": "user-vikram-002",
+      "addedAt": "2026-09-16T11:00:00.000Z",
+      "lastCheckedAt": "2026-09-16T11:00:03.000Z",
+      "latestTier": "NO_ALERT_FOUND",
+      "GSI3PK": "SKEL#X291",
+      "GSI3SK": "CAB#cab-mom-001#MED#med-paracetamol-002"
+    }
+  ],
+  "matches": [
+    {
+      "PK": "CAB#cab-mom-001",
+      "SK": "MATCH#med-glimepiride-001#d521d57fe144d31a15ab63d40b181982f712c1eeb70840ae486a5f10729f9dbc",
+      "tier": "FLAGGED",
+      "category": "NSQ",
+      "alertRef": "QkFUQ0gjR1RMMTI1OHxBTEVSVCMyMDI1LTAzI05TUSNkNTIxZDU3ZmUxNDRkMzFhMTVhYjYzZDQwYjE4MTk4MmY3MTJjMWVlYjcwODQwYWU0ODZhNWYxMDcyOWY5ZGJj",
+      "reasonCode": [
+        "BATCH_EXACT",
+        "MFR_STRONG"
+      ],
+      "alertMonth": "2025-03",
+      "trigger": "RETROACTIVE",
+      "createdAt": "2026-09-15T07:30:05.000Z",
+      "notifiedAt": "2026-09-15T07:30:10.000Z"
+    },
+    {
+      "PK": "CAB#cab-mom-001",
+      "SK": "MATCH#med-glimepiride-001#720f4c3fbb5ee793fd8a325ebe27d0b98150b0e84e68cb5dad8a1aba7bb91edd",
+      "tier": "FLAGGED",
+      "category": "SPURIOUS",
+      "alertRef": "QkFUQ0gjR1RMMTI1OHxBTEVSVCMyMDI1LTA1I1NQVVJJT1VTIzcyMGY0YzNmYmI1ZWU3OTNmZDhhMzI1ZWJlMjdkMGI5ODE1MGIwZTg0ZTY4Y2I1ZGFkOGExYWJhN2JiOTFlZGQ",
+      "reasonCode": [
+        "BATCH_EXACT",
+        "MFR_STRONG"
+      ],
+      "alertMonth": "2025-05",
+      "trigger": "RETROACTIVE",
+      "createdAt": "2026-09-15T07:30:05.000Z",
+      "notifiedAt": "2026-09-15T07:30:10.000Z"
+    }
+  ]
+}

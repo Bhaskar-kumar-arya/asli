@@ -1,0 +1,14 @@
+// Canonical Cedar schema for Asli cabinet-sharing authorization (docs/PERMISSIONS.md).
+// Mirrored in JSON form (AVP_SCHEMA) by infra/lib/shared-stack.ts - keep both in sync;
+// coordinate with X to redeploy SharedStack when this file changes.
+namespace Asli {
+  entity User;
+  entity MemberGroup;
+  entity Cabinet {
+    owners: MemberGroup,
+    editors: MemberGroup,
+    viewers: MemberGroup
+  };
+  action ViewCabinet, AddMedicine, RemoveMedicine, ManageMembers, ReceiveAlerts
+    appliesTo { principal: User, resource: Cabinet };
+}

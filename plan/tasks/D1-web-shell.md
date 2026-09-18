@@ -35,14 +35,27 @@ Feature screens.
 
 ---
 ## Handoff (the session updates this before stopping)
-**Status:** NOT STARTED | IN PROGRESS | BLOCKED | DONE
-**Stage deployed:** 
+**Status:** IN PROGRESS (built opportunistically from lane/D2 so D2 wasn't blocked; human approved doing both in one session - see plan/tasks/D2-scan-result-screens.md)
+**Stage deployed:** none (frontend only, not yet pointed at a real `int` API)
 **Done:**
-- 
+- Theme tokens (`theme/tokens.css`, light/dark via `prefers-color-scheme` + `data-theme`, text-size via `data-text-size`, reduced-motion respected) and `theme/textSize.ts`.
+- Shared components: `Button`, `Card`, `StatusChip`, `Field`, `Page`, `BottomNav`, `OfflineBanner` in `shell/components/**`.
+- Cognito email sign-in (`auth/**`) using Amplify JS v6 (`aws-amplify` added as a dependency), gated by `VITE_COGNITO_USER_POOL_ID`/`VITE_COGNITO_USER_POOL_CLIENT_ID` build env vars; `ProtectedRoute` + `AuthProvider`.
+- `api/client.ts` (typed fetch wrapper, JWT attach, `ApiError` → `ApiRequestError` mapping) and `api/endpoints.ts` (uploads, scans, checks, alerts, push, cabinets/medicines).
+- MSW mocks (`mocks/**`) driven by `@asli/contracts/fixtures/scan-responses.json`, enabled with `VITE_MOCK=1`; `public/mockServiceWorker.js` generated via `npx msw init`.
+- i18next setup (`i18n/**`) with `en`/`hi`/`kn` shell-chrome strings only (language switch persisted to localStorage) - guidance/result copy is separate, see D2 Handoff.
+- Service worker (`sw.ts`): precache (unchanged from T00 scaffold) + `push` handler (shows notification from the docs/ALERTS.md payload shape) + `notificationclick` (focuses/opens `url`).
+- Settings screen (language, text size, notification subscribe/unsubscribe via `/v1/push/subscriptions`, test push button).
+- `app/routes.tsx` registry (D2 already added its one line for `scanRoutes`).
+- `OfflineBanner` wired globally in `AppRoot`.
 **Remaining:**
-- 
+- Real Cognito sign-in has **not** been tested against `int` (no deployed User Pool reachable from this session) - X/human needs to set `VITE_COGNITO_USER_POOL_ID`/`VITE_COGNITO_USER_POOL_CLIENT_ID`/`VITE_API_BASE_URL` in the Amplify Hosting build env and smoke-test a real sign-in.
+- Lighthouse accessibility audit not run (no browser automation tool available in this sandboxed session) - please run manually before the demo.
+- Confirm-signup / forgot-password flows are not built (only sign-in) - add if the demo needs new user self-signup instead of pre-created test accounts.
 **Gotchas / decisions:**
-- 
+- Content package (`packages/content`, lane I) is still a placeholder, so shell i18n only carries chrome strings (nav labels, settings). Result-card guidance copy lives in D2's own `features/scan/lib/content.ts` as a stand-in - see D2 Handoff for the swap-over plan.
+- `App.tsx`/`App.test.tsx` (T00 scaffold placeholders) were replaced by `app/AppRoot.tsx`/`app/AppRoot.test.tsx`; `main.tsx` now bootstraps theme CSS, i18n, text size and MSW before rendering.
+- Used `useRoutes()` with a flat `RouteObject[]` (static routes + `...featureRoutes`) instead of nested JSX `<Route>` elements, so a lane's route entry can itself be a parent route with `children` (D2's `/scan/*` needs this for its shared `ScanFlowProvider`) without D1 having to special-case it.
 **Contract change requests:**
-- none
-**Learning log entries added:** yes / no
+- none from D1 itself (see D2's request below, which affects `CheckRequestSchema`).
+**Learning log entries added:** yes
