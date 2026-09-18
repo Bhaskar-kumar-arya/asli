@@ -1,5 +1,5 @@
 {
-  "name": "@asli/authz",
+  "name": "@asli/members",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -11,9 +11,15 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@asli/authz": "workspace:*",
     "@asli/contracts": "workspace:*",
+    "@aws-lambda-powertools/logger": "^2.11.0",
+    "@aws-lambda-powertools/metrics": "^2.11.0",
+    "@aws-sdk/client-dynamodb": "^3.699.0",
+    "@aws-sdk/client-ssm": "^3.699.0",
     "@aws-sdk/client-verifiedpermissions": "^3.699.0",
-    "@aws-sdk/lib-dynamodb": "^3.699.0"
+    "@aws-sdk/lib-dynamodb": "^3.699.0",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.145",

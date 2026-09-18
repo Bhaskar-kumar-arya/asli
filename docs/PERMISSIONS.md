@@ -43,10 +43,18 @@ when { principal in resource.owners };
 ```ts
 type CabinetAction = "ViewCabinet"|"AddMedicine"|"RemoveMedicine"|"ManageMembers"|"ReceiveAlerts";
 interface Authz { isAllowed(userId: string, action: CabinetAction, cabinetId: string): Promise<boolean>; }
-export function createAuthz(opts: { mode: "stub" | "avp"; policyStoreId?: string }): Authz;
+export function createAuthz(opts: {
+  mode: "stub" | "avp";
+  ddb: DynamoDBDocumentClient;
+  cabinetsTable: string;
+  policyStoreId?: string;   // required when mode: "avp"
+  avpClient?: VerifiedPermissionsClient; // required when mode: "avp"
+  now?: () => number;
+}): Authz;
 ```
+`createAuthz` needs a DynamoDB client and the Cabinets table name to look the caller's role up itself (matching `@asli/lookup`'s `createLookup(deps)` DI convention) - the original two-field sketch above couldn't actually decide anything on its own.
 - `stub`: role table above in code. Used by lanes until H merges.
-- `avp`: `IsAuthorized` against the policy store (ID from SSM `/asli/<stage>/avp/policyStoreId`), with entities built from DynamoDB. Cache decisions for 30 s per Lambda instance.
+- `avp`: `IsAuthorized` against the policy store (ID from SSM `/asli/<stage>/avp/policyStoreId`), with entities built from DynamoDB - each cabinet has exactly one `MemberGroup` entity per role (`"<cabinetId>#OWNER"` etc), a `User`'s only parent is the group matching their own role, and `Cabinet.owners/editors/viewers` point at those same three fixed group ids. Cache decisions for 30 s per Lambda instance.
 - Deny by default on any error.
 
 ## Tests
