@@ -1,0 +1,33 @@
+{
+  "name": "@asli/notify",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@asli/contracts": "workspace:*",
+    "@aws-lambda-powertools/idempotency": "^2.13.1",
+    "@aws-lambda-powertools/logger": "^2.13.1",
+    "@aws-lambda-powertools/metrics": "^2.13.1",
+    "@aws-sdk/client-cognito-identity-provider": "^3.699.0",
+    "@aws-sdk/client-dynamodb": "^3.699.0",
+    "@aws-sdk/client-secrets-manager": "^3.699.0",
+    "@aws-sdk/client-sesv2": "^3.699.0",
+    "@aws-sdk/lib-dynamodb": "^3.699.0",
+    "web-push": "^3.6.7",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.146",
+    "@types/web-push": "^3.6.4",
+    "aws-sdk-client-mock": "^4.1.0",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
