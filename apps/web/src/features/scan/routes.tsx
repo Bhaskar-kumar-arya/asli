@@ -8,6 +8,7 @@ import { ConfirmDetailsScreen } from './screens/ConfirmDetailsScreen';
 import { ManualEntryScreen } from './screens/ManualEntryScreen';
 import { ResultScreen } from './screens/ResultScreen';
 import { BillResultsScreen } from './screens/BillResultsScreen';
+import { QrScanScreen, QrConfirmScreen } from './qr';
 
 function ScanLayout() {
   return (
@@ -30,6 +31,8 @@ export const scanRoutes: RouteObject[] = [
       { path: 'manual', element: <ManualEntryScreen /> },
       { path: 'result', element: <ResultScreen /> },
       { path: 'bill-results', element: <BillResultsScreen /> },
+      { path: 'qr', element: <QrScanScreen /> },
+      { path: 'qr/confirm', element: <QrConfirmScreen /> },
     ],
   },
 ];
