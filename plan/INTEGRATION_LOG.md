@@ -25,10 +25,10 @@
 | D2 | P0 | ⬜ | | | |
 | D3 | P0 | ⬜ | | | |
 | E | P1 | ⬜ | | | Photos: 0/30 strips, 0/10 bills |
-| F | P0 | ⬜ | | | |
+| F | P0 | 🟨 | | | **IN PROGRESS, not yet deployed.** Cabinet CRUD handlers + retroactive check stream consumer, local authz stub (H's package still a placeholder), 34 unit tests, `pnpm -r lint/test/build` green, `cdk synth LaneFStack-dev-f` clean. Real deploy needs human approval (auto-mode classifier blocked it this session). |
 | G1 | P0 | 🟨 | | | IN PROGRESS. Subscriptions API + push-sender/email-sender Lambdas + wording-enforced templates written, 26 unit tests, `pnpm -r lint/test/build` green, `cdk synth` clean. Not deployed yet. |
 | G2 | P0 | 🟨 | | | **IN PROGRESS** (on `lane/G2`, own worktree `asli-G2`). New-alert fan-out: stream consumer on FlaggedBatches (GSI3 candidate lookup, conditional MATCH puts, latestTier bump, `AlertEvent` publish), 60-day backfill notification guard (age-of-`alertMonth`, not execution-tag - `IngestionState.sourceType` can't distinguish backfill from daily). `pnpm -r lint/test/build` green (19 new tests), `cdk synth` clean. Not yet deployed/verified against real AWS. |
-| H | P1 | ⬜ | | | |
+| H | P1 | ✅ | 2026-09-18 | dev-h | **DONE, merged to main.** Cedar `stub`/`avp` authz, invites and members API. 56 new tests. Deployed `LaneHStack-dev-h` and invoked all 4 handlers directly against real seeded fixture data in `stub` mode - OWNER invites, VIEWER denied, invite accept single-use, last-owner guard, all confirmed live. `avp` mode unit-tested only (blocked on the same account-wide Verified Permissions restriction as T01/T02). See plan/tasks/H-permissions-cedar.md Handoff. |
 | I | P1 | ⬜ | | | Review: hi ⬜ kn ⬜ |
 | S | P1 | ⬜ | | | |
 | J | P2 | ⬜ | | | |
