@@ -42,7 +42,9 @@ PK `USER#<userId>`, SK `SUB#<sha256(endpoint)>`; attributes endpoint, keys {p256
 | `REASON#<reasonRawNorm>` | `CODE` | Cached reason classification |
 
 ## Stats
-PK `STATS#<kind>` SK `<scope>` e.g. `STATS#LAG` / `ALL`, `STATS#MONTH` / `2025-03`. Value is a JSON document matching `StatsDocument` in contracts.
+PK `STATS#<kind>` SK `<scope>`. Two kinds in use:
+- `STATS#LAG` / `ALL`, `STATS#MONTH` / `<yyyy-mm>` - operational/cost metrics, value matches `StatsDocument` in contracts (ingestion/scans/matching/alerts/cost - see `packages/contracts/fixtures/stats.json`).
+- `STATS#IMPACT` / `ALL`, `STATS#IMPACT` / `<yyyy-mm>` - lane S's impact numbers (docs/PRODUCT.md "Evidence": rows, within-expiry share, manufacture-to-alert lag distribution, counts by reasonCode/reportingSource). Not `StatsDocument`-shaped - see `services/stats/src/types.ts` (`ImpactStatsDocument`) and lane S's task Handoff "Contract change requests" for why. `STATS#PUBLIC` / `ALL` caches the contract's `PublicStats` for `GET /v1/public/stats` to re-serve.
 
 ## Reports (PvPI, private, Wave 2)
 PK `REPORT#<yyyy-mm>` SK `<reportId>`; problemType, alertRef?, batchNorm, createdAt. No free text stored beyond 280 chars, never shown to other users.
