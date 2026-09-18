@@ -20,7 +20,7 @@
 | A2 | P0 | 🟨 | | dev-a2 | **DONE, not yet merged to main** (on `lane/A2`). Ingestion state machine, daily check-months, backfill, demo replay, build-reference. `pnpm -r lint/test/build` green (90 new tests). Real `LaneA2Stack-dev-a2` deploy - all 6 acceptance criteria verified against it, including a genuine idempotency bug (rowHash depended on evolving aliases) found and fixed only by re-running on real infra. |
 | A3 | P0/P2 | ⬜ | | | |
 | B | P0 | ✅ | 2026-09-18 | | **DONE, merged to main.** All 10 required test cases + 100% branch coverage on classifyMatch/decide, property tests, benchmark. Human reviewed classify.ts against the tier table in chat and approved (task's own acceptance criterion). `@asli/matching` is now real, not a stub. |
-| C | P0 | ⬜ | | | |
+| C | P0 | 🟨 | | dev-c | **DONE, not yet merged to main** (on `lane/C`). Upload/scan/check/alert-detail APIs + `packages/lookup`. `pnpm -r lint/test/build` green (47 new tests in services/scan, 5 in packages/lookup, 194 total repo-wide). Real `LaneCStack-dev-c` deploy; Checks/Alerts/Uploads invoked directly against real seeded data (FLAGGED result, SPURIOUS-first, clean logs). Scans endpoint code-complete + fixture-tested but not live-verified - blocked on T01's Bedrock model access (same blocker as A2/N). |
 | D1 | P0 | ⬜ | | | |
 | D2 | P0 | ⬜ | | | |
 | D3 | P0 | ⬜ | | | |
