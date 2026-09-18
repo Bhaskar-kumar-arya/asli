@@ -1,0 +1,52 @@
+:root {
+  --tier-flagged: #b3261e;
+  --tier-verify: #8a5a00;
+  --tier-none: #3c4858;
+  --tier-pending: #5b6472;
+  --cabinet-border: #d7dbe0;
+  --cabinet-bg-muted: #f5f6f8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tier-flagged: #ff8a80;
+    --tier-verify: #ffca7a;
+    --tier-none: #b8c2cf;
+    --tier-pending: #9aa4b2;
+    --cabinet-border: #3a3f47;
+    --cabinet-bg-muted: #1f2227;
+  }
+}
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  min-height: 32px;
+}
+
+.cabinet-medicine-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 1px solid var(--cabinet-border);
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+}
+
+.cabinet-medicine-row[data-highlighted='true'] {
+  border-color: var(--tier-flagged);
+  border-width: 2px;
+}
+
+.tap-target {
+  min-height: 48px;
+  min-width: 48px;
+  font-size: 1.05rem;
+}
