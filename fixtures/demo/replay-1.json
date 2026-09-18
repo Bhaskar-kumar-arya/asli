@@ -1,0 +1,21 @@
+{
+  "_comment": "docs/ALERTS.md demo path (plan/tasks/A2-ingestion-pipeline.md Deliverable 6). This is a real CDSCO NSQ row captured by T01's endpoint spike for Feb-2026 (packages/contracts/fixtures/cdsco/endpoint-nsq-2026-02.json, row 1) - a genuine past CDSCO alert, replayed live during the demo via POST /v1/admin/demo/replay-month. PLACEHOLDER: lane X should either point the demo cabinet's mock strip at this exact batch (E9AIY029 / Pharma Force Lab) so the NEW_ALERT fan-out has a saved medicine to match against, or swap this file's aaData row for whichever real CDSCO row X picks to match the mock strip instead - see this task's Handoff.",
+  "meta": {
+    "alertMonth": "2026-02",
+    "tab": "nsq",
+    "sourceUrl": "https://cdscoonline.gov.in/CDSCO/filteredNsqDrugTable?month=Feb-2026&source=All&tab=nsq"
+  },
+  "aaData": [
+    {
+      "str_product_name": "Montelukast & Levocetirizine Dihydrochloride",
+      "str_batch_no": "E9AIY029",
+      "dt_manufacturing_date": "Aug-2025",
+      "dt_expiry_date": "Jul-2027",
+      "str_manufactured_by": "Pharma Force Lab (Unit II) Plot No. 83-86, Industrial Area Gondpur, Tehsil Paonta Sahib, Distt. Sirnour  (HP)",
+      "str_nsq_result": "Assay of Montelukast Sodium IP & Levocetirizine Dihydrochloride IP",
+      "str_reporting_source": "State Lab",
+      "str_reported_by_lab_or_state": "FDTL,Uttarakhand",
+      "dt_reporting_month_year": "FEB-2026"
+    }
+  ]
+}
