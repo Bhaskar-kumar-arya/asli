@@ -1,0 +1,139 @@
+/* Design tokens - docs/UX.md Visual system. Light/dark variants, tier colours never used alone (icon + text + colour). */
+:root {
+  --font-sans: 'Noto Sans', 'Noto Sans Devanagari', 'Noto Sans Kannada', system-ui, sans-serif;
+
+  --font-size-base: 18px;
+  --font-size-heading: 28px;
+  --tap-target-min: 48px;
+
+  --color-bg: #ffffff;
+  --color-surface: #f8fafc;
+  --color-text: #0f172a;
+  --color-text-muted: #475569;
+  --color-border: #cbd5e1;
+  --color-primary: #0f172a;
+  --color-primary-text: #ffffff;
+
+  --color-flagged-bg: #fee2e2;
+  --color-flagged-text: #7f1d1d;
+  --color-flagged-border: #dc2626;
+
+  --color-verify-bg: #fef3c7;
+  --color-verify-text: #78350f;
+  --color-verify-border: #d97706;
+
+  --color-no-alert-bg: #e2e8f0;
+  --color-no-alert-text: #1e293b;
+  --color-no-alert-border: #64748b;
+
+  --color-danger: #dc2626;
+  --color-focus-ring: #2563eb;
+}
+
+:root[data-text-size='large'] {
+  --font-size-base: 22px;
+  --font-size-heading: 32px;
+}
+
+:root[data-text-size='extra-large'] {
+  --font-size-base: 26px;
+  --font-size-heading: 36px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --color-bg: #0f172a;
+    --color-surface: #1e293b;
+    --color-text: #f1f5f9;
+    --color-text-muted: #cbd5e1;
+    --color-border: #334155;
+    --color-primary: #f1f5f9;
+    --color-primary-text: #0f172a;
+
+    --color-flagged-bg: #450a0a;
+    --color-flagged-text: #fecaca;
+    --color-flagged-border: #f87171;
+
+    --color-verify-bg: #451a03;
+    --color-verify-text: #fde68a;
+    --color-verify-border: #fbbf24;
+
+    --color-no-alert-bg: #1e293b;
+    --color-no-alert-text: #e2e8f0;
+    --color-no-alert-border: #94a3b8;
+  }
+}
+
+:root[data-theme='dark'] {
+  --color-bg: #0f172a;
+  --color-surface: #1e293b;
+  --color-text: #f1f5f9;
+  --color-text-muted: #cbd5e1;
+  --color-border: #334155;
+  --color-primary: #f1f5f9;
+  --color-primary-text: #0f172a;
+
+  --color-flagged-bg: #450a0a;
+  --color-flagged-text: #fecaca;
+  --color-flagged-border: #f87171;
+
+  --color-verify-bg: #451a03;
+  --color-verify-text: #fde68a;
+  --color-verify-border: #fbbf24;
+
+  --color-no-alert-bg: #1e293b;
+  --color-no-alert-text: #e2e8f0;
+  --color-no-alert-border: #94a3b8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+}
+
+h1,
+h2,
+h3 {
+  font-size: var(--font-size-heading);
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+@keyframes asli-result-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
