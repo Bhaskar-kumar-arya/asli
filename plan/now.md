@@ -4,11 +4,12 @@
 | Lane | Folder | Started | Status |
 |---|---|---|---|
 | T01 | asli-T01 (worktree, branch lane/T01) | 2026-09-17 19:35 IST | BLOCKED - endpoint (`ENDPOINT_OK`) and PDF-listing spikes done with real evidence; Bedrock/Translate/Textract/Verified Permissions all blocked by AWS account restrictions that need a human console action (see Blocked). |
+| D1+D2 | asli-D2 (worktree, branch lane/D2) | 2026-09-18 01:15 IST | IN PROGRESS - human approved building D1's web shell opportunistically in this same session so D2 (scan/confirm/result screens) wasn't blocked waiting on it. `pnpm -r lint/test/build` green (24 new tests). Not yet run against a real `int` deploy or a real device - see D1/D2 task Handoffs. |
 
 ## Ready to start next
 | Lane | Note |
 |---|---|
-| D1, I, S | **`contracts-v1` is tagged, `dev-shared` is deployed and seeded, and `@asli/matching`'s real implementation is merged to `main`** (human-reviewed 2026-09-18, see B Handoff) - fully unblocked now, including real `cdk deploy` (SSM imports resolve) and real tier decisions (no more stub). A3 (PDF/Textract fallback) can likely drop to P2 - T01 confirmed `ENDPOINT_OK` with strong evidence. Note: Verified Permissions isn't deployed yet (`ENABLE_AVP=false`, see T02 Handoff) - H can build against the stub authz mode until that's resolved. `@asli/ingestion`'s `services/ingestion/src/cdsco/**` (A1) is ready to import - `createCdscoClient`, `parseSnapshot`, `normalizeRows`. `packages/lookup`'s real `findCandidates`/`getCheckedAgainst` (C) is ready to import too, and D2 needs `services/scan`'s presigned-POST upload contract (see C Handoff Gotchas: it's a POST with `fields`, not a raw PUT). |
+| I, S | **`contracts-v1` is tagged, `dev-shared` is deployed and seeded, and `@asli/matching`'s real implementation is merged to `main`** (human-reviewed 2026-09-18, see B Handoff) - fully unblocked now, including real `cdk deploy` (SSM imports resolve) and real tier decisions (no more stub). A3 (PDF/Textract fallback) can likely drop to P2 - T01 confirmed `ENDPOINT_OK` with strong evidence. Note: Verified Permissions isn't deployed yet (`ENABLE_AVP=false`, see T02 Handoff) - H can build against the stub authz mode until that's resolved. `@asli/ingestion`'s `services/ingestion/src/cdsco/**` (A1) is ready to import - `createCdscoClient`, `parseSnapshot`, `normalizeRows`. `packages/lookup`'s real `findCandidates`/`getCheckedAgainst` (C) is ready to import too, and D2 needs `services/scan`'s presigned-POST upload contract (see C Handoff Gotchas: it's a POST with `fields`, not a raw PUT). |
 
 ## Blocked
 | Lane | Blocked on |
