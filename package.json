@@ -18,15 +18,22 @@
     "seed-fixtures": "tsx scripts/seed-fixtures.ts",
     "seed-demo-fixture": "tsx scripts/seed-demo-fixture.ts",
     "backfill": "tsx scripts/backfill.ts",
-    "export-review": "tsx scripts/reference/export-review.ts"
+    "export-review": "tsx scripts/reference/export-review.ts",
+    "stats-report": "tsx scripts/stats-report/export.ts",
+    "content:translate": "tsx scripts/content/translate.ts",
+    "content:audio": "tsx scripts/content/audio.ts"
   },
   "dependencies": {
+    "@asli/content": "workspace:*",
     "@asli/contracts": "workspace:*",
+    "@aws-sdk/client-cloudwatch": "^3.699.0",
     "@aws-sdk/client-dynamodb": "^3.699.0",
+    "@aws-sdk/client-polly": "^3.699.0",
     "@aws-sdk/client-s3": "^3.699.0",
     "@aws-sdk/client-secrets-manager": "^3.699.0",
     "@aws-sdk/client-sfn": "^3.699.0",
     "@aws-sdk/client-ssm": "^3.699.0",
+    "@aws-sdk/client-translate": "^3.699.0",
     "@aws-sdk/lib-dynamodb": "^3.699.0",
     "web-push": "^3.6.7"
   },

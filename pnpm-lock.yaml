@@ -8,12 +8,21 @@ importers:
 
   .:
     dependencies:
+      '@asli/content':
+        specifier: workspace:*
+        version: link:packages/content
       '@asli/contracts':
         specifier: workspace:*
         version: link:packages/contracts
+      '@aws-sdk/client-cloudwatch':
+        specifier: ^3.699.0
+        version: 3.1135.0
       '@aws-sdk/client-dynamodb':
         specifier: ^3.699.0
         version: 3.1134.0
+      '@aws-sdk/client-polly':
+        specifier: ^3.699.0
+        version: 3.1135.0
       '@aws-sdk/client-s3':
         specifier: ^3.699.0
         version: 3.1135.0
@@ -26,6 +35,9 @@ importers:
       '@aws-sdk/client-ssm':
         specifier: ^3.699.0
         version: 3.1134.0
+      '@aws-sdk/client-translate':
+        specifier: ^3.699.0
+        version: 3.1135.0
       '@aws-sdk/lib-dynamodb':
         specifier: ^3.699.0
         version: 3.1134.0(@aws-sdk/client-dynamodb@3.1134.0)
@@ -179,6 +191,10 @@ importers:
         version: 2.1.9(@types/node@22.20.3)(jsdom@25.0.1)(msw@2.15.0(@types/node@22.20.3)(typescript@5.9.3))(terser@5.51.2)
 
   packages/content:
+    dependencies:
+      '@asli/contracts':
+        specifier: workspace:*
+        version: link:../contracts
     devDependencies:
       typescript:
         specifier: ^5.7.2
@@ -315,6 +331,31 @@ importers:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@22.20.3)(jsdom@25.0.1)(msw@2.15.0(@types/node@22.20.3)(typescript@5.9.3))(terser@5.51.2)
 
+  services/content:
+    dependencies:
+      '@asli/content':
+        specifier: workspace:*
+        version: link:../../packages/content
+      '@asli/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
+      '@aws-lambda-powertools/logger':
+        specifier: ^2.13.1
+        version: 2.35.0(@aws-lambda-powertools/jmespath@2.35.0)
+      '@aws-lambda-powertools/metrics':
+        specifier: ^2.13.1
+        version: 2.35.0
+    devDependencies:
+      '@types/aws-lambda':
+        specifier: ^8.10.146
+        version: 8.10.163
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@22.20.3)(jsdom@25.0.1)(msw@2.15.0(@types/node@22.20.3)(typescript@5.9.3))(terser@5.51.2)
+
   services/fanout:
     dependencies:
       '@asli/contracts':
@@ -387,6 +428,9 @@ importers:
       '@aws-sdk/client-ssm':
         specifier: ^3.699.0
         version: 3.1134.0
+      '@aws-sdk/client-textract':
+        specifier: ^3.699.0
+        version: 3.1135.0
       '@aws-sdk/lib-dynamodb':
         specifier: ^3.699.0
         version: 3.1134.0(@aws-sdk/client-dynamodb@3.1134.0)
@@ -542,8 +586,64 @@ importers:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@22.20.3)(jsdom@25.0.1)(msw@2.15.0(@types/node@22.20.3)(typescript@5.9.3))(terser@5.51.2)
 
-  tools/accuracy:
+  services/stats:
+    dependencies:
+      '@asli/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
+      '@aws-lambda-powertools/logger':
+        specifier: ^2.11.0
+        version: 2.35.0(@aws-lambda-powertools/jmespath@2.35.0)
+      '@aws-lambda-powertools/metrics':
+        specifier: ^2.11.0
+        version: 2.35.0
+      '@aws-sdk/client-dynamodb':
+        specifier: ^3.699.0
+        version: 3.1134.0
+      '@aws-sdk/client-s3':
+        specifier: ^3.699.0
+        version: 3.1135.0
+      '@aws-sdk/lib-dynamodb':
+        specifier: ^3.699.0
+        version: 3.1134.0(@aws-sdk/client-dynamodb@3.1134.0)
     devDependencies:
+      '@types/aws-lambda':
+        specifier: ^8.10.146
+        version: 8.10.163
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@22.20.3)(jsdom@25.0.1)(msw@2.15.0(@types/node@22.20.3)(typescript@5.9.3))(terser@5.51.2)
+
+  tools/accuracy:
+    dependencies:
+      '@asli/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
+      '@asli/matching':
+        specifier: workspace:*
+        version: link:../../packages/matching
+      '@aws-sdk/client-cloudwatch':
+        specifier: ^3.699.0
+        version: 3.1135.0
+      '@aws-sdk/client-cognito-identity-provider':
+        specifier: ^3.699.0
+        version: 3.1135.0
+      '@aws-sdk/client-s3':
+        specifier: ^3.699.0
+        version: 3.1135.0
+      '@aws-sdk/client-ssm':
+        specifier: ^3.699.0
+        version: 3.1134.0
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.76
+    devDependencies:
+      tsx:
+        specifier: ^4.19.2
+        version: 4.23.13
       typescript:
         specifier: ^5.7.2
         version: 5.9.3
@@ -706,6 +806,10 @@ packages:
     resolution: {integrity: sha512-DDTMmWwVAJYsOOb83thk8AkBAJMQIJDm89n/doYbtlks9KGc//mbPYYvxfWgVTqFlUu+oCqwF2sJT2FxnSMk1Q==}
     engines: {node: '>=20.0.0'}
 
+  '@aws-sdk/client-cloudwatch@3.1135.0':
+    resolution: {integrity: sha512-UqXYanWwsyBMNOu7kM5uPl8Z8HqqJkniMY90wGIfrUvQg0auj3qCfhO0RN7MGrARjwxXlcsZIkj4VyJodoGu5w==}
+    engines: {node: '>=20.0.0'}
+
   '@aws-sdk/client-cognito-identity-provider@3.1135.0':
     resolution: {integrity: sha512-Fr062DJo4NZsDE3OYr9kdsFZawiOOW2Wfhlsen+wtRGNwr51LKrI6CWEPaSYXvQXkftJiC7vkB3PUt1KaaMkBg==}
     engines: {node: '>=20.0.0'}
@@ -730,6 +834,10 @@ packages:
     resolution: {integrity: sha512-Fmz54bK7VZ+IFJFMfWRMBp9nX4enT0ciC+udAVnOdqhB4mSKs5VBeDku48BJgBySrfv0zIoqwKs0fpw3SLWcwQ==}
     engines: {node: '>=20.0.0'}
 
+  '@aws-sdk/client-polly@3.1135.0':
+    resolution: {integrity: sha512-MAgzgfxOh4wr4CSjutQJbUUyiWa52HTohQhKu0bZlWeMjKqXfr0AAolG9x4DkSEz7MZoAF8HS+dB5hSoetp+AQ==}
+    engines: {node: '>=20.0.0'}
+
   '@aws-sdk/client-s3@3.1135.0':
     resolution: {integrity: sha512-/1CVA0M+TaEOzgM02DUST1NzQTjbY8OumDKPETjzo4owypkZZMxu1ADecFbzeG73hje/XLNAJfGepQ3a40CGnw==}
     engines: {node: '>=20.0.0'}
@@ -752,6 +860,14 @@ packages:
 
   '@aws-sdk/client-ssm@3.1134.0':
     resolution: {integrity: sha512-ZjAv1kZxMUDK/reFxSOSutpTXSgMIgnd6kTcicCFvIQCHO1f1/pIk8kT0x0Qy6grjx4BXPvTJ84GiEZtD/y9WA==}
+    engines: {node: '>=20.0.0'}
+
+  '@aws-sdk/client-textract@3.1135.0':
+    resolution: {integrity: sha512-L4fFSL31icsIi6ysfP/UHJgNuw2CC2mR+1hm2Qu12jjX46yXAe18fuwqIz4Vc0/mMek1uEGgNFXgbN9gjkoJLA==}
+    engines: {node: '>=20.0.0'}
+
+  '@aws-sdk/client-translate@3.1135.0':
+    resolution: {integrity: sha512-g7LqEwOGkNPBcktWtwn5s87/WPXgVKvsqcmR27k8HlPx8H9lrt7aGpkAWYmOtB/dB5qkBIJEZqJW5LktAW5kQg==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/client-verifiedpermissions@3.1135.0':
@@ -2236,6 +2352,10 @@ packages:
   '@smithy/md5-js@2.0.7':
     resolution: {integrity: sha512-2i2BpXF9pI5D1xekqUsgQ/ohv5+H//G9FlawJrkOJskV18PgJ8LiNbLiskMeYt07yAsSTZR7qtlcAaa/GQLWww==}
 
+  '@smithy/middleware-compression@4.6.2':
+    resolution: {integrity: sha512-Q9d+luiRjyHT6kCL/9NyGpdZJgodh4vtvfHC6H8SqoVKrV2k9RoyI9/IloVfdCYks3/2DIi7BsYYLcda5KZS0A==}
+    engines: {node: '>=18.0.0'}
+
   '@smithy/node-http-handler@4.12.1':
     resolution: {integrity: sha512-ThMkboGeONWXAelq9FvGsuJC4rOi+qyC4/zhUF58xYpxUg5sQKx2VXZYJmtNjr4dSuBJ1HeJXETQILCz3wOHvw==}
     engines: {node: '>=18.0.0'}
@@ -3061,6 +3181,9 @@ packages:
     peerDependenciesMeta:
       picomatch:
         optional: true
+
+  fflate@0.8.3:
+    resolution: {integrity: sha512-tbZNuJrLwGUp3zshBtdy4W+ORxZuIh8a5ilyIEQDC5rY1f3U20JMry0Ll3WBzU58EZKsEuJFXhb5gwv8CsPvgA==}
 
   file-entry-cache@8.0.0:
     resolution: {integrity: sha512-XXTUwCvisa5oacNGRP9SfNtYBNAMi+RPwBFmblZEF7N7swHYQS6/Zfk7SRwx4D5j3CH211YNRco1DEMNVfZCnQ==}
@@ -4750,6 +4873,18 @@ snapshots:
       '@smithy/types': 4.18.0
       tslib: 2.8.1
 
+  '@aws-sdk/client-cloudwatch@3.1135.0':
+    dependencies:
+      '@aws-sdk/core': 3.978.0
+      '@aws-sdk/credential-provider-node': 3.972.83
+      '@aws-sdk/types': 3.974.5
+      '@smithy/core': 3.34.1
+      '@smithy/fetch-http-handler': 5.8.0
+      '@smithy/middleware-compression': 4.6.2
+      '@smithy/node-http-handler': 4.12.1
+      '@smithy/types': 4.18.0
+      tslib: 2.8.1
+
   '@aws-sdk/client-cognito-identity-provider@3.1135.0':
     dependencies:
       '@aws-sdk/core': 3.978.0
@@ -4818,6 +4953,19 @@ snapshots:
       '@smithy/types': 4.18.0
       tslib: 2.8.1
 
+  '@aws-sdk/client-polly@3.1135.0':
+    dependencies:
+      '@aws-sdk/core': 3.978.0
+      '@aws-sdk/credential-provider-node': 3.972.83
+      '@aws-sdk/eventstream-handler-node': 3.972.34
+      '@aws-sdk/middleware-eventstream': 3.972.29
+      '@aws-sdk/types': 3.974.5
+      '@smithy/core': 3.34.1
+      '@smithy/fetch-http-handler': 5.8.0
+      '@smithy/node-http-handler': 4.12.1
+      '@smithy/types': 4.18.0
+      tslib: 2.8.1
+
   '@aws-sdk/client-s3@3.1135.0':
     dependencies:
       '@aws-sdk/checksums': 3.1001.0
@@ -4878,6 +5026,28 @@ snapshots:
       tslib: 2.8.1
 
   '@aws-sdk/client-ssm@3.1134.0':
+    dependencies:
+      '@aws-sdk/core': 3.978.0
+      '@aws-sdk/credential-provider-node': 3.972.83
+      '@aws-sdk/types': 3.974.5
+      '@smithy/core': 3.34.1
+      '@smithy/fetch-http-handler': 5.8.0
+      '@smithy/node-http-handler': 4.12.1
+      '@smithy/types': 4.18.0
+      tslib: 2.8.1
+
+  '@aws-sdk/client-textract@3.1135.0':
+    dependencies:
+      '@aws-sdk/core': 3.978.0
+      '@aws-sdk/credential-provider-node': 3.972.83
+      '@aws-sdk/types': 3.974.5
+      '@smithy/core': 3.34.1
+      '@smithy/fetch-http-handler': 5.8.0
+      '@smithy/node-http-handler': 4.12.1
+      '@smithy/types': 4.18.0
+      tslib: 2.8.1
+
+  '@aws-sdk/client-translate@3.1135.0':
     dependencies:
       '@aws-sdk/core': 3.978.0
       '@aws-sdk/credential-provider-node': 3.972.83
@@ -6373,6 +6543,13 @@ snapshots:
       '@smithy/util-utf8': 2.3.0
       tslib: 2.8.1
 
+  '@smithy/middleware-compression@4.6.2':
+    dependencies:
+      '@smithy/core': 3.34.1
+      '@smithy/types': 4.18.0
+      fflate: 0.8.3
+      tslib: 2.8.1
+
   '@smithy/node-http-handler@4.12.1':
     dependencies:
       '@smithy/core': 3.34.1
@@ -7395,6 +7572,8 @@ snapshots:
   fdir@6.5.0(picomatch@4.0.7):
     optionalDependencies:
       picomatch: 4.0.7
+
+  fflate@0.8.3: {}
 
   file-entry-cache@8.0.0:
     dependencies:
