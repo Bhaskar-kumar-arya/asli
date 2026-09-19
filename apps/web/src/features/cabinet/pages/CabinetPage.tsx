@@ -44,35 +44,68 @@ export function CabinetPage() {
 
   const groups = useMemo(() => (detail ? groupByPerson(detail.medicines) : null), [detail]);
 
-  if (error) return <p role="alert">{error}</p>;
-  if (!detail || !groups) return <p>Loading cabinet…</p>;
+  if (error)
+    return (
+      <main className="reg-sheet">
+        <p role="alert" className="reg-line reg-line--flagged" style={{ textTransform: 'none', marginTop: '1.5rem' }}>
+          {error}
+        </p>
+      </main>
+    );
+  if (!detail || !groups)
+    return (
+      <main className="reg-sheet">
+        <p className="reg-line" style={{ marginTop: '1.5rem' }}>
+          <span className="reg-line__ellipsis">Opening the cabinet</span>
+        </p>
+      </main>
+    );
 
   return (
-    <section>
-      <h2>{detail.cabinet.name}</h2>
-      <p>
-        <Link to={`/cabinets/${detail.cabinet.cabinetId}/members`} className="tap-target">
-          Members ({detail.members.length})
-        </Link>
-      </p>
+    <main className="reg-sheet">
+      <header className="reg-masthead">
+        <h1>{detail.cabinet.name}</h1>
+        <p className="reg-masthead__currency">
+          {detail.medicines.length} entries · {detail.members.length} members
+        </p>
+      </header>
+
       {[...groups.entries()].map(([person, medicines]) => (
-        <div key={person}>
-          <h3>{person}</h3>
-          <ul style={{ listStyle: 'none', padding: 0 }}>
-            {medicines.map((med) => (
+        <section key={person}>
+          <div className="reg-head">
+            <h2>{person}</h2>
+          </div>
+          <ul className="cabinet-list">
+            {medicines.map((med, i) => (
               <li key={med.medId} className="cabinet-medicine-row">
-                <Link to={`/cabinets/${detail.cabinet.cabinetId}/medicines/${med.medId}`} className="tap-target">
-                  {med.label ?? med.identity.productName ?? med.identity.batchNumber}
-                </Link>
+                <span className="reg-no" aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span className="reg-grow">
+                  <Link to={`/cabinets/${detail.cabinet.cabinetId}/medicines/${med.medId}`} className="tap-target">
+                    {med.label ?? med.identity.productName ?? med.identity.batchNumber}
+                  </Link>
+                  {med.identity.batchNumber ? (
+                    <span className="reg-value" style={{ display: 'block', fontSize: 'var(--step-small)', color: 'var(--text-2)' }}>
+                      Batch {med.identity.batchNumber}
+                    </span>
+                  ) : null}
+                </span>
                 <StatusChip status={med.latestTier} />
               </li>
             ))}
           </ul>
-        </div>
+        </section>
       ))}
-      <Link to={`/cabinets/${detail.cabinet.cabinetId}/add-medicine`} className="tap-target">
-        Add a medicine
-      </Link>
-    </section>
+
+      <div className="reg-stack">
+        <Link to={`/cabinets/${detail.cabinet.cabinetId}/add-medicine`} className="reg-btn reg-btn--primary">
+          Add a medicine
+        </Link>
+        <Link to={`/cabinets/${detail.cabinet.cabinetId}/members`} className="reg-btn">
+          Members ({detail.members.length})
+        </Link>
+      </div>
+    </main>
   );
 }

@@ -62,22 +62,53 @@ export function MedicineDetailPage() {
     }
   }
 
-  if (loadError) return <p role="alert">{loadError}</p>;
-  if (!detail) return <p>Loading medicine…</p>;
+  if (loadError)
+    return (
+      <main className="reg-sheet">
+        <p role="alert" className="reg-line reg-line--flagged" style={{ textTransform: 'none', marginTop: '1.5rem' }}>
+          {loadError}
+        </p>
+      </main>
+    );
+  if (!detail)
+    return (
+      <main className="reg-sheet">
+        <p className="reg-line" style={{ marginTop: '1.5rem' }}>
+          <span className="reg-line__ellipsis">Fetching the entry</span>
+        </p>
+      </main>
+    );
 
   const medicine = detail.medicines.find((m) => m.medId === medId);
-  if (!medicine) return <p role="alert">This medicine could not be found.</p>;
+  if (!medicine)
+    return (
+      <main className="reg-sheet">
+        <p role="alert" className="reg-line reg-line--flagged" style={{ textTransform: 'none', marginTop: '1.5rem' }}>
+          This medicine could not be found.
+        </p>
+      </main>
+    );
 
   const matches: MatchSummary[] = detail.matches
     .filter((m) => m.medId === medId)
     .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
 
   return (
-    <section>
-      <h2>{medicine.label ?? medicine.identity.productName ?? medicine.identity.batchNumber}</h2>
-      <StatusChip status={medicine.latestTier} />
+    <main className="reg-sheet">
+      <header className="reg-masthead">
+        <h1>{medicine.label ?? medicine.identity.productName ?? medicine.identity.batchNumber}</h1>
+      </header>
 
-      <dl>
+      <span className="reg-legend" style={{ marginTop: '1.2rem' }}>
+        Batch entered
+      </span>
+      <span className="reg-value--batch">{medicine.identity.batchNumber}</span>
+
+      <div style={{ margin: '1.1rem 0 1.4rem' }}>
+        <StatusChip status={medicine.latestTier} />
+      </div>
+
+      <dl className="reg-particulars">
         {medicine.identity.productName && (
           <>
             <dt>Medicine name</dt>
@@ -106,11 +137,17 @@ export function MedicineDetailPage() {
         )}
       </dl>
 
-      <h3>Match history</h3>
+      <div className="reg-head">
+        <h3>Match history</h3>
+      </div>
       {matches.length === 0 ? (
-        <p>No CDSCO alert list matches found for this batch.</p>
+        <div className="reg-empty">
+          <p className="reg-prose reg-prose--muted" style={{ margin: 0 }}>
+            No CDSCO alert list matches found for this batch.
+          </p>
+        </div>
       ) : (
-        <ul style={{ listStyle: 'none', padding: 0 }}>
+        <ul className="cabinet-list">
           {matches.map((match) => {
             const alert = alertDetails[match.alertRef];
             const isHighlighted = match.alertRef === highlightedAlertId;
@@ -121,33 +158,59 @@ export function MedicineDetailPage() {
                 data-highlighted={isHighlighted}
                 aria-current={isHighlighted ? 'true' : undefined}
               >
-                <strong>
-                  {match.category === 'SPURIOUS'
-                    ? 'A batch with this label was reported as spurious'
-                    : 'This batch is on a CDSCO alert list'}
-                </strong>
-                <span>CDSCO alert month: {formatMonth(match.alertMonth)}</span>
-                {alert && (
-                  <>
-                    <span>Reporting source: {alert.reportingSource}</span>
-                    {alert.reportingLab && <span>Lab: {alert.reportingLab}</span>}
-                    <span>Reason: {reasonPlainText(alert.reasonCode)}</span>
-                    <a href={alert.sourceUrl} target="_blank" rel="noreferrer">
-                      View CDSCO source
-                    </a>
-                  </>
-                )}
+                <span className="reg-grow">
+                  <strong style={{ display: 'block', marginBottom: '0.55rem' }}>
+                    {match.category === 'SPURIOUS'
+                      ? 'A batch with this label was reported as spurious'
+                      : 'This batch is on a CDSCO alert list'}
+                  </strong>
+                  <dl className="reg-particulars" style={{ marginTop: 0 }}>
+                    <dt>Alert month</dt>
+                    <dd>{formatMonth(match.alertMonth)}</dd>
+                    {alert && (
+                      <>
+                        <dt>Reporting source</dt>
+                        <dd>{alert.reportingSource}</dd>
+                        {alert.reportingLab && (
+                          <>
+                            <dt>Lab</dt>
+                            <dd>{alert.reportingLab}</dd>
+                          </>
+                        )}
+                        <dt>Reason</dt>
+                        <dd>{reasonPlainText(alert.reasonCode)}</dd>
+                        <dt>Source</dt>
+                        <dd>
+                          <a href={alert.sourceUrl} target="_blank" rel="noreferrer">
+                            View CDSCO source
+                          </a>
+                        </dd>
+                      </>
+                    )}
+                  </dl>
+                </span>
               </li>
             );
           })}
         </ul>
       )}
 
-      <button type="button" onClick={handleRemove} disabled={removing || removeDisabled} className="tap-target">
-        Remove from family medicines
-      </button>
-      {removeError && <p role="alert">{removeError}</p>}
-      <ReportProblemButton identity={medicine.identity} alertRef={matches[0]?.alertRef} />
-    </section>
+      <div className="reg-stack">
+        <ReportProblemButton identity={medicine.identity} alertRef={matches[0]?.alertRef} />
+        <button
+          type="button"
+          onClick={handleRemove}
+          disabled={removing || removeDisabled}
+          className="reg-btn reg-btn--danger"
+        >
+          Remove from family medicines
+        </button>
+      </div>
+      {removeError && (
+        <p role="alert" className="reg-note reg-note--flagged">
+          {removeError}
+        </p>
+      )}
+    </main>
   );
 }

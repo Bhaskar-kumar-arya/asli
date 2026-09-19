@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import type { MedicineIdentity, ProblemReportResponse } from '@asli/contracts';
 import { Button } from '../../../shell/components/Button';
-import { Card } from '../../../shell/components/Card';
 import { postProblemReport } from '../api/reports';
 import { formatBatchDetails } from '../lib/formatBatchDetails';
 import { PROBLEM_TYPES, type ProblemTypeValue } from '../problemTypes';
@@ -48,94 +47,101 @@ export function ReportProblemModal({ identity, alertRef, onClose }: ReportProble
   }
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="report-problem-heading"
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'rgba(0,0,0,0.5)',
-        display: 'flex',
-        alignItems: 'flex-end',
-        justifyContent: 'center',
-        zIndex: 50,
-      }}
-    >
-      <Card style={{ width: '100%', maxWidth: 480, maxHeight: '90vh', overflowY: 'auto', borderRadius: '1rem 1rem 0 0' }}>
-        <h2 id="report-problem-heading" style={{ marginTop: 0 }}>
-          Report a problem with this medicine
-        </h2>
+    <div className="reg-scrim" style={{ alignItems: 'flex-end', padding: 0 }}>
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="report-problem-heading"
+        className="reg-docket"
+        style={{ maxWidth: 480, maxHeight: '90vh', overflowY: 'auto' }}
+      >
+        <h2 id="report-problem-heading">Report a problem with this medicine</h2>
 
         {result ? (
           <>
-            <p>Thanks. Your report is saved privately - here's how to also tell PvPI, the official channel:</p>
-            <p style={{ fontWeight: 600 }}>{result.pvpi.howToReport}</p>
-            <ul>
+            <p className="reg-prose">
+              Thanks. Your report is saved privately - here's how to also tell PvPI, the official channel:
+            </p>
+            <dl className="reg-particulars">
+              <dt>How to report</dt>
+              <dd>{result.pvpi.howToReport}</dd>
               {result.pvpi.links.map((link) => (
-                <li key={link}>
-                  <a href={link} target="_blank" rel="noreferrer">
-                    {link}
-                  </a>
-                </li>
+                <Fragment key={link}>
+                  <dt>Link</dt>
+                  <dd>
+                    <a href={link} target="_blank" rel="noreferrer">
+                      {link}
+                    </a>
+                  </dd>
+                </Fragment>
               ))}
-            </ul>
-            <Button onClick={onClose} fullWidth>
-              Done
-            </Button>
+            </dl>
+            <div className="reg-stack">
+              <Button onClick={onClose} fullWidth>
+                Done
+              </Button>
+            </div>
           </>
         ) : (
           <>
-            <p style={{ color: 'var(--text-2)' }}>
+            <p className="reg-prose reg-prose--muted">
               Asli does not investigate reports. PvPI is the official channel.
             </p>
 
-            <fieldset style={{ border: 'none', padding: 0, margin: '0 0 1rem' }}>
-              <legend style={{ fontWeight: 600, marginBottom: '0.5rem' }}>What kind of problem?</legend>
+            <fieldset style={{ border: 'none', padding: 0, margin: '0 0 1.4rem' }}>
+              <legend className="reg-legend">What kind of problem?</legend>
               {PROBLEM_TYPES.map((option) => (
-                <label key={option.value} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.4rem 0' }}>
+                <label
+                  key={option.value}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.7rem',
+                    minHeight: 'var(--tap-target-min)',
+                    borderBottom: '1px solid var(--rule)',
+                    cursor: 'pointer',
+                  }}
+                >
                   <input
                     type="radio"
                     name="problemType"
                     value={option.value}
                     checked={problemType === option.value}
                     onChange={() => setProblemType(option.value)}
+                    style={{ accentColor: 'var(--margin)', width: 18, height: 18 }}
                   />
                   {option.label}
                 </label>
               ))}
             </fieldset>
 
-            <label htmlFor="report-note" style={{ display: 'block', fontWeight: 600, marginBottom: '0.35rem' }}>
-              Anything else? (optional)
-            </label>
-            <textarea
-              id="report-note"
-              value={note}
-              onChange={(e) => setNote(e.target.value.slice(0, 280))}
-              maxLength={280}
-              rows={3}
-              style={{
-                width: '100%',
-                padding: '0.6rem 0.75rem',
-                borderRadius: '0.6rem',
-                border: '2px solid var(--rule-strong)',
-                background: 'var(--sheet)',
-                color: 'var(--text)',
-                marginBottom: '1rem',
-              }}
-            />
+            <div className="reg-field">
+              <label htmlFor="report-note" className="reg-legend">
+                Anything else? (optional)
+              </label>
+              <textarea
+                id="report-note"
+                value={note}
+                onChange={(e) => setNote(e.target.value.slice(0, 280))}
+                maxLength={280}
+                rows={3}
+                className="reg-field__input"
+                style={{ resize: 'vertical', lineHeight: 1.5 }}
+              />
+            </div>
 
-            <div style={{ marginBottom: '1rem' }}>
-              <p style={{ fontWeight: 600, marginBottom: '0.35rem' }}>Batch details, for the PvPI form</p>
+            <div style={{ marginBottom: '1.2rem' }}>
+              <p className="reg-legend">Batch details, for the PvPI form</p>
               <pre
                 style={{
                   whiteSpace: 'pre-wrap',
-                  background: 'var(--sheet)',
-                  border: '1px solid var(--rule-strong)',
-                  borderRadius: '0.6rem',
-                  padding: '0.6rem 0.75rem',
-                  margin: '0 0 0.5rem',
+                  background: 'var(--sheet-sunk)',
+                  borderTop: '1px solid var(--rule-strong)',
+                  borderBottom: '1px solid var(--rule-strong)',
+                  padding: '0.7rem 0.75rem',
+                  margin: '0 0 0.7rem',
+                  fontFamily: 'var(--face-record)',
+                  fontSize: 'var(--step-small)',
                 }}
               >
                 {batchDetails}
@@ -146,22 +152,22 @@ export function ReportProblemModal({ identity, alertRef, onClose }: ReportProble
             </div>
 
             {status === 'error' ? (
-              <p role="alert" style={{ color: 'var(--flagged)' }}>
+              <p role="alert" className="reg-note reg-note--flagged">
                 Couldn't save your report. Please try again.
               </p>
             ) : null}
 
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <div className="reg-stack">
+              <Button onClick={() => void handleSubmit()} disabled={status === 'submitting'} type="button">
+                {status === 'submitting' ? 'Submitting…' : 'Submit'}
+              </Button>
               <Button variant="secondary" onClick={onClose} type="button">
                 Cancel
-              </Button>
-              <Button onClick={() => void handleSubmit()} disabled={status === 'submitting'} fullWidth type="button">
-                {status === 'submitting' ? 'Submitting…' : 'Submit'}
               </Button>
             </div>
           </>
         )}
-      </Card>
+      </div>
     </div>
   );
 }

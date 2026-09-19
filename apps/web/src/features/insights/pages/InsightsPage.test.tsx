@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PublicStats } from '@asli/contracts';
 import { InsightsPage } from './InsightsPage';
 import type { InsightsDetail } from '../types';
@@ -9,12 +9,16 @@ afterEach(() => {
 });
 
 // jsdom has no ResizeObserver; Recharts' ResponsiveContainer needs one to mount.
+// Re-stubbed per test because afterEach's unstubAllGlobals would otherwise strip it.
 class ResizeObserverStub {
   observe() {}
   unobserve() {}
   disconnect() {}
 }
-vi.stubGlobal('ResizeObserver', ResizeObserverStub);
+
+beforeEach(() => {
+  vi.stubGlobal('ResizeObserver', ResizeObserverStub);
+});
 
 const statsFixture: PublicStats = {
   generatedAt: '2026-09-17T00:00:00.000Z',

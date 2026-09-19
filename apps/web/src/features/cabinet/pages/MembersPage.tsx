@@ -91,75 +91,131 @@ export function MembersPage() {
     }
   }
 
-  if (error) return <p role="alert">{error}</p>;
-  if (!detail) return <p>Loading members…</p>;
+  if (error)
+    return (
+      <main className="reg-sheet">
+        <p role="alert" className="reg-line reg-line--flagged" style={{ textTransform: 'none', marginTop: '1.5rem' }}>
+          {error}
+        </p>
+      </main>
+    );
+  if (!detail)
+    return (
+      <main className="reg-sheet">
+        <p className="reg-line" style={{ marginTop: '1.5rem' }}>
+          <span className="reg-line__ellipsis">Reading the signatures</span>
+        </p>
+      </main>
+    );
 
   return (
-    <section>
-      <h2>Members of {detail.cabinet.name}</h2>
-      <ul style={{ listStyle: 'none', padding: 0 }}>
-        {detail.members.map((member) => {
+    <main className="reg-sheet">
+      <header className="reg-masthead">
+        <h1>Members</h1>
+        <p className="reg-masthead__currency">{detail.cabinet.name}</p>
+      </header>
+
+      <ul className="cabinet-list">
+        {detail.members.map((member, i) => {
           const isSelf = member.userId === currentUserId;
           return (
             <li key={member.userId} className="cabinet-medicine-row">
-              <span>
-                {isSelf ? 'You' : member.userId} — {member.role}
+              <span className="reg-no" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
               </span>
-              <label>
-                Role
-                <select
-                  value={member.role}
-                  onChange={(e) => handleRoleChange(member.userId, e.target.value as Role)}
+              <span className="reg-grow">
+                <span style={{ display: 'block', fontWeight: 700 }}>
+                  {isSelf ? 'You' : member.userId} — {member.role}
+                </span>
+
+                <span className="reg-field" style={{ display: 'block', margin: '0.7rem 0 0.4rem' }}>
+                  <label htmlFor={`role-${member.userId}`} className="reg-legend">
+                    Role
+                  </label>
+                  <select
+                    id={`role-${member.userId}`}
+                    className="reg-select"
+                    value={member.role}
+                    onChange={(e) => handleRoleChange(member.userId, e.target.value as Role)}
+                  >
+                    {ROLES.map((r) => (
+                      <option key={r} value={r}>
+                        {r}
+                      </option>
+                    ))}
+                  </select>
+                </span>
+
+                <label
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.6rem',
+                    minHeight: 'var(--tap-target-min)',
+                    cursor: 'pointer',
+                  }}
                 >
-                  {ROLES.map((r) => (
-                    <option key={r} value={r}>
-                      {r}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={member.alertsEnabled}
-                  onChange={(e) => handleAlertsToggle(member.userId, e.target.checked)}
-                />
-                Receive alerts
-              </label>
-              {isSelf && (
-                <button type="button" className="tap-target" onClick={() => handleLeave(member.userId)}>
-                  Leave this cabinet
-                </button>
-              )}
+                  <input
+                    type="checkbox"
+                    checked={member.alertsEnabled}
+                    onChange={(e) => handleAlertsToggle(member.userId, e.target.checked)}
+                    style={{ accentColor: 'var(--margin)', width: 18, height: 18 }}
+                  />
+                  Receive alerts
+                </label>
+
+                {isSelf && (
+                  <button type="button" className="reg-btn reg-btn--danger" onClick={() => handleLeave(member.userId)}>
+                    Leave this cabinet
+                  </button>
+                )}
+              </span>
             </li>
           );
         })}
       </ul>
 
-      <h3>Invite someone</h3>
-      <label>
-        Role for new member
-        <select value={inviteRole} onChange={(e) => setInviteRole(e.target.value as Role)}>
+      <div className="reg-head">
+        <h2>Invite someone</h2>
+      </div>
+
+      <div className="reg-field" style={{ marginTop: '1rem' }}>
+        <label htmlFor="invite-role" className="reg-legend">
+          Role for new member
+        </label>
+        <select
+          id="invite-role"
+          className="reg-select"
+          value={inviteRole}
+          onChange={(e) => setInviteRole(e.target.value as Role)}
+        >
           {ROLES.map((r) => (
             <option key={r} value={r}>
               {r}
             </option>
           ))}
         </select>
-      </label>
-      <button type="button" className="tap-target" onClick={handleCreateInvite}>
-        Create invite
-      </button>
+      </div>
+
+      <div className="reg-stack">
+        <button type="button" className="reg-btn reg-btn--primary" onClick={handleCreateInvite}>
+          Create invite
+        </button>
+      </div>
+
       {invite && (
-        <div>
-          <p>
-            Invite code: <strong>{invite.code}</strong>
-          </p>
-          <button type="button" className="tap-target" onClick={handleShare}>
-            Share invite link
-          </button>
-        </div>
+        <>
+          <dl className="reg-particulars" style={{ marginTop: '1.4rem' }}>
+            <dt>Invite code</dt>
+            <dd>{invite.code}</dd>
+          </dl>
+          <div className="reg-stack">
+            <button type="button" className="reg-btn" onClick={handleShare}>
+              Share invite link
+            </button>
+          </div>
+        </>
       )}
-    </section>
+    </main>
   );
 }

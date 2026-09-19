@@ -27,13 +27,31 @@ export function InviteAcceptPage() {
   }
 
   return (
-    <section>
-      <h2>Join a family medicine cabinet</h2>
-      <p>Invite code: {code}</p>
-      <button type="button" className="tap-target" onClick={handleAccept} disabled={submitting}>
-        Accept invite
-      </button>
-      {error && <p role="alert">{error}</p>}
-    </section>
+    <main className="reg-sheet">
+      <header className="reg-masthead">
+        <h1>Join a family medicine cabinet</h1>
+      </header>
+
+      <dl className="reg-particulars" style={{ marginTop: '1.4rem' }}>
+        <dt>Invite code</dt>
+        <dd>{code}</dd>
+      </dl>
+
+      <div className="reg-stack">
+        <button
+          type="button"
+          className="reg-btn reg-btn--primary reg-btn--wide"
+          onClick={handleAccept}
+          disabled={submitting}
+        >
+          Accept invite
+        </button>
+      </div>
+      {error && (
+        <p role="alert" className="reg-note reg-note--flagged">
+          {error}
+        </p>
+      )}
+    </main>
   );
 }

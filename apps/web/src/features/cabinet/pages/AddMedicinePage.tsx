@@ -1,5 +1,6 @@
 import { FormEvent, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Field } from '../../../shell/components/Field';
 import { addMedicine } from '../api/cabinets';
 
 // D2 (docs/UX.md screen 3-6) owns the scan/photo flow; its result card's "Save to family medicines"
@@ -39,33 +40,48 @@ export function AddMedicinePage() {
   }
 
   return (
-    <section>
-      <h2>Add a medicine</h2>
-      <p>
+    <main className="reg-sheet">
+      <header className="reg-masthead">
+        <h1>Add a medicine</h1>
+      </header>
+      <p className="reg-prose">
         Have a strip or bill photo? <Link to={`/scan?saveToCabinet=${cabinetId ?? ''}`}>Scan it instead.</Link>
       </p>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Batch number (on the strip or carton)
-          <input value={batchNumber} onChange={(e) => setBatchNumber(e.target.value)} required />
-        </label>
-        <label>
-          Medicine name (optional)
-          <input value={productName} onChange={(e) => setProductName(e.target.value)} />
-        </label>
-        <label>
-          Manufacturer (optional)
-          <input value={manufacturer} onChange={(e) => setManufacturer(e.target.value)} />
-        </label>
-        <label>
-          Whose medicine is this? (optional)
-          <input value={forPerson} onChange={(e) => setForPerson(e.target.value)} />
-        </label>
-        {error && <p role="alert">{error}</p>}
-        <button type="submit" disabled={submitting || !batchNumber.trim()} className="tap-target">
+      <form onSubmit={handleSubmit} style={{ marginTop: '1.4rem' }}>
+        <Field
+          label="Batch number (on the strip or carton)"
+          value={batchNumber}
+          onChange={(e) => setBatchNumber(e.target.value)}
+          required
+        />
+        <Field
+          label="Medicine name (optional)"
+          value={productName}
+          onChange={(e) => setProductName(e.target.value)}
+        />
+        <Field
+          label="Manufacturer (optional)"
+          value={manufacturer}
+          onChange={(e) => setManufacturer(e.target.value)}
+        />
+        <Field
+          label="Whose medicine is this? (optional)"
+          value={forPerson}
+          onChange={(e) => setForPerson(e.target.value)}
+        />
+        {error && (
+          <p role="alert" className="reg-note reg-note--flagged" style={{ margin: '0 0 1rem' }}>
+            {error}
+          </p>
+        )}
+        <button
+          type="submit"
+          disabled={submitting || !batchNumber.trim()}
+          className="reg-btn reg-btn--primary reg-btn--wide"
+        >
           Save to family medicines
         </button>
       </form>
-    </section>
+    </main>
   );
 }
