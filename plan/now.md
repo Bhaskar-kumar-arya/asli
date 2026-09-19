@@ -1,35 +1,39 @@
 # NOW.md — updated whenever a lane starts, stops, or finishes
 
-**2026-09-19 (update 2): reconciled against plan/INTEGRATION_LOG.md again — Z1 is done bar one mechanical
-deploy step and the phone recording; the Bedrock block on scanning no longer applies (see below).**
+**2026-09-19 (update 3): all engineering work is done. `int` is fully current with `main` across
+all 14 stacks (Z1's `DELETE /v1/me` deployed, C's Gemini rework deployed, both verified live).
+E's accuracy harness has run for real against `int` and produced a real report. T00's AWS Budgets
+alert is confirmed created. Everything left is human-only — see below.**
 
 ## Active right now
 | Lane | Folder | Started | Status |
 |---|---|---|---|
-| Z2 | main | in progress | Submission package. README.md and submission/WRITEUP.md drafted with real numbers; remaining: screenshots/GIF, PNG export of the architecture diagram, Builder Center blog post, video (human, needs a phone/screen recording), team placeholders. See plan/tasks/Z2-submission-package.md Handoff. |
-
-## Ready to start next / mechanical follow-ups
-| Lane | Note |
-|---|---|
-| Z1 | Code-complete, `int` fully deployed except `LaneZ1Stack-int` itself (`DELETE /v1/me`) — `cdk diff` confirms a clean, purely-additive change (new Lambda + IAM + route only). Blocked only on a human approving the actual `cdk deploy` (this session's sandbox blocks shared-infra mutations by default). Demo-replay screen recording still needs a human with an Android phone. |
+| Z2 | main | in progress | Submission package. README.md, WRITEUP.md, BLOG_POST.md, LICENSE and the exported architecture PNG are all drafted with real numbers. Remaining is human-only: screenshots/GIF, publishing the Builder Center blog post, the demo video, team-name placeholders. See plan/tasks/Z2-submission-package.md Handoff. |
 
 ## No longer blocked
-- **Scan extraction (`POST /v1/scans`) is unblocked.** Bedrock access itself is still account-gated (see T01), but as of 2026-09-19 the extraction pipeline (`services/scan`) no longer hard-depends on it: `services/scan/src/scans/extraction-provider.ts` picks a backend (`bedrock` | `textract` | `gemini`) from an SSM parameter at Lambda runtime, no redeploy needed to switch. **`gemini` is the deployed default** (Google Gemini free-tier key in Secrets Manager, `gemini-3.5-flash-lite` model id, itself SSM-driven in case Google deprecates it) — verified end-to-end against the real API and a real medicine photo, meaningfully more accurate on dense small-print labels than the `textract` (OCR + regex rules, zero external AI call) fallback. `bedrock` stays wired and IAM-granted so flipping back the moment account access clears is one `aws ssm put-parameter --value bedrock`. This means E's accuracy harness and N's invoice-photo path can now actually run for real once photos exist — they were previously blocked on this.
+- **Scan extraction (`POST /v1/scans`) is unblocked and deployed to `int`.** Bedrock access itself is still account-gated (see T01), but the extraction pipeline (`services/scan`) no longer hard-depends on it: `services/scan/src/scans/extraction-provider.ts` picks a backend (`bedrock` | `textract` | `gemini`) from an SSM parameter at Lambda runtime, no redeploy needed to switch. **`gemini` is the deployed default** and verified live end-to-end on `int` against real photos, including a correct `NO_ALERT_FOUND` and a correct `FLAGGED` (with real CDSCO source citation) result. `bedrock` stays wired and IAM-granted so flipping back the moment account access clears is one `aws ssm put-parameter --value bedrock`.
+- **E's accuracy harness has run for real against `int`.** `pnpm --filter @asli/accuracy-harness run:accuracy -- --stage int --upload` produced a real report (batch-exact 73.3%, manufacturer STRONG 86.7%, expiry-month exact 40.0%, seeded tier-correctness 44/44, avg latency 3574ms), uploaded to the public bucket for J's dashboard, with a measured angle-vs-accuracy comparison logged to `submission/LEARNING_LOG.md`. Fixed a real bug in the harness itself along the way (`resolveStageConfig` was reading the wrong SSM prefix — see `plan/INTEGRATION_LOG.md`'s 2026-09-19 note).
+- **T00's AWS Budgets alert is confirmed created** (`My Monthly Cost Budget` $50, `asli-int-team-credit` $100 with 50%/80% thresholds, both healthy) — this acceptance criterion is met, `plan/tasks/T00-scaffold.md` updated accordingly.
 
 ## Blocked (AWS account-wide restriction, see T01 Handoff)
 | Lane | Blocked on |
 |---|---|
-| A3 (PDF/Textract fallback) | Account-wide `SubscriptionRequiredException` on Textract *for the bulk-PDF-analysis path A3 uses*. Unmerged on `lane/A3`, not wired into A2's `build.ts`. Per the P2 cutting rule, recommended to stay unmerged unless this clears. (Note: C's `textract` scan-extraction fallback uses plain `DetectDocumentText`/`AnalyzeDocument`, a different call pattern, and that one works — see "No longer blocked" above. The two aren't the same restriction in practice even though both are nominally "Textract.") |
+| A3 (PDF/Textract fallback) | Account-wide `SubscriptionRequiredException` on Textract *for the bulk-PDF-analysis path A3 uses*. Unmerged on `lane/A3`, not wired into A2's `build.ts`. Per the P2 cutting rule, recommended to stay unmerged unless this clears. (Note: C's `textract` scan-extraction fallback uses plain `DetectDocumentText`/`AnalyzeDocument`, a different call pattern, and that one works.) |
 | H (avp mode) | Verified Permissions blocked the same way; ships with `ENABLE_AVP=false` stub authz. |
 | I (Polly hi/kn read-aloud) | Translate/Polly blocked the same way; also Polly has zero hi-IN/kn-IN voices in `ap-south-1` regardless. Falls back to browser `speechSynthesis`. |
 
-## Human-only follow-ups (not AWS-restriction related)
-- T00: AWS Budgets alert (50%/80%) still needs a console click-through.
-- K (QR): needs ≥3 real pack QR photos shot and decode rate logged (`VITE_FEATURE_QR` off by default).
-- E (accuracy harness): tooling done; needs 30 real strip photos + 10 real bills labeled to produce real accuracy numbers — now unblocked end-to-end since scan extraction no longer needs Bedrock (see above).
-- Push/email: fan-out verified, but real *delivery* needs a live push subscription + an SES-verified recipient inbox.
-- D1: real Cognito sign-in never smoke-tested against Amplify Hosting's deployed env vars.
-- hi/kn guidance strings: hand-drafted only, need native-speaker review (`scripts/content/review.md`).
+## Human-only follow-ups (everything else that remains in the whole project)
+- **Testset size (E):** still 15/30 strips, 1/10 bills labelled — tooling and pipeline are fully proven end-to-end, but closing the gap to the ≥30/≥10 acceptance criterion needs actual human-shot photos of real Indian medicine strips/bills (`testset/README.md`); internet sourcing has been exhausted (`testset/sources.md`'s "Coverage gaps" section).
+- **Demo-replay screen recording:** needs a human with an Android phone (`plan/tasks/Z1-hardening-freeze.md` Handoff has the exact seeded-data walkthrough).
+- **Submission video:** record per `submission/DEMO_SCRIPT.md`, ≤3:00, captions, mock-strip disclosure on screen, upload and link.
+- **README screenshots/GIF:** needs a browser against the live Amplify URL (https://main.d2ag2oukltn4mc.amplifyapp.com).
+- **AWS Builder Center blog:** publish `submission/BLOG_POST.md`, fill in `{{BUILDER_CENTER_BLOG_URL}}` in `WRITEUP.md`.
+- **Team placeholders:** `{{TEAM_NAME}}` in `LICENSE`/README, teammate names/roles and Builder Center profile links in `WRITEUP.md` (fast-track eligibility).
+- **K (QR):** needs ≥3 real pack QR photos shot and decode rate logged (`VITE_FEATURE_QR` off by default, code path otherwise complete).
+- **Push/email delivery:** fan-out verified, but real *delivery* needs a live push subscription + an SES-verified recipient inbox.
+- **D1:** real Cognito sign-in never smoke-tested against Amplify Hosting's deployed env vars specifically (has been tested directly against the API/Cognito pool from a script instead).
+- **hi/kn guidance strings:** hand-drafted only, need native-speaker review (`scripts/content/review.md`).
+- **Early/final submission** through the hackathon's own form (Saturday 18:00 early, ≥3h before deadline final).
 
 ## Recently finished (see plan/INTEGRATION_LOG.md for full detail and evidence)
-All of T00–T02, A1, A2, B, C, D1/D2/D3, F, G1, G2, H, I, S, J, K, L, M, N are merged to `main`; Wave 1 and Wave 2 are deployed to `int`. C's scan extraction was reworked 2026-09-19 to be Bedrock-optional (Gemini default, Textract/Bedrock as runtime-switchable fallbacks — see "No longer blocked" above). Z1's hardening pass (audit, demo seed data, pricing table, `DELETE /v1/me`) is code-complete and `int` is fully redeployed except `LaneZ1Stack-int` itself. Z2 is in progress.
+All of T00–T02, A1, A2, B, C, D1/D2/D3, F, G1, G2, H, I, S, J, K, L, M, N, Z1 are merged to `main` and deployed to `int` (all 14 stacks, including `LaneZ1Stack-int` and the redeployed `LaneCStack-int`). C's scan extraction was reworked 2026-09-19 to be Bedrock-optional (Gemini default, Textract/Bedrock as runtime-switchable fallbacks). Z1's hardening pass (audit, demo seed data, pricing table, `DELETE /v1/me`) is fully done including its own deploy. E's harness has produced a real accuracy report against live `int`. Z2 is in progress, docs-complete, blocked only on human-only deliverables.
