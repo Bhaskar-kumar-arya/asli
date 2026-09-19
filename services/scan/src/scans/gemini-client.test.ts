@@ -103,7 +103,7 @@ describe('extractStrip (Gemini)', () => {
     const fetchImpl = fakeFetch([geminiResponse(validStripInput)]);
     await extractStrip({ apiKey: 'k', modelId: 'gemini-3.5-flash-lite', fetchImpl }, new Uint8Array([1]), 'image/jpeg');
 
-    const [, init] = (fetchImpl as ReturnType<typeof vi.fn>).mock.calls[0];
+    const [, init] = (fetchImpl as ReturnType<typeof vi.fn>).mock.calls[0]!;
     expect(init.signal).toBeInstanceOf(AbortSignal);
   });
 });

@@ -6,11 +6,11 @@ import {
   type MedicineItem,
   type MedicineWithStatus,
 } from '@asli/contracts';
-import { createAuthz } from '../authz';
+import { createAuthz } from '@asli/authz';
 import { getDdb, cabinetsTableName } from '../db';
 import { forbidden, jsonResponse, notFound, parseJsonBody, userIdFromEvent, withErrors } from '../http';
 import { withIdempotency } from '../idempotency';
-import { createCabinetRepo, medicineGsi3Keys, newMedId, roleOf } from '../repo';
+import { createCabinetRepo, medicineGsi3Keys, newMedId } from '../repo';
 
 const baseHandler = withErrors(async (event: APIGatewayProxyEventV2WithJWTAuthorizer) => {
   const userId = userIdFromEvent(event);
@@ -20,10 +20,7 @@ const baseHandler = withErrors(async (event: APIGatewayProxyEventV2WithJWTAuthor
   const { identity, label, forPerson } = parseJsonBody(event, (raw) => AddMedicineRequestSchema.parse(raw));
 
   const repo = createCabinetRepo({ ddb: getDdb(), tableName: cabinetsTableName() });
-  const authz = createAuthz({
-    mode: 'stub',
-    lookupRole: async (uid, cid) => roleOf(await repo.getMember(cid, uid)),
-  });
+  const authz = createAuthz({ mode: 'stub', ddb: getDdb(), cabinetsTable: cabinetsTableName() });
 
   if (!(await authz.isAllowed(userId, 'AddMedicine', cabinetId))) throw forbidden();
 

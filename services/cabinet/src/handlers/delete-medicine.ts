@@ -1,8 +1,8 @@
 import type { APIGatewayProxyEventV2WithJWTAuthorizer } from 'aws-lambda';
-import { createAuthz } from '../authz';
+import { createAuthz } from '@asli/authz';
 import { getDdb, cabinetsTableName } from '../db';
 import { forbidden, notFound, userIdFromEvent, withErrors } from '../http';
-import { createCabinetRepo, roleOf } from '../repo';
+import { createCabinetRepo } from '../repo';
 
 export const handler = withErrors(async (event: APIGatewayProxyEventV2WithJWTAuthorizer) => {
   const userId = userIdFromEvent(event);
@@ -11,10 +11,7 @@ export const handler = withErrors(async (event: APIGatewayProxyEventV2WithJWTAut
   if (!cabinetId || !medId) throw notFound('cabinetId and medId path parameters are required');
 
   const repo = createCabinetRepo({ ddb: getDdb(), tableName: cabinetsTableName() });
-  const authz = createAuthz({
-    mode: 'stub',
-    lookupRole: async (uid, cid) => roleOf(await repo.getMember(cid, uid)),
-  });
+  const authz = createAuthz({ mode: 'stub', ddb: getDdb(), cabinetsTable: cabinetsTableName() });
 
   if (!(await authz.isAllowed(userId, 'RemoveMedicine', cabinetId))) throw forbidden();
 

@@ -27,9 +27,14 @@ export function register(app: App, stage: string): void {
 
   const cabinetsTableName = importParam(stack, shared, SSM_PATHS.table('cabinets'));
   const cabinetsStreamArn = importParam(stack, shared, SSM_PATHS.tableStream('cabinets'));
+  // globalIndexes required so grantReadWriteData below also covers the GSI ARNs -
+  // listMembershipsForUser (repo.ts) queries GSI1, without it dynamodb:Query on the
+  // index is denied even though the base table grant succeeds (see the same note on
+  // flaggedBatchesTable below).
   const cabinetsTable = dynamodb.Table.fromTableAttributes(stack, 'CabinetsTable', {
     tableName: cabinetsTableName,
     tableStreamArn: cabinetsStreamArn,
+    globalIndexes: ['GSI1', 'GSI2', 'GSI3'],
   });
 
   const flaggedBatchesTableName = importParam(stack, shared, SSM_PATHS.table('flagged-batches'));

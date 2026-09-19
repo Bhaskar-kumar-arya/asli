@@ -11,6 +11,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@asli/authz": "workspace:*",
     "@asli/contracts": "workspace:*",
     "@asli/matching": "workspace:*",
     "@aws-lambda-powertools/idempotency": "^2.11.0",

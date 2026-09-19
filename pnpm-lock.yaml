@@ -352,6 +352,9 @@ importers:
 
   services/cabinet:
     dependencies:
+      '@asli/authz':
+        specifier: workspace:*
+        version: link:../../packages/authz
       '@asli/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts

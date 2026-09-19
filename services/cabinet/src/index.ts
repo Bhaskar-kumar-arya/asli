@@ -1,4 +1,4 @@
-export { createAuthz, type Authz } from './authz';
+export { createAuthz, type Authz } from '@asli/authz';
 export { runRetroactiveCheck } from './check';
 export {
   createCabinetRepo,

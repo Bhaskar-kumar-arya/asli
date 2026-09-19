@@ -102,12 +102,12 @@ weight in `submission/DEMO_SCRIPT.md`:
 
    ![No alert found result card](docs/screenshots/no-alert-result.png)
 
-3. **Shared cabinet** (1:45–2:35) — "Mom's medicines" with both the clean and flagged medicine
-   saved together, matching the real seeded demo data used for `submission/DEMO_SCRIPT.md`. The
-   full "second phone/caregiver alert arriving" moment is best shown live in the video rather than
-   a static screenshot.
+3. **Home screen: family's medicines** (1:45–2:35) — both the clean and flagged medicine saved to
+   "Mom's medicines", matching the real seeded demo data used for `submission/DEMO_SCRIPT.md`, with
+   the last CDSCO update month shown. The full "second phone/caregiver alert arriving" moment is
+   best shown live in the video rather than a static screenshot.
 
-   ![Shared cabinet](docs/screenshots/shared-cabinet.png)
+   ![Home screen with family's medicines](docs/screenshots/shared-cabinet.png)
 
 ## Repository layout
 ```

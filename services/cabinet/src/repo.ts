@@ -27,7 +27,6 @@ import {
   type MedicineIdentity,
   type MedicineItem,
   type MemberItem,
-  type Role,
 } from '@asli/contracts';
 import { batchSkeleton, normalizeBatch } from '@asli/matching';
 
@@ -267,8 +266,4 @@ export function medicineGsi3Keys(cabinetId: string, medId: string, identity: Med
 
 export function matchKeyFor(cabinetId: string, medId: string, alertId: string) {
   return { PK: cabinetPk(cabinetId), SK: cabinetMatchSk(medId, alertId) };
-}
-
-export function roleOf(member: MemberItem | undefined): Role | undefined {
-  return member?.role;
 }
