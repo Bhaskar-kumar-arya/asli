@@ -738,6 +738,85 @@ a:hover {
   word-break: break-word;
 }
 
+/* Public returns run wider than a phone sheet. */
+.reg-sheet--wide {
+  max-width: 760px;
+}
+
+/* A tabulated return. Ruled, tabular figures, no zebra fill. */
+.reg-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  margin: 0.8rem 0 0.4rem;
+}
+
+.reg-table caption {
+  text-align: start;
+  font-size: var(--step-small);
+  color: var(--text-2);
+  line-height: 1.4;
+  margin-bottom: 0.6rem;
+}
+
+.reg-table th {
+  font-family: var(--face-print);
+  font-size: var(--step-legend);
+  font-weight: 700;
+  font-stretch: 88%;
+  letter-spacing: var(--track-legend);
+  text-transform: uppercase;
+  color: var(--text-3);
+  text-align: start;
+  padding: 0.4rem 0.5rem 0.4rem 0;
+  border-bottom: 2px solid var(--text);
+  white-space: nowrap;
+}
+
+.reg-table td {
+  font-family: var(--face-record);
+  font-size: var(--step-small);
+  color: var(--text);
+  padding: 0.55rem 0.5rem 0.55rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.reg-table th:last-child,
+.reg-table td:last-child {
+  padding-inline-end: 0;
+}
+
+.reg-table [data-num],
+.reg-table th[data-num] {
+  text-align: end;
+}
+
+.reg-table-scroll {
+  overflow-x: auto;
+}
+
+/* A fold-out: the register's own way of holding detail. */
+.reg-details {
+  border-bottom: 1px solid var(--rule);
+  margin: 0.6rem 0 1rem;
+}
+
+.reg-details > summary {
+  cursor: pointer;
+  padding: 0.7rem 0;
+  font-family: var(--face-print);
+  font-size: var(--step-legend);
+  font-weight: 700;
+  font-stretch: 88%;
+  letter-spacing: var(--track-legend);
+  text-transform: uppercase;
+  color: var(--margin);
+}
+
+.reg-details > summary::marker {
+  color: var(--margin);
+}
+
 /* ---------- printed states: no toasts, no spinners ---------- */
 
 .reg-line {

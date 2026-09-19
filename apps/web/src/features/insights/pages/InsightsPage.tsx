@@ -10,7 +10,6 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { Card } from '../../../shell/components/Card';
 import { getPublicInsights, getPublicStats } from '../api/insights';
 import { reasonLabel } from '../lib/reasonLabels';
 import type { InsightsDetail } from '../types';
@@ -35,12 +34,21 @@ function fmtPct(n: number): string {
 
 /** "Source: CDSCO alerts, computed by Asli on <date>" (this task's Deliverable 2). */
 function SourceLine({ generatedAt }: { generatedAt: string }) {
-  return (
-    <p style={{ margin: '0.25rem 0 1rem', fontSize: '0.85rem', color: 'var(--text-2, #666)' }}>
-      Source: CDSCO alerts, computed by Asli on {fmtDate(generatedAt)}
-    </p>
-  );
+  return <p className="reg-annotation">Source: CDSCO alerts, computed by Asli on {fmtDate(generatedAt)}</p>;
 }
+
+const AXIS = { fill: 'var(--text-2)', fontFamily: 'var(--face-record)' } as const;
+
+const TOOLTIP = {
+  background: 'var(--sheet)',
+  border: '1px solid var(--text)',
+  borderRadius: 0,
+  fontFamily: 'var(--face-record)',
+  fontSize: '0.85rem',
+  color: 'var(--text)',
+} as const;
+
+const LEGEND = { fontFamily: 'var(--face-print)', fontSize: '0.8rem' } as const;
 
 /** Public, no-login "how big is this problem" page (docs/UX.md screen 13, plan/tasks/M-insights.md).
  * Every number is an aggregate CDSCO alert count - never a manufacturer ranking or named-company
@@ -66,8 +74,22 @@ export function InsightsPage() {
     };
   }, []);
 
-  if (error) return <p role="alert">{error}</p>;
-  if (!stats || !insights) return <p>Loading insights…</p>;
+  if (error)
+    return (
+      <main className="reg-sheet reg-sheet--wide">
+        <p role="alert" className="reg-line reg-line--flagged" style={{ textTransform: 'none', marginTop: '1.5rem' }}>
+          {error}
+        </p>
+      </main>
+    );
+  if (!stats || !insights)
+    return (
+      <main className="reg-sheet reg-sheet--wide">
+        <p className="reg-line" style={{ marginTop: '1.5rem' }}>
+          <span className="reg-line__ellipsis">Compiling the return</span>
+        </p>
+      </main>
+    );
 
   const monthData = insights.byMonthCategory.map((m) => ({ ...m, monthLabel: fmtMonth(m.month) }));
   const reasonData = insights.topReasonCodes
@@ -77,35 +99,33 @@ export function InsightsPage() {
   const latestMonthEntry = monthData[monthData.length - 1];
 
   return (
-    <main style={{ maxWidth: 720, margin: '0 auto', padding: '1rem 1rem 3rem' }}>
-      <h1 style={{ margin: '0 0 0.25rem' }}>CDSCO alerts, at a glance</h1>
-      <p style={{ color: 'var(--text-2, #666)', marginTop: 0 }}>
+    <main className="reg-sheet reg-sheet--wide">
+      <header className="reg-masthead">
+        <h1>CDSCO alerts, at a glance</h1>
+        <p className="reg-masthead__currency">Summary of record · {fmtMonth(stats.latestMonth)}</p>
+      </header>
+
+      <p className="reg-prose">
         This does not certify any medicine as safe. It summarises batches CDSCO has already reported as Not of
         Standard Quality or spurious.
       </p>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '0.75rem', marginBottom: '1.5rem' }}>
-        <Card>
-          <h2 style={{ margin: '0 0 0.25rem', fontSize: '1rem' }}>Flagged batches</h2>
-          <p style={{ fontSize: '1.75rem', margin: 0 }}>{stats.totalFlaggedBatches}</p>
-        </Card>
-        <Card>
-          <h2 style={{ margin: '0 0 0.25rem', fontSize: '1rem' }}>Months covered</h2>
-          <p style={{ fontSize: '1.75rem', margin: 0 }}>{stats.monthsCovered}</p>
-        </Card>
-        <Card>
-          <h2 style={{ margin: '0 0 0.25rem', fontSize: '1rem' }}>Latest CDSCO list</h2>
-          <p style={{ fontSize: '1.75rem', margin: 0 }}>{fmtMonth(stats.latestMonth)}</p>
-        </Card>
-        <Card>
-          <h2 style={{ margin: '0 0 0.25rem', fontSize: '1rem' }}>Families protected</h2>
-          <p style={{ fontSize: '1.75rem', margin: 0 }}>{stats.cabinetsProtected}</p>
-        </Card>
-      </div>
+      <dl className="reg-particulars" style={{ marginTop: '1.4rem' }}>
+        <dt>Flagged batches</dt>
+        <dd>{stats.totalFlaggedBatches}</dd>
+        <dt>Months covered</dt>
+        <dd>{stats.monthsCovered}</dd>
+        <dt>Latest CDSCO list</dt>
+        <dd>{fmtMonth(stats.latestMonth)}</dd>
+        <dt>Families protected</dt>
+        <dd>{stats.cabinetsProtected}</dd>
+      </dl>
 
-      <section aria-labelledby="by-month-heading" style={{ marginBottom: '2rem' }}>
-        <h2 id="by-month-heading">Flagged batches per month</h2>
-        <p>
+      <section aria-labelledby="by-month-heading">
+        <div className="reg-head">
+          <h2 id="by-month-heading">Flagged batches per month</h2>
+        </div>
+        <p className="reg-prose" style={{ marginTop: '0.8rem' }}>
           {latestMonthEntry
             ? `In ${latestMonthEntry.monthLabel}, CDSCO reported ${latestMonthEntry.NSQ} Not-of-Standard-Quality and ${latestMonthEntry.SPURIOUS} spurious batches. Totals across all ${monthData.length} covered months are shown below.`
             : 'No months have been computed yet.'}
@@ -113,43 +133,47 @@ export function InsightsPage() {
         <div role="img" aria-label={`Bar chart of flagged batches per month, split by Not of Standard Quality and spurious, across ${monthData.length} months.`}>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={monthData} margin={{ left: 0, right: 8 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="monthLabel" fontSize={12} />
-              <YAxis allowDecimals={false} fontSize={12} />
-              <Tooltip />
-              <Legend />
+              <CartesianGrid stroke="var(--chart-grid)" strokeDasharray="2 4" vertical={false} />
+              <XAxis dataKey="monthLabel" fontSize={11} tick={AXIS} stroke="var(--rule-strong)" />
+              <YAxis allowDecimals={false} fontSize={11} tick={AXIS} stroke="var(--rule-strong)" />
+              <Tooltip contentStyle={TOOLTIP} />
+              <Legend wrapperStyle={LEGEND} />
               <Bar dataKey="NSQ" name="Not of Standard Quality" stackId="a" fill="var(--chart-1)" />
               <Bar dataKey="SPURIOUS" name="Spurious" stackId="a" fill="var(--chart-2)" />
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <details>
+        <details className="reg-details">
           <summary>Table of month-by-month counts</summary>
-          <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '0.5rem' }}>
-            <thead>
-              <tr>
-                <th style={{ textAlign: 'left' }}>Month</th>
-                <th style={{ textAlign: 'right' }}>NSQ</th>
-                <th style={{ textAlign: 'right' }}>Spurious</th>
-              </tr>
-            </thead>
-            <tbody>
-              {monthData.map((m) => (
-                <tr key={m.month}>
-                  <td>{m.monthLabel}</td>
-                  <td style={{ textAlign: 'right' }}>{m.NSQ}</td>
-                  <td style={{ textAlign: 'right' }}>{m.SPURIOUS}</td>
+          <div className="reg-table-scroll">
+            <table className="reg-table">
+              <thead>
+                <tr>
+                  <th>Month</th>
+                  <th data-num>NSQ</th>
+                  <th data-num>Spurious</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {monthData.map((m) => (
+                  <tr key={m.month}>
+                    <td>{m.monthLabel}</td>
+                    <td data-num>{m.NSQ}</td>
+                    <td data-num>{m.SPURIOUS}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </details>
         <SourceLine generatedAt={insights.generatedAt} />
       </section>
 
-      <section aria-labelledby="by-reason-heading" style={{ marginBottom: '2rem' }}>
-        <h2 id="by-reason-heading">Most common reasons</h2>
-        <p>
+      <section aria-labelledby="by-reason-heading">
+        <div className="reg-head">
+          <h2 id="by-reason-heading">Most common reasons</h2>
+        </div>
+        <p className="reg-prose" style={{ marginTop: '0.8rem' }}>
           {reasonData[0]
             ? `The most common reason was "${reasonData[0].label}" (${reasonData[0].count} batches).`
             : 'No reason codes have been computed yet.'}
@@ -157,10 +181,10 @@ export function InsightsPage() {
         <div role="img" aria-label="Bar chart of flagged batch counts by quality-failure reason.">
           <ResponsiveContainer width="100%" height={Math.max(200, reasonData.length * 40)}>
             <BarChart data={reasonData} layout="vertical" margin={{ left: 8, right: 16 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" allowDecimals={false} fontSize={12} />
-              <YAxis type="category" dataKey="code" width={110} fontSize={12} />
-              <Tooltip formatter={(value: number, _name, item) => [value, item.payload.label]} />
+              <CartesianGrid stroke="var(--chart-grid)" strokeDasharray="2 4" horizontal={false} />
+              <XAxis type="number" allowDecimals={false} fontSize={11} tick={AXIS} stroke="var(--rule-strong)" />
+              <YAxis type="category" dataKey="code" width={110} fontSize={11} tick={AXIS} stroke="var(--rule-strong)" />
+              <Tooltip contentStyle={TOOLTIP} formatter={(value: number, _name, item) => [value, item.payload.label]} />
               <Bar dataKey="count" name="Batches" fill="var(--chart-1)" />
             </BarChart>
           </ResponsiveContainer>
@@ -168,9 +192,11 @@ export function InsightsPage() {
         <SourceLine generatedAt={insights.generatedAt} />
       </section>
 
-      <section aria-labelledby="by-source-heading" style={{ marginBottom: '2rem' }}>
-        <h2 id="by-source-heading">Reporting labs</h2>
-        <p>
+      <section aria-labelledby="by-source-heading">
+        <div className="reg-head">
+          <h2 id="by-source-heading">Reporting labs</h2>
+        </div>
+        <p className="reg-prose" style={{ marginTop: '0.8rem' }}>
           {sourceData.length > 0
             ? `${sourceData.length} labs have reported flagged batches. The busiest, ${sourceData[0]?.label}, reported ${sourceData[0]?.count}.`
             : 'No reporting-source data has been computed yet.'}
@@ -178,10 +204,10 @@ export function InsightsPage() {
         <div role="img" aria-label="Bar chart of flagged batch counts by reporting lab.">
           <ResponsiveContainer width="100%" height={Math.max(200, sourceData.length * 40)}>
             <BarChart data={sourceData} layout="vertical" margin={{ left: 8, right: 16 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" allowDecimals={false} fontSize={12} />
-              <YAxis type="category" dataKey="label" width={140} fontSize={12} />
-              <Tooltip />
+              <CartesianGrid stroke="var(--chart-grid)" strokeDasharray="2 4" horizontal={false} />
+              <XAxis type="number" allowDecimals={false} fontSize={11} tick={AXIS} stroke="var(--rule-strong)" />
+              <YAxis type="category" dataKey="label" width={140} fontSize={11} tick={AXIS} stroke="var(--rule-strong)" />
+              <Tooltip contentStyle={TOOLTIP} />
               <Bar dataKey="count" name="Batches" fill="var(--chart-2)" />
             </BarChart>
           </ResponsiveContainer>
@@ -190,43 +216,47 @@ export function InsightsPage() {
       </section>
 
       <section aria-labelledby="lag-heading">
-        <h2 id="lag-heading">Timing</h2>
-        <p>
+        <div className="reg-head">
+          <h2 id="lag-heading">Timing</h2>
+        </div>
+        <p className="reg-prose" style={{ marginTop: '0.8rem' }}>
           {insights.withinExpiry.rows > 0
             ? `${fmtPct(insights.withinExpiry.withinExpiryShare)} of flagged batches were still within their expiry date when CDSCO reported them.`
             : 'No timing data has been computed yet.'}
         </p>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <caption style={{ textAlign: 'left', marginBottom: '0.5rem' }}>
-            Months from manufacture to alert, and months remaining from alert to expiry (median, 10th/90th
-            percentile, and longest seen)
-          </caption>
-          <thead>
-            <tr>
-              <th style={{ textAlign: 'left' }}></th>
-              <th style={{ textAlign: 'right' }}>Median</th>
-              <th style={{ textAlign: 'right' }}>10th pct.</th>
-              <th style={{ textAlign: 'right' }}>90th pct.</th>
-              <th style={{ textAlign: 'right' }}>Longest</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Manufacture → alert</td>
-              <td style={{ textAlign: 'right' }}>{insights.mfgToAlertLagMonths.median}</td>
-              <td style={{ textAlign: 'right' }}>{insights.mfgToAlertLagMonths.p10}</td>
-              <td style={{ textAlign: 'right' }}>{insights.mfgToAlertLagMonths.p90}</td>
-              <td style={{ textAlign: 'right' }}>{insights.mfgToAlertLagMonths.max}</td>
-            </tr>
-            <tr>
-              <td>Alert → expiry remaining</td>
-              <td style={{ textAlign: 'right' }}>{insights.alertToExpiryRemainingMonths.median}</td>
-              <td style={{ textAlign: 'right' }}>{insights.alertToExpiryRemainingMonths.p10}</td>
-              <td style={{ textAlign: 'right' }}>{insights.alertToExpiryRemainingMonths.p90}</td>
-              <td style={{ textAlign: 'right' }}>{insights.alertToExpiryRemainingMonths.max}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="reg-table-scroll">
+          <table className="reg-table">
+            <caption>
+              Months from manufacture to alert, and months remaining from alert to expiry (median, 10th/90th
+              percentile, and longest seen)
+            </caption>
+            <thead>
+              <tr>
+                <th></th>
+                <th data-num>Median</th>
+                <th data-num>10th pct.</th>
+                <th data-num>90th pct.</th>
+                <th data-num>Longest</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Manufacture → alert</td>
+                <td data-num>{insights.mfgToAlertLagMonths.median}</td>
+                <td data-num>{insights.mfgToAlertLagMonths.p10}</td>
+                <td data-num>{insights.mfgToAlertLagMonths.p90}</td>
+                <td data-num>{insights.mfgToAlertLagMonths.max}</td>
+              </tr>
+              <tr>
+                <td>Alert → expiry remaining</td>
+                <td data-num>{insights.alertToExpiryRemainingMonths.median}</td>
+                <td data-num>{insights.alertToExpiryRemainingMonths.p10}</td>
+                <td data-num>{insights.alertToExpiryRemainingMonths.p90}</td>
+                <td data-num>{insights.alertToExpiryRemainingMonths.max}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <SourceLine generatedAt={insights.generatedAt} />
       </section>
     </main>

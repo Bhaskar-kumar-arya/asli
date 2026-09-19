@@ -61,8 +61,8 @@ describe('PharmacyPage', () => {
 
     await waitFor(() => expect(screen.getByText('GTL1258')).toBeInTheDocument());
     expect(screen.getByText(/1 rows checked/)).toBeInTheDocument();
-    expect(screen.getByText(/flagged units/)).toBeInTheDocument();
-    expect(screen.getAllByText('10')).toHaveLength(2); // quantity cell + flagged units count
+    expect(screen.getByText(/10 flagged units/)).toBeInTheDocument();
+    expect(screen.getByText('10')).toBeInTheDocument(); // quantity cell
   });
 
   it('shows an error message when the check fails', async () => {

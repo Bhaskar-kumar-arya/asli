@@ -10,6 +10,6 @@ describe('AppRoot', () => {
         <AppRoot />
       </MemoryRouter>,
     );
-    expect(await screen.findByRole('heading', { name: /sign in to asli/i })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /^sign in$/i })).toBeInTheDocument();
   });
 });

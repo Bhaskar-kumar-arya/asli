@@ -53,12 +53,13 @@ describe('DashboardPage', () => {
 
     render(<DashboardPage />);
 
-    await waitFor(() => expect(screen.getByText(/Sample size: 40/)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText('Sample size')).toBeInTheDocument());
+    expect(screen.getByText('Sample size').nextElementSibling).toHaveTextContent('40');
     expect(screen.getByText('strip_vision')).toBeInTheDocument();
     expect(screen.getByText('lighting=poor')).toBeInTheDocument();
     expect(screen.getByText('$0.0012')).toBeInTheDocument();
     expect(screen.getByText('$1.2345')).toBeInTheDocument();
-    expect(screen.getByText('50 rows ingested')).toBeInTheDocument();
+    expect(screen.getByText(/50 rows ingested/)).toBeInTheDocument();
   });
 
   it('shows a fallback message when no accuracy run has been uploaded yet', async () => {

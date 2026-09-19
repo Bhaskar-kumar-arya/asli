@@ -1,8 +1,7 @@
 import { useRef, useState } from 'react';
 import type { PharmacyCheckResponse } from '@asli/contracts';
 import { Button } from '../../../shell/components/Button';
-import { Card } from '../../../shell/components/Card';
-import { StatusChip } from '../../../shell/components/StatusChip';
+import { Verdict } from '../../../shell/components/Verdict';
 import { ApiRequestError } from '../../../api/client';
 import { downscaleImage } from '../../scan/lib/imageProcessing';
 import { uploadToPresignedUrl } from '../../../api/upload';
@@ -50,13 +49,17 @@ export function PharmacyPage() {
   const rows = response ? [...response.rows].sort((a, b) => tierRank(a.tier) - tierRank(b.tier)) : [];
 
   return (
-    <main style={{ maxWidth: 900, margin: '0 auto', padding: '1rem 1rem 3rem' }}>
-      <h1 style={{ margin: '0 0 0.25rem' }}>Pharmacy mode</h1>
-      <p style={{ color: 'var(--text-2)', marginTop: 0 }}>
-        Check your stock or a supplier invoice against CDSCO alert lists in bulk. Up to 500 rows.
+    <main className="reg-sheet reg-sheet--wide">
+      <header className="reg-masthead">
+        <h1>Pharmacy mode</h1>
+        <p className="reg-masthead__currency">Bulk consignment check · up to 500 rows</p>
+      </header>
+
+      <p className="reg-prose">
+        Check your stock or a supplier invoice against CDSCO alert lists in bulk.
       </p>
 
-      <Card style={{ marginBottom: '1rem', display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
+      <div className="reg-stack">
         <Button onClick={() => csvInputRef.current?.click()} disabled={busy}>
           Upload stock CSV
         </Button>
@@ -89,47 +92,55 @@ export function PharmacyPage() {
             if (file) void handleInvoicePhoto(file);
           }}
         />
-      </Card>
+      </div>
 
-      {busy ? <p role="status">Checking…</p> : null}
-      {error ? <p role="alert">{error}</p> : null}
+      {busy ? (
+        <p role="status" className="reg-line" style={{ marginTop: '1.4rem' }}>
+          <span className="reg-line__ellipsis">Checking the consignment against the register</span>
+        </p>
+      ) : null}
+      {error ? (
+        <p role="alert" className="reg-line reg-line--flagged" style={{ textTransform: 'none', marginTop: '1.4rem' }}>
+          {error}
+        </p>
+      ) : null}
 
       {response ? (
         <>
-          <Card style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
-            <p style={{ margin: 0 }}>
-              {response.rows.length} rows checked · <strong>{response.flaggedUnits}</strong> flagged units
-            </p>
+          <div className="reg-head">
+            <h2>
+              {response.rows.length} rows checked · {response.flaggedUnits} flagged units
+            </h2>
             <Button variant="secondary" onClick={() => downloadResultsCsv(response)}>
-              Export results as CSV
+              Export CSV
             </Button>
-          </Card>
+          </div>
 
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <div className="reg-table-scroll" style={{ marginTop: '0.4rem' }}>
+            <table className="reg-table">
               <thead>
                 <tr>
-                  <th style={{ textAlign: 'left', padding: '0.5rem' }}>Product</th>
-                  <th style={{ textAlign: 'left', padding: '0.5rem' }}>Batch</th>
-                  <th style={{ textAlign: 'left', padding: '0.5rem' }}>Manufacturer</th>
-                  <th style={{ textAlign: 'right', padding: '0.5rem' }}>Qty</th>
-                  <th style={{ textAlign: 'left', padding: '0.5rem' }}>Status</th>
-                  <th style={{ textAlign: 'left', padding: '0.5rem' }}>Source</th>
+                  <th>Product</th>
+                  <th>Batch</th>
+                  <th>Manufacturer</th>
+                  <th data-num>Qty</th>
+                  <th>Status</th>
+                  <th>Source</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((row, i) => {
                   const match = row.matches[0];
                   return (
-                    <tr key={`${row.identity.batchNumber}-${i}`} style={{ borderTop: '1px solid var(--rule-strong)' }}>
-                      <td style={{ padding: '0.5rem' }}>{row.identity.productName ?? '—'}</td>
-                      <td style={{ padding: '0.5rem' }}>{row.identity.batchNumber}</td>
-                      <td style={{ padding: '0.5rem' }}>{row.identity.manufacturer ?? '—'}</td>
-                      <td style={{ padding: '0.5rem', textAlign: 'right' }}>{row.quantity ?? '—'}</td>
-                      <td style={{ padding: '0.5rem' }}>
-                        <StatusChip tier={row.tier} />
+                    <tr key={`${row.identity.batchNumber}-${i}`}>
+                      <td>{row.identity.productName ?? '—'}</td>
+                      <td>{row.identity.batchNumber}</td>
+                      <td>{row.identity.manufacturer ?? '—'}</td>
+                      <td data-num>{row.quantity ?? '—'}</td>
+                      <td>
+                        <Verdict tier={row.tier} category={match?.category} />
                       </td>
-                      <td style={{ padding: '0.5rem' }}>
+                      <td>
                         {match ? (
                           <a href={match.sourceUrl} target="_blank" rel="noreferrer">
                             CDSCO, {match.reportingLab ?? match.reportingSource}

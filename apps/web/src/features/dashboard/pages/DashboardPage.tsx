@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Card } from '../../../shell/components/Card';
 import { getPublicMetrics } from '../api/metrics';
 import type { DashboardMetrics } from '../types';
 
@@ -37,105 +36,135 @@ export function DashboardPage() {
     };
   }, []);
 
-  if (error) return <p role="alert">{error}</p>;
-  if (!data) return <p>Loading dashboard…</p>;
+  if (error)
+    return (
+      <main className="reg-sheet reg-sheet--wide">
+        <p role="alert" className="reg-line reg-line--flagged" style={{ textTransform: 'none', marginTop: '1.5rem' }}>
+          {error}
+        </p>
+      </main>
+    );
+  if (!data)
+    return (
+      <main className="reg-sheet reg-sheet--wide">
+        <p className="reg-line" style={{ marginTop: '1.5rem' }}>
+          <span className="reg-line__ellipsis">Compiling the return</span>
+        </p>
+      </main>
+    );
 
   const { accuracyDetail, costDetail } = data;
 
   return (
-    <main style={{ maxWidth: 640, margin: '0 auto', padding: '1rem 1rem 3rem' }}>
-      <h1 style={{ margin: '0 0 0.25rem' }}>Cost and accuracy dashboard</h1>
-      <p style={{ color: 'var(--text-2, #666)', marginTop: 0 }}>
-        Measured on {fmtDate(costDetail.window.end)} · last 24h on this stage
-      </p>
+    <main className="reg-sheet reg-sheet--wide">
+      <header className="reg-masthead">
+        <h1>Cost and accuracy</h1>
+        <p className="reg-masthead__currency">
+          Measured {fmtDate(costDetail.window.end)} · last 24h on this stage
+        </p>
+      </header>
 
-      <section aria-labelledby="accuracy-heading" style={{ marginBottom: '1.5rem' }}>
-        <h2 id="accuracy-heading">Accuracy</h2>
+      <section aria-labelledby="accuracy-heading">
+        <div className="reg-head">
+          <h2 id="accuracy-heading">Accuracy</h2>
+        </div>
         {accuracyDetail ? (
           <>
-            <p>
-              Sample size: {data.accuracy.sampleSize} · Tier correctness: {fmtPct(accuracyDetail.tierCorrectnessRate)} ·
-              measured {fmtDate(accuracyDetail.measuredAt)}
-            </p>
-            <h3>By method</h3>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr>
-                  <th style={{ textAlign: 'left' }}>Method</th>
-                  <th style={{ textAlign: 'right' }}>Count</th>
-                  <th style={{ textAlign: 'right' }}>Batch exact</th>
-                </tr>
-              </thead>
-              <tbody>
-                {accuracyDetail.byMethod.map((row) => (
-                  <tr key={row.method}>
-                    <td>{row.method}</td>
-                    <td style={{ textAlign: 'right' }}>{row.count}</td>
-                    <td style={{ textAlign: 'right' }}>{fmtPct(row.batchExactRate)}</td>
+            <dl className="reg-particulars" style={{ marginTop: '1rem' }}>
+              <dt>Sample size</dt>
+              <dd>{data.accuracy.sampleSize}</dd>
+              <dt>Tier correctness</dt>
+              <dd>{fmtPct(accuracyDetail.tierCorrectnessRate)}</dd>
+              <dt>Measured</dt>
+              <dd>{fmtDate(accuracyDetail.measuredAt)}</dd>
+            </dl>
+
+            <div className="reg-table-scroll">
+              <table className="reg-table">
+                <caption>Batch-exact read rate by capture method</caption>
+                <thead>
+                  <tr>
+                    <th>Method</th>
+                    <th data-num>Count</th>
+                    <th data-num>Batch exact</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-            <h3>By condition</h3>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr>
-                  <th style={{ textAlign: 'left' }}>Condition</th>
-                  <th style={{ textAlign: 'right' }}>Count</th>
-                  <th style={{ textAlign: 'right' }}>Batch exact</th>
-                </tr>
-              </thead>
-              <tbody>
-                {accuracyDetail.byCondition.map((row) => (
-                  <tr key={`${row.condition}-${row.value}`}>
-                    <td>
-                      {row.condition}={row.value}
-                    </td>
-                    <td style={{ textAlign: 'right' }}>{row.count}</td>
-                    <td style={{ textAlign: 'right' }}>{fmtPct(row.batchExactRate)}</td>
+                </thead>
+                <tbody>
+                  {accuracyDetail.byMethod.map((row) => (
+                    <tr key={row.method}>
+                      <td>{row.method}</td>
+                      <td data-num>{row.count}</td>
+                      <td data-num>{fmtPct(row.batchExactRate)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="reg-table-scroll" style={{ marginTop: '1.4rem' }}>
+              <table className="reg-table">
+                <caption>Batch-exact read rate by photo condition</caption>
+                <thead>
+                  <tr>
+                    <th>Condition</th>
+                    <th data-num>Count</th>
+                    <th data-num>Batch exact</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {accuracyDetail.byCondition.map((row) => (
+                    <tr key={`${row.condition}-${row.value}`}>
+                      <td>
+                        {row.condition}={row.value}
+                      </td>
+                      <td data-num>{row.count}</td>
+                      <td data-num>{fmtPct(row.batchExactRate)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </>
         ) : (
-          <p>No accuracy run has been uploaded yet (see tools/accuracy).</p>
+          <p className="reg-prose reg-prose--muted" style={{ marginTop: '1rem' }}>
+            No accuracy run has been uploaded yet (see tools/accuracy).
+          </p>
         )}
       </section>
 
       <section aria-labelledby="cost-heading">
-        <h2 id="cost-heading">Cost</h2>
-        <p>Scans measured in this window: {costDetail.scanCount}</p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.75rem' }}>
-          <Card>
-            <h3 style={{ marginTop: 0 }}>Per scan</h3>
-            <p style={{ fontSize: '1.5rem', margin: 0 }}>{fmtUsd(costDetail.perScanUsd.totalUsd)}</p>
-          </Card>
-          <Card>
-            <h3 style={{ marginTop: 0 }}>Per 1,000 scans</h3>
-            <p style={{ fontSize: '1.5rem', margin: 0 }}>{fmtUsd(data.cost.costPer1000ScansUsd)}</p>
-          </Card>
-          <Card>
-            <h3 style={{ marginTop: 0 }}>Per ingestion run</h3>
-            <p style={{ fontSize: '1.5rem', margin: 0 }}>{fmtUsd(costDetail.perIngestionRun.totalUsd)}</p>
-            <p style={{ margin: 0, fontSize: '0.85rem' }}>
-              {costDetail.perIngestionRun.rows > 0 ? `${costDetail.perIngestionRun.rows} rows ingested` : 'no run in this window'}
-            </p>
-          </Card>
-          <Card>
-            <h3 style={{ marginTop: 0 }}>10,000-family projection (monthly)</h3>
-            <p style={{ fontSize: '1.5rem', margin: 0 }}>{fmtUsd(costDetail.tenThousandFamilyProjection.totalUsd)}</p>
-          </Card>
+        <div className="reg-head">
+          <h2 id="cost-heading">Cost</h2>
         </div>
 
-        <details style={{ marginTop: '1rem' }}>
+        <dl className="reg-particulars" style={{ marginTop: '1rem' }}>
+          <dt>Scans in window</dt>
+          <dd>{costDetail.scanCount}</dd>
+          <dt>Per scan</dt>
+          <dd>{fmtUsd(costDetail.perScanUsd.totalUsd)}</dd>
+          <dt>Per 1,000 scans</dt>
+          <dd>{fmtUsd(data.cost.costPer1000ScansUsd)}</dd>
+          <dt>Per ingestion run</dt>
+          <dd>
+            {fmtUsd(costDetail.perIngestionRun.totalUsd)}
+            {costDetail.perIngestionRun.rows > 0 ? ` · ${costDetail.perIngestionRun.rows} rows ingested` : ' · no run in this window'}
+          </dd>
+          <dt>10,000 families, monthly</dt>
+          <dd>{fmtUsd(costDetail.tenThousandFamilyProjection.totalUsd)}</dd>
+        </dl>
+
+        <details className="reg-details" style={{ marginTop: '1.2rem' }}>
           <summary>Projection assumptions</summary>
-          <ul>
-            <li>{costDetail.tenThousandFamilyProjection.assumptions.avgMedicinesPerFamily} medicines per family</li>
-            <li>{costDetail.tenThousandFamilyProjection.assumptions.scansPerFamilyPerMonth} scans per family per month</li>
-            <li>{costDetail.tenThousandFamilyProjection.assumptions.newAlertFanoutsPerMonth} new-alert fan-outs per month</li>
-            <li>{costDetail.tenThousandFamilyProjection.assumptions.familiesNotifiedPerFanout} families notified per fan-out</li>
-          </ul>
+          <dl className="reg-particulars">
+            <dt>Medicines per family</dt>
+            <dd>{costDetail.tenThousandFamilyProjection.assumptions.avgMedicinesPerFamily}</dd>
+            <dt>Scans per family per month</dt>
+            <dd>{costDetail.tenThousandFamilyProjection.assumptions.scansPerFamilyPerMonth}</dd>
+            <dt>New-alert fan-outs per month</dt>
+            <dd>{costDetail.tenThousandFamilyProjection.assumptions.newAlertFanoutsPerMonth}</dd>
+            <dt>Families notified per fan-out</dt>
+            <dd>{costDetail.tenThousandFamilyProjection.assumptions.familiesNotifiedPerFanout}</dd>
+          </dl>
         </details>
       </section>
     </main>

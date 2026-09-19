@@ -66,7 +66,7 @@ describe('InsightsPage', () => {
     render(<InsightsPage />);
 
     await waitFor(() => expect(screen.getByText('3')).toBeInTheDocument());
-    expect(screen.getByText('Families protected').closest('div')).toHaveTextContent('5');
+    expect(screen.getByText('Families protected').nextElementSibling).toHaveTextContent('5');
     expect(screen.getByText(/1 Not-of-Standard-Quality and 0 spurious/)).toBeInTheDocument();
     expect(screen.getByText(/most common reason was "The amount of active medicine/)).toBeInTheDocument();
     expect(screen.getByText(/67% of flagged batches/)).toBeInTheDocument();
