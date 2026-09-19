@@ -70,6 +70,67 @@ export const STRIP_TOOL_JSON_SCHEMA: DocumentType = {
   required: ['isMedicinePack', 'productName', 'batchNumber', 'manufacturer', 'expDate', 'confidence'],
 };
 
+/** Gemini `responseSchema` (OpenAPI-subset, uppercase types) for the strip prompt - see gemini-client.ts. */
+export const STRIP_GEMINI_SCHEMA: DocumentType = {
+  type: 'OBJECT',
+  properties: {
+    isMedicinePack: { type: 'BOOLEAN' },
+    productName: { type: 'STRING', nullable: true },
+    brandName: { type: 'STRING', nullable: true },
+    batchNumber: { type: 'STRING', nullable: true },
+    manufacturer: { type: 'STRING', nullable: true },
+    mfgDate: { type: 'STRING', nullable: true },
+    expDate: { type: 'STRING', nullable: true },
+    strength: { type: 'STRING', nullable: true },
+    dosageForm: { type: 'STRING', nullable: true },
+    mrp: { type: 'STRING', nullable: true },
+    confidence: {
+      type: 'OBJECT',
+      properties: {
+        batchNumber: { type: 'NUMBER' },
+        manufacturer: { type: 'NUMBER' },
+        productName: { type: 'NUMBER' },
+        expDate: { type: 'NUMBER' },
+      },
+    },
+    notes: { type: 'STRING', nullable: true },
+  },
+  required: ['isMedicinePack', 'productName', 'batchNumber', 'manufacturer', 'expDate', 'confidence'],
+};
+
+/** Gemini `responseSchema` for the bill prompt. */
+export const BILL_GEMINI_SCHEMA: DocumentType = {
+  type: 'OBJECT',
+  properties: {
+    isPharmacyBill: { type: 'BOOLEAN' },
+    lines: {
+      type: 'ARRAY',
+      items: {
+        type: 'OBJECT',
+        properties: {
+          productName: { type: 'STRING', nullable: true },
+          batchNumber: { type: 'STRING', nullable: true },
+          expDate: { type: 'STRING', nullable: true },
+          manufacturer: { type: 'STRING', nullable: true },
+          quantity: { type: 'NUMBER', nullable: true },
+          mrp: { type: 'STRING', nullable: true },
+          confidence: {
+            type: 'OBJECT',
+            properties: {
+              batchNumber: { type: 'NUMBER' },
+              manufacturer: { type: 'NUMBER' },
+              productName: { type: 'NUMBER' },
+              expDate: { type: 'NUMBER' },
+            },
+          },
+        },
+        required: ['productName', 'batchNumber'],
+      },
+    },
+  },
+  required: ['isPharmacyBill', 'lines'],
+};
+
 /** Bedrock Converse tool `inputSchema.json` for the bill prompt. */
 export const BILL_TOOL_JSON_SCHEMA: DocumentType = {
   type: 'object',

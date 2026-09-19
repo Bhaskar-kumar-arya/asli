@@ -9,6 +9,18 @@ export function recordBedrockTokens(purpose: 'strip' | 'bill', inputTokens: numb
   metrics.addMetric('BedrockOutputTokens', MetricUnit.Count, outputTokens);
 }
 
+/** docs/OBSERVABILITY_AND_COST.md: every Textract call emits a cost metric, same as Bedrock's token metrics. */
+export function recordTextractPage(purpose: 'strip' | 'bill'): void {
+  metrics.addDimension('purpose', purpose);
+  metrics.addMetric('TextractPages', MetricUnit.Count, 1);
+}
+
+export function recordGeminiTokens(purpose: 'strip' | 'bill', inputTokens: number, outputTokens: number): void {
+  metrics.addDimension('purpose', purpose);
+  metrics.addMetric('GeminiInputTokens', MetricUnit.Count, inputTokens);
+  metrics.addMetric('GeminiOutputTokens', MetricUnit.Count, outputTokens);
+}
+
 export function recordScanLatency(ms: number): void {
   metrics.addMetric('ScanLatencyMs', MetricUnit.Milliseconds, ms);
 }

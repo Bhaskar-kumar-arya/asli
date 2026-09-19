@@ -13,6 +13,7 @@ import {
   type BillExtraction,
   type StripExtraction,
 } from './extraction-schema';
+import type { ImageExtractor } from './extractor';
 
 const TOOL_NAME = 'record_medicines';
 const IMAGE_FORMAT_BY_CONTENT_TYPE: Record<string, 'jpeg' | 'png' | 'webp'> = {
@@ -85,4 +86,12 @@ export function extractBill(
   contentType: string,
 ): Promise<BillExtraction | null> {
   return callWithRetry(deps, 'bill', BILL_PROMPT, BILL_TOOL_JSON_SCHEMA, BillExtractionSchema, imageBytes, contentType);
+}
+
+/** `ImageExtractor` adapter over the functions above - see extraction-provider.ts. */
+export function createBedrockExtractor(deps: BedrockExtractDeps): ImageExtractor {
+  return {
+    extractStrip: (imageBytes, contentType) => extractStrip(deps, imageBytes, contentType),
+    extractBill: (imageBytes, contentType) => extractBill(deps, imageBytes, contentType),
+  };
 }

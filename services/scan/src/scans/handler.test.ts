@@ -7,6 +7,8 @@ const sendMock = vi.fn();
 vi.mock('@aws-sdk/client-dynamodb', () => ({ DynamoDBClient: vi.fn() }));
 vi.mock('@aws-sdk/lib-dynamodb', () => ({ DynamoDBDocumentClient: { from: vi.fn(() => ({ send: sendMock })) } }));
 vi.mock('@aws-sdk/client-bedrock-runtime', () => ({ BedrockRuntimeClient: vi.fn() }));
+vi.mock('@aws-sdk/client-textract', () => ({ TextractClient: vi.fn() }));
+vi.mock('@aws-sdk/client-secrets-manager', () => ({ SecretsManagerClient: vi.fn(), GetSecretValueCommand: vi.fn((input) => ({ input })) }));
 vi.mock('@aws-sdk/client-ssm', () => ({ SSMClient: vi.fn(), GetParameterCommand: vi.fn((input) => ({ input })) }));
 vi.mock('@aws-sdk/client-s3', () => ({
   S3Client: vi.fn(),
@@ -22,12 +24,15 @@ vi.mock('../reference/alias-map', () => ({ createAliasMapLoader: vi.fn(() => asy
 vi.mock('../reference/brand-candidates', () => ({ getBrandCandidates: vi.fn(async () => []) }));
 vi.mock('@asli/lookup', () => ({ createLookup: vi.fn(() => ({})) }));
 vi.mock('./model-id', () => ({ createModelIdLoader: vi.fn(() => async () => 'model-1') }));
+vi.mock('./extraction-provider', () => ({ createExtractionProviderLoader: vi.fn(() => async () => 'bedrock') }));
 
 const extractStripMock = vi.fn();
 const extractBillMock = vi.fn();
 vi.mock('./bedrock-client', () => ({
-  extractStrip: (...args: unknown[]) => extractStripMock(...args),
-  extractBill: (...args: unknown[]) => extractBillMock(...args),
+  createBedrockExtractor: () => ({
+    extractStrip: (...args: unknown[]) => extractStripMock(...args),
+    extractBill: (...args: unknown[]) => extractBillMock(...args),
+  }),
 }));
 
 const checkIdentityMock = vi.fn();
@@ -94,6 +99,9 @@ describe('scans handler', () => {
     process.env.REFERENCE_TABLE = 'reference';
     process.env.UPLOADS_BUCKET = 'uploads';
     process.env.BEDROCK_VISION_MODEL_ID_PARAM = '/asli/dev-c/bedrock/visionModelId';
+    process.env.EXTRACTION_PROVIDER_PARAM = '/asli/dev-c/scan/extractionProvider';
+    process.env.GEMINI_MODEL_ID_PARAM = '/asli/dev-c/scan/geminiModelId';
+    process.env.GEMINI_API_KEY_SECRET_ARN = 'arn:aws:secretsmanager:ap-south-1:000000000000:secret:asli/dev-c/gemini-api-key';
     vi.resetModules();
     vi.clearAllMocks();
     extractStripMock.mockReset();
