@@ -30,11 +30,23 @@ interface GeminiResponse {
 }
 
 /**
+ * Per-attempt timeout for the Gemini call. Without this, a single slow/hung
+ * response (observed intermittently on multi-item bill extraction, never on
+ * single-item strips - submission/LEARNING_LOG.md 2026-09-19 E entry) burns
+ * the Lambda's entire 30s budget on attempt one, since a bare `fetch()` has
+ * no default timeout and the retry loop below never gets to attempt two.
+ * Two attempts at 12s each fit safely under the handler's 30s function
+ * timeout with margin for the rest of the handler's own work.
+ */
+const GEMINI_TIMEOUT_MS = 12_000;
+
+/**
  * Gemini `generateContent` with `responseSchema` forcing structured JSON -
  * the same "extract, don't decide" role Bedrock's Converse tool call played
- * (CLAUDE.md rule 1). Validates with Zod; on invalid/unparseable output
- * retries once, then gives up (caller returns EXTRACTION_FAILED / prompts
- * manual entry), matching bedrock-client.ts's behaviour.
+ * (CLAUDE.md rule 1). Validates with Zod; on invalid/unparseable output,
+ * a non-OK response, or a timed-out/failed request, retries once, then
+ * gives up (caller returns EXTRACTION_FAILED / prompts manual entry),
+ * matching bedrock-client.ts's behaviour.
  */
 async function callWithRetry<T>(
   deps: GeminiExtractDeps,
@@ -60,7 +72,17 @@ async function callWithRetry<T>(
   };
 
   for (let attempt = 0; attempt < 2; attempt += 1) {
-    const res = await fetchImpl(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    let res: Response;
+    try {
+      res = await fetchImpl(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
+      });
+    } catch {
+      continue; // timed out or network error on this attempt - try again
+    }
     if (!res.ok) continue;
 
     const data = (await res.json()) as GeminiResponse;

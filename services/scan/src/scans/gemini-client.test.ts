@@ -75,6 +75,37 @@ describe('extractStrip (Gemini)', () => {
     expect(result).toEqual(validStripInput);
     expect(calls).toBe(2);
   });
+
+  it('retries once when the first attempt times out/aborts, then succeeds', async () => {
+    let calls = 0;
+    const fetchImpl = vi.fn(async () => {
+      calls += 1;
+      if (calls === 1) throw new DOMException('The operation was aborted.', 'AbortError');
+      return geminiResponse(validStripInput);
+    }) as unknown as typeof fetch;
+    const result = await extractStrip({ apiKey: 'k', modelId: 'gemini-3.5-flash-lite', fetchImpl }, new Uint8Array([1]), 'image/jpeg');
+
+    expect(result).toEqual(validStripInput);
+    expect(calls).toBe(2);
+  });
+
+  it('returns null when both attempts time out/abort', async () => {
+    const fetchImpl = vi.fn(async () => {
+      throw new DOMException('The operation was aborted.', 'AbortError');
+    }) as unknown as typeof fetch;
+    const result = await extractStrip({ apiKey: 'k', modelId: 'gemini-3.5-flash-lite', fetchImpl }, new Uint8Array([1]), 'image/jpeg');
+
+    expect(result).toBeNull();
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
+
+  it('passes an abort signal with each request', async () => {
+    const fetchImpl = fakeFetch([geminiResponse(validStripInput)]);
+    await extractStrip({ apiKey: 'k', modelId: 'gemini-3.5-flash-lite', fetchImpl }, new Uint8Array([1]), 'image/jpeg');
+
+    const [, init] = (fetchImpl as ReturnType<typeof vi.fn>).mock.calls[0];
+    expect(init.signal).toBeInstanceOf(AbortSignal);
+  });
 });
 
 describe('extractBill (Gemini)', () => {
