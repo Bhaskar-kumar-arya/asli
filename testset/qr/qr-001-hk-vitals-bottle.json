@@ -1,0 +1,10 @@
+{
+  "kind": "qr",
+  "decodedText": "https://www.blife.in/manufacturing-list",
+  "truth": {
+    "productName": "Ginseng, Grape Seed, Green Tea & Ginger Extracts, Pre-Probiotic, Vitamins and Minerals Tablets",
+    "batchNumber": "PPM0902",
+    "manufacturer": "Bright Lifecare Pvt. Ltd. (marketed by, brand: HealthKart bLife)"
+  },
+  "note": "Real photo of an owned supplement bottle (not a CDSCO-regulated drug strip, but a real pack QR for jsQR decode-rate testing). Decoded successfully by jsQR in Node (via jimp) at 0.75x downscale - full-resolution attempt failed, consistent with jsQR needing the code closer to its expected pixel density. The QR itself resolves to a generic manufacturing-info URL, not a GS1/batch-encoded payload - the label's own text says to read the QR alongside the batch's first two printed characters, not decode the batch from the QR payload. batchNumber (PPM0902) is transcribed from print near the QR, not from the QR payload itself."
+}

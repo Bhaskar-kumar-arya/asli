@@ -1,0 +1,9 @@
+{
+  "kind": "qr",
+  "decodedText": "https://line.me/ti/p/~@novolife",
+  "truth": {
+    "productName": "Herbal inhalant (Thai traditional medicine, ยาดมสมุนไพร หงส์คู่)",
+    "manufacturer": "Novo Life"
+  },
+  "note": "Real photo of an owned product - a Thai herbal inhalant, not an Indian CDSCO-regulated medicine, included only for jsQR decode-rate testing since it's a real pack QR the team had on hand. Decoded successfully by jsQR at full resolution, no cropping/downscaling needed - the cleanest decode of the three samples (flat label, high contrast, good focus). The QR payload is a LINE messaging-app contact link, not batch/GS1 data, and no batch number is legible anywhere on this face of the jar, so batchNumber is intentionally omitted from truth rather than guessed."
+}

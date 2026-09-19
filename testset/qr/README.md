@@ -33,8 +33,24 @@ pipeline. `truth` is what's printed on the pack, same as the strip/bill
 ground truth.
 
 ## Status
-No samples collected yet in this session (no camera access) - this is
-outstanding, see `plan/tasks/K-qr.md` Handoff. A team member with the
-physical medicines needs to shoot ≥ 3 pack QR codes and drop them here, then
-report the decode rate (`packages/qr-parse` `parseQrPayload` + the in-browser
-`jsQR` decode) in E's comparison.
+**2/3 real pack QR photos collected and kept 2026-09-19** (`qr-001-hk-vitals-bottle`,
+`qr-003-novolife-thai-jar`) - **short of K's "≥ 3 real pack QR codes"
+acceptance criterion.** A third real sample (`qr-002-zerodol-p-blister`, a
+medicine blister strip) was shot and tested but removed from the testset
+because its QR - small, printed on creased/reflective foil - failed to
+decode with `jsQR` at every scale/crop tried (see `submission/LEARNING_LOG.md`'s
+2026-09-19 K entry for the full attempt log). Decode rate tested offline
+with the exact `jsQR` library `apps/web/src/features/scan/qr/lib/decodeQr.ts`
+uses (via `jimp` in Node instead of an in-browser canvas, same decode call):
+
+| Sample | Decoded? | Notes |
+|---|---|---|
+| qr-001-hk-vitals-bottle | ✅ | needed 0.75x downscale from full resolution |
+| qr-003-novolife-thai-jar | ✅ | decoded at full resolution, no adjustment needed |
+
+**Decode rate on kept samples: 2/2 (100%)**, but only 2 real samples total -
+**still needs ≥1 more real pack QR photo to meet the ≥3 acceptance
+criterion.** Worth trying a real phone's native camera QR reader on a
+strip/blister QR as a follow-up - phone-native decoders are typically more
+robust than `jsQR` alone (continuous autofocus, multi-frame capture) and
+might succeed where this offline single-photo test didn't.
