@@ -17,7 +17,7 @@
 - Presigned upload URLs expire in 5 minutes and are scoped to one key.
 - S3: block public access, SSE-S3, TLS-only bucket policy.
 - DynamoDB: encryption at rest (default).
-- Users can delete a cabinet, a medicine, and their account (`DELETE /v1/me`, lane Z1 if time allows; otherwise documented as future work).
+- Users can delete a cabinet, a medicine, and their account. `DELETE /v1/me` (lane Z1) removes the caller's Cognito user, their push subscriptions, and either their cabinet membership (if they share it with an owner) or the whole cabinet (if they're its sole member) - it refuses with 409 rather than orphaning a cabinet the caller solely owns but shares with other members, asking them to transfer ownership or remove those members first.
 
 ## Demo data
 - Test set photos: team members' own medicines; bills redacted before adding to `testset/`; no faces, names or addresses.

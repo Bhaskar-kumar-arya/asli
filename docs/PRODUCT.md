@@ -11,7 +11,9 @@ Asli tells a family whether a medicine they own belongs to a batch CDSCO has off
 ## Problem
 CDSCO publishes monthly alerts listing batches that failed tests at central and state labs. They are published as tables and PDFs on government sites that consumers do not read. No practical consumer tool matches a family's own batches to these lists.
 
-## Evidence (verified by hand, to be recomputed by lane S)
+## Evidence
+
+**Hand-verified spot check (central labs only), done during planning:**
 | Alert month (central labs) | Batches | Within expiry at announcement | Avg months from manufacture to alert |
 |---|---|---|---|
 | Sep 2024 | 49 | 48 | 11.0 |
@@ -19,7 +21,20 @@ CDSCO publishes monthly alerts listing batches that failed tests at central and 
 | Mar 2025 | 70 | 70 | 8.6 |
 | Total | 171 | 170 (99.4%) | ~9.6 |
 
-Headline for the demo (only after lane S confirms on the full backfill): flagged batches are typically still within expiry, often by about a year, when CDSCO announces them.
+**Confirmed against lane S's real `compute-stats` run on `int` (2026-09-19, queried directly off DynamoDB `asli-dev-shared-flagged-batches` via GSI2 `MONTH#<alertMonth>`, filtered `reportingSource = CENTRAL_LAB`):** Jan 2025 = 52 central-lab rows, Mar 2025 = 70 central-lab rows — both match the hand-verified count exactly. **Sep 2024 = 0 rows in the real backfill** — CDSCO's own listing/PDF pages no longer carry that month by the time A2's ingestion ran (its month-discovery reads whatever the site currently lists, with no hardcoded lookback start), so that spot-check figure is no longer independently reproducible from live ingestion, though it was correct when hand-verified.
+
+**Full backfill, all reporting sources, all months lane S found on `int` (generated `2026-09-19T01:01Z`, 21 months, `2024-11` to `2026-07`):**
+| | Value |
+|---|---|
+| Total flagged batches | 3,326 (3,274 NSQ + 52 Spurious) |
+| Within expiry at announcement | 3,204 (99.47%) |
+| Avg (mean) months from manufacture to alert | 10.7 |
+| Median months from manufacture to alert | 9 |
+| By reporting source | Central lab 1,072 · State lab 2,249 · Unknown 5 |
+
+The state-lab rows (excluded from the original hand-verified spot check) are why full-backfill per-month totals run higher than the central-lab-only sample above — both are real, they're counting different scopes.
+
+Headline for the demo: flagged batches are typically still within expiry, often by about 10 months, when CDSCO announces them — confirmed on the full real backfill, not just the 3-month hand-verified sample.
 
 ## Core promise and its limits
 - Asli checks against CDSCO's published lists. A batch not on a list is "No alert found", not "safe".

@@ -60,6 +60,7 @@ CheckItemResult {
 | GET | /v1/public/metrics | **public** | — | `MetricsSummary {accuracy, cost}` | J |
 | POST | /v1/pharmacy/checks | JWT | `PharmacyCheckRequest {uploadId} | {csv: string}` | `PharmacyCheckResponse {rows: (CheckItemResult & {quantity?})[], flaggedUnits}` | N |
 | POST | /v1/admin/demo/replay-month | JWT, Cognito group `admin`, stage `int` only | `DemoReplayRequest {fixtureKey}` | `{executionArn}` | A2 |
+| DELETE | /v1/me | JWT | — | 204 (409 if the caller solely owns a cabinet shared with others - transfer ownership or remove the other members first) | Z1 |
 
 ## Rules
 - `POST /v1/scans` never returns the image or raw model output. `warnings` include `LOW_READ_CONFIDENCE`, `NO_BATCH_ON_LINE`, `NOT_A_MEDICINE`.

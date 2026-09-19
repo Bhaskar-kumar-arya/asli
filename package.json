@@ -17,6 +17,7 @@
     "vapid-keys": "tsx scripts/vapid-keys.ts",
     "seed-fixtures": "tsx scripts/seed-fixtures.ts",
     "seed-demo-fixture": "tsx scripts/seed-demo-fixture.ts",
+    "seed-demo": "tsx scripts/seed-demo.ts",
     "backfill": "tsx scripts/backfill.ts",
     "export-review": "tsx scripts/reference/export-review.ts",
     "stats-report": "tsx scripts/stats-report/export.ts",
@@ -26,7 +27,9 @@
   "dependencies": {
     "@asli/content": "workspace:*",
     "@asli/contracts": "workspace:*",
+    "@asli/matching": "workspace:*",
     "@aws-sdk/client-cloudwatch": "^3.699.0",
+    "@aws-sdk/client-cognito-identity-provider": "^3.699.0",
     "@aws-sdk/client-dynamodb": "^3.699.0",
     "@aws-sdk/client-polly": "^3.699.0",
     "@aws-sdk/client-s3": "^3.699.0",
