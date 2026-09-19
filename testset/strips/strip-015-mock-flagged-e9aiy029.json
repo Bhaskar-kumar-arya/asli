@@ -1,0 +1,12 @@
+{
+  "kind": "strip",
+  "truth": {
+    "productName": "Montelukast & Levocetirizine Dihydrochloride Tablets",
+    "batchNumber": "E9AIY029",
+    "manufacturer": "Pharma Force Lab (Unit II), Plot No. 83-86, Industrial Area Gondpur, Tehsil Paonta Sahib, Distt. Sirmour (HP)",
+    "mfgMonth": "2025-08",
+    "expMonth": "2027-07"
+  },
+  "conditions": { "foil": true, "lighting": "good", "angle": "flat", "blur": false },
+  "note": "MOCK/DEMO strip, not a real product photo. Base blister photo is strip-003-unbranded-blister's real CC BY-SA 4.0 source (see testset/sources.md); a printed label panel with this batch's real CDSCO NSQ row text (fixtures/demo/replay-1.json, Feb-2026, E9AIY029 / Pharma Force Lab) was composited underneath and clearly marked 'MOCK / DEMO STRIP - NOT A REAL PRODUCT' in red, matching the disclosed-mock-strip pattern already used in submission/DEMO_SCRIPT.md and docs/PRIVACY.md. Used to exercise and demo the FLAGGED path end-to-end against the live int pipeline."
+}

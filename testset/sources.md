@@ -29,6 +29,7 @@ CC BY-SA 3.0/4.0 = https://creativecommons.org/licenses/by-sa/{ver}/.
 | strip-012-plendil-er | [Plendil ER 10 mg tbl.jpg](https://commons.wikimedia.org/wiki/File:Plendil_ER_10_mg_tbl.jpg) | Tomino de WS | CC BY-SA 4.0 |
 | strip-013-ebrantil | [Ebrantil 60 mg cps.jpg](https://commons.wikimedia.org/wiki/File:Ebrantil_60_mg_cps.jpg) | Tomino de WS | CC BY-SA 4.0 |
 | strip-014-tolucombi-80 | [Tolucombi 80 mg-12,5 mg tbl.jpg](https://commons.wikimedia.org/wiki/File:Tolucombi_80_mg-12,5_mg_tbl.jpg) | Tomino de WS | CC BY-SA 4.0 |
+| strip-015-mock-flagged-e9aiy029 | **Not a sourced photo — constructed for the demo.** Base image is strip-003's same CC BY-SA 4.0 blister photo (Tarasna0922), with a printed label panel composited below it carrying the real CDSCO NSQ row from `fixtures/demo/replay-1.json` (Feb-2026, E9AIY029 / Pharma Force Lab) and a red "MOCK / DEMO STRIP — NOT A REAL PRODUCT" disclosure banner, matching the disclosed-mock-strip pattern in `submission/DEMO_SCRIPT.md`/`docs/PRIVACY.md`. See its `.json` label file's `note` field. | (derivative of strip-003) | CC BY-SA 4.0 |
 
 ## Bills
 
