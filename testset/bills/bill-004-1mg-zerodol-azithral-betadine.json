@@ -1,0 +1,12 @@
+{
+  "kind": "bill",
+  "truth": {
+    "lines": [
+      { "productName": "Zerodol P Tablet", "manufacturer": "Ipca Laboratories Ltd", "batchNumber": "KVB0126061AS", "expMonth": "2028-05" },
+      { "productName": "Azithral 500 Tablet", "manufacturer": "Alembic Pharmaceuticals Ltd", "batchNumber": "2613000424", "expMonth": "2028-10" },
+      { "productName": "Betadine Gargle Mint", "manufacturer": "Win-Medicare Pvt Ltd", "batchNumber": "#GC06626", "expMonth": "2027-08" }
+    ]
+  },
+  "conditions": { "foil": false, "lighting": "good", "angle": "flat", "blur": false },
+  "note": "Real Indian pharmacy tax invoice (Tata 1mg), rendered from a PDF the team downloaded and redacted (patient name/address, doctor name/address, order QR codes and invoice/order IDs blacked out) before adding to the repo, per docs/PRIVACY.md's bill-redaction rule. 'Handling Charges' line excluded (no medicine fields)."
+}

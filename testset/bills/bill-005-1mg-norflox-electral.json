@@ -1,0 +1,11 @@
+{
+  "kind": "bill",
+  "truth": {
+    "lines": [
+      { "productName": "Norflox-TZ RF Tablet", "manufacturer": "Cipla Ltd", "batchNumber": "STC26193", "expMonth": "2029-03" },
+      { "productName": "Electral Powder", "manufacturer": "FDC Ltd", "batchNumber": "0326D227", "expMonth": "2028-03" }
+    ]
+  },
+  "conditions": { "foil": false, "lighting": "good", "angle": "flat", "blur": false },
+  "note": "Real Indian pharmacy tax invoice (Tata 1mg), rendered from a PDF the team downloaded and redacted (patient name/address, doctor name/address, order QR codes and invoice/order IDs blacked out) before adding to the repo, per docs/PRIVACY.md's bill-redaction rule. 'Handling Charges' line excluded (no medicine fields)."
+}

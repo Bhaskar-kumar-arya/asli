@@ -37,6 +37,29 @@ CC BY-SA 3.0/4.0 = https://creativecommons.org/licenses/by-sa/{ver}/.
 |---|---|---|---|
 | bill-001-nl-apotheek-cream | [Apotheek Hillegersberg receipt, Hillegersberg, Rotterdam (2021) 01.jpg](https://commons.wikimedia.org/wiki/File:Apotheek_Hillegersberg_receipt,_Hillegersberg,_Rotterdam_(2021)_01.jpg) | Donald Trung | CC BY-SA 4.0 (image cropped to redact pharmacy name/address/phone/payment details, keeping only the medicine line and price) |
 
+### bills 002-006: team members' own real pharmacy invoices
+
+Not Commons-sourced. `bill-002` through `bill-006` are five real, itemised Tata 1mg
+tax invoices from two team members' own genuine online pharmacy orders (PDFs the
+team downloaded and provided directly) — exactly the intended path in
+`docs/PRIVACY.md`'s Demo data rule ("Test set photos: team members' own medicines;
+bills redacted before adding to `testset/`; no faces, names or addresses"), so no
+third-party license applies. Each PDF page was rasterized (PyMuPDF, 3x zoom) and
+redacted before being added to the repo: patient name, patient address, doctor
+name/address, both order QR codes, and the invoice/order ID block are all blacked
+out with a labelled "REDACTED" box (coordinates found from each page's real text
+layout, not eyeballed, since address length varies per invoice and pushes the
+line-item table's own QR code down by a variable amount depending on row count).
+Only the pharmacy's own public business info (Sold By block), the medicine line
+items (product/manufacturer/batch/expiry/price), and totals remain visible — real,
+legible batch numbers and manufacturer names for 9 additional real Indian-market
+medicines (Zerodol P, Betadine Gargle Mint, Azimax 500, Monticope, Pantakind,
+Azithral 500, Norflox-TZ RF, Electral Powder, Pezover-DSR), which was the exact
+gap this testset had. Original (unredacted) PDFs were never committed and were
+deleted from the working tree after the redacted images were produced and
+verified. `Handling Charges` line items (no medicine fields) are excluded from
+each label's `truth.lines`.
+
 ## Coverage gaps and why
 
 - **Strips: 14/30.** Sourced by searching Wikimedia Commons (API `list=search`,
@@ -62,24 +85,27 @@ CC BY-SA 3.0/4.0 = https://creativecommons.org/licenses/by-sa/{ver}/.
   useful for testing the vision extraction pipeline's field-reading accuracy
   (batch/mfr/expiry OCR), even though they don't exercise Indian-specific
   formatting.
-- **Bills: 1/10.** This is the weakest area. Extensive searching (Commons
-  full-text search for "pharmacy bill/receipt/cash memo", Openverse image
-  search, browsing Commons categories) turned up essentially no real,
-  itemised, CC-licensed Indian pharmacy bill photos — retail till receipts
-  showing a medicine batch/MRP line are not the kind of photo people
-  publish under an open license. The one usable find is a real Dutch
-  pharmacy till receipt (Apotheek Hillegersberg, Rotterdam) showing one
-  compounded-cream line item and price; it has no batch/manufacturer/expiry
-  (normal for an EU till receipt) and is not Indian-format, but it is a real,
-  legally-licensed, PII-clean medicine purchase record, which is why it was
-  kept rather than discarded. Two similar Dutch pharmacy receipts found in
-  the same search (Apotheek Zevenkamp, SE Apotheek Het Dokhuis) were
-  card-payment-terminal slips with no medicine line at all and were not used.
-  No padding: no irrelevant/unlabelable images were added just to raise the
-  count.
+- **Bills: 6/10, up from 1/10.** Commons/Openverse searching (full-text search
+  for "pharmacy bill/receipt/cash memo", browsing categories) turned up
+  essentially no real, itemised, CC-licensed Indian pharmacy bill photos —
+  retail till receipts showing a medicine batch/MRP line are not the kind of
+  photo people publish under an open license. The one Commons find (bill-001)
+  is a real Dutch pharmacy till receipt (Apotheek Hillegersberg, Rotterdam)
+  with one compounded-cream line and price, no batch/manufacturer/expiry
+  (normal for an EU till receipt) and not Indian-format, kept anyway since
+  it's real, licensed and PII-clean. Two similar Dutch pharmacy receipts
+  found in the same search (Apotheek Zevenkamp, SE Apotheek Het Dokhuis) were
+  card-payment-terminal slips with no medicine line and were not used.
+  **bills 002-006 closed most of the gap**: two team members provided their
+  own real Tata 1mg pharmacy order PDFs (5 invoices, 9 real Indian-market
+  medicine line items with legible batch/manufacturer/expiry each), redacted
+  per `docs/PRIVACY.md`'s own intended path for this ("team members' own
+  medicines; bills redacted before adding to `testset/`") — see the "bills
+  002-006" note above for exactly what was redacted and how.
 
-**Bottom line:** 14/30 strips and 1/10 bills, honestly short of target. The
-harness itself (label CLI, runner, scorer) is unaffected — see
-`tools/accuracy/README` usage and this task file's Handoff section for what a
-human collecting real photos from their own medicine cabinet would still need
-to add to close the gap, especially on the bill side.
+**Bottom line:** 15/30 strips and 6/10 bills. Strips still need human-shot
+photos (internet sourcing exhausted, see above); bills are now close to
+target and the batch-number coverage gap that mattered most for scoring is
+substantially closed. The harness itself (label CLI, runner, scorer) is
+unaffected — see `tools/accuracy/README` usage and the task file's Handoff
+section for what remains.

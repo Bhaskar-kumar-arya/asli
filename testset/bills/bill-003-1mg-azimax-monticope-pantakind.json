@@ -1,0 +1,12 @@
+{
+  "kind": "bill",
+  "truth": {
+    "lines": [
+      { "productName": "Azimax 500 Tablet", "manufacturer": "Cipla Ltd", "batchNumber": "5SN1427", "expMonth": "2028-06" },
+      { "productName": "Monticope Tablet", "manufacturer": "Mankind Pharma Ltd", "batchNumber": "#C45Z005", "expMonth": "2028-02" },
+      { "productName": "Pantakind Tablet", "manufacturer": "Mankind Pharma Ltd", "batchNumber": "#G95Z005", "expMonth": "2028-02" }
+    ]
+  },
+  "conditions": { "foil": false, "lighting": "good", "angle": "flat", "blur": false },
+  "note": "Real Indian pharmacy tax invoice (Tata 1mg), rendered from a PDF the team downloaded and redacted (patient name/address, doctor name/address, order QR codes and invoice/order IDs blacked out) before adding to the repo, per docs/PRIVACY.md's bill-redaction rule. 'Handling Charges' line excluded (no medicine fields)."
+}
