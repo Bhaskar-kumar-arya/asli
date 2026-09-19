@@ -1,5 +1,9 @@
 # Asli — writeup
 
+An AWS Builder Center blog post adapted from this writeup is drafted at
+`submission/BLOG_POST.md`. **TODO (human):** publish it on Builder Center and paste the live URL
+here: {{BUILDER_CENTER_BLOG_URL}}.
+
 ## The problem
 India's CDSCO publishes monthly lists of drug batches that failed quality tests (Not of Standard
 Quality) or were found Spurious — but as government tables and PDFs, never pushed to the families
@@ -135,8 +139,15 @@ See `submission/LEARNING_LOG.md` for the full, timestamped list (30+ entries acr
 
 ## AI tools used
 Claude Code (Anthropic) wrote most of the code in this repository under our direction, working
-lane-by-lane from the specs in `docs/` and `plan/`, including this writeup. {{List any other AI
-tools used — image generation for assets, etc. — or state "no others" if none.}}
+lane-by-lane from the specs in `docs/` and `plan/`, including this writeup and the blog post — the
+git history's own commit trailers confirm two Claude Code model versions did the committing across
+the build (`Co-Authored-By: Claude Sonnet 5` and `Co-Authored-By: Claude Haiku 4.5`). No other
+AI coding tool (Copilot, Cursor, etc.) was used. Separately, and not a coding assistant: the scan
+extraction Lambda calls Google's Gemini API as its default vision-extraction provider, with
+Bedrock and Textract as runtime-switchable fallbacks (see "Where AWS fits" above and
+`plan/INTEGRATION_LOG.md`) — this is a product-runtime dependency for reading strip/bill photos,
+not a tool used to write the code, and it never influences the matching decision (CLAUDE.md rule
+1: `packages/matching` alone decides the tier).
 
 ## Team
 {{Names, roles, and Builder Center profile links for all teammates — needed for fast-track

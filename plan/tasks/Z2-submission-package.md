@@ -20,22 +20,32 @@ CLAUDE.md, submission/DEMO_SCRIPT.md, submission/WRITEUP.md, submission/LEARNING
 ## Handoff (the session updates this before stopping)
 **Status:** IN PROGRESS
 **Stage deployed:** n/a (docs-only work this session)
-**Done:**
+**Done (previous session):**
 - `README.md` rewritten with real numbers from `docs/PRODUCT.md`'s Evidence table (3,326 flagged batches / 21 months, 99.47% within expiry), the architecture diagram, the "Where AWS fits" service table, measured latency, an honest note on why accuracy/per-scan cost aren't measurable yet (account-wide Bedrock restriction), deploy steps, and a status summary pulled from `plan/INTEGRATION_LOG.md`.
 - `submission/WRITEUP.md` filled in from the template: problem statement with real numbers, architecture summary, full "Where AWS fits" table, decisions we're proud of, measured results (accuracy/cost/latency, honestly marked where not yet measurable), 6 picked entries from `submission/LEARNING_LOG.md`, limitations, what's next.
-**Remaining:**
-- Screenshots/GIF for the README.
-- Export the mermaid architecture diagram to a PNG (README currently embeds mermaid source, which GitHub renders natively, but Deliverable 1 asks for an exported PNG too).
-- Video: record per `submission/DEMO_SCRIPT.md`, ≤3:00, captions, mock-strip disclosure on screen, upload and link (human task — needs a screen recording).
-- AWS Builder Center blog post adapted from the writeup, linked in the submission.
-- Team names/roles, Builder Center profile links (Deliverable 6, fast-track eligibility) — left as `{{...}}` placeholders in both README.md and WRITEUP.md, needs the human team.
-- Licence choice for README.md (left as a placeholder, MIT suggested).
-- Accuracy numbers in WRITEUP.md "Measured results" and "What we learned" — fill in once lane E's harness has run against real photos (still blocked, see plan/INTEGRATION_LOG.md).
-- "AI tools used" section — confirm whether any tool beyond Claude Code was used.
+
+**Done (this session):**
+- `submission/BLOG_POST.md`: new AWS Builder Center blog post adapted from `WRITEUP.md`, same real numbers (171/170 hand-check, 3,326/99.47% full backfill, latency, cost, the account-wide Bedrock restriction and the Gemini-fallback decision from commit `7466969`), written in blog tone (hook → problem → what we built → engineering decisions → honest measured-vs-not section → what's next) rather than the submission-form template structure. Links the real repo (`https://github.com/Bhaskar-kumar-arya/asli`, confirmed via `git remote -v`) and Claude Code.
+- `LICENSE`: real MIT license text added at repo root, copyright year 2026. Searched the repo (`package.json`, README, docs, plan) for a team/org name to use as the copyright holder — found none (git authors are two individuals: "HEET SHAH" and "devestrator"/Bhaskar) — so left the holder as `{{TEAM_NAME}}`, clearly marked, per the task instructions not to invent a name.
+- `README.md` Licence section: now says MIT, links `LICENSE`, notes the `{{TEAM_NAME}}` placeholder is pending Deliverable 6.
+- Architecture diagram exported to PNG: `docs/diagrams/architecture.mmd` (mermaid source, copied from README) rendered with `npx @mermaid-js/mermaid-cli@11.17.0` (worked headless in this Windows/PowerShell environment — no browser needed, puppeteer's bundled Chromium handled it) to `docs/diagrams/architecture.png` (1600px wide, white background, 67KB). README's architecture section now links both the mermaid source (GitHub renders it natively) and the exported PNG.
+- README screenshots: added a "Screenshots" section marking this as an outstanding human TODO, with the exact live URL (`https://main.d2ag2oukltn4mc.amplifyapp.com`, confirmed real from `plan/INTEGRATION_LOG.md`) and the 3 screens that matter most per `submission/DEMO_SCRIPT.md`'s shot list: (1) the flagged result card with CDSCO source link, (2) the "No alert found" neutral card (proves the never-say-"safe" rule), (3) the shared cabinet with a caregiver alert arriving. Also added the same TODO note at the top of the README where the video thumbnail/GIF placeholder already was.
+- "AI tools used" in `WRITEUP.md`: confirmed via `git log --all --grep` (no Copilot/Cursor/other coding-tool mentions) and `git log --all --format --grep "co-authored-by"` (only `Claude Sonnet 5` and `Claude Haiku 4.5` trailers exist across all 54 commits) that Claude Code is the only coding assistant used. Also honestly noted the one other AI-adjacent fact found in git history: commit `7466969` made Gemini the *runtime* default vision-extraction provider for the product (a product dependency, not a coding tool) — described accurately in both `WRITEUP.md` and `BLOG_POST.md` as separate from "AI tools used to build this repo".
+- Linked `BLOG_POST.md` from the top of `WRITEUP.md` with a `{{BUILDER_CENTER_BLOG_URL}}` placeholder for the human to fill in once published.
+- `pnpm -r lint && pnpm -r test` run: no-op as expected (docs/LICENSE/PNG-only changes, no app code touched).
+
+**Remaining (all human-only):**
+- Screenshots/GIF for the README — needs a browser against the live Amplify URL (this session had no browser/display available).
+- Video: record per `submission/DEMO_SCRIPT.md`, ≤3:00, captions, mock-strip disclosure on screen, upload and link.
+- Publish `submission/BLOG_POST.md` to AWS Builder Center and fill in `{{BUILDER_CENTER_BLOG_URL}}` in `WRITEUP.md`.
+- Team names/roles, Builder Center profile links (Deliverable 6, fast-track eligibility), and the `{{TEAM_NAME}}` copyright holder in `LICENSE`/README — all still `{{...}}` placeholders, needs the human team.
+- Accuracy numbers in WRITEUP.md "Measured results" and "What we learned" — fill in once lane E's harness has run against real photos (now unblocked in principle since C's Gemini fallback is live and verified against one real photo per commit `7466969`, but a full scored run hasn't happened yet).
 - Early submission Saturday 18:00, final submission ≥3h before deadline — human actions on the hackathon's own form.
+
 **Gotchas / decisions:**
-- Deliberately did not invent accuracy or per-scan cost numbers that don't exist yet — both sections say plainly what's measured vs. blocked, rather than presenting a placeholder as real. Matches the acceptance criterion "every claim in the video is shown working or backed by a measured number."
-- Checked `plan/CHANGELOG.md`'s "Contract change requests" section before writing this: it's correctly still empty since none of the three low-urgency CCRs from lanes S/J/M have been human-approved yet — no writeup claim depends on those being unified.
+- Deliberately did not invent accuracy or per-scan cost numbers that don't exist yet, in either `WRITEUP.md` or the new `BLOG_POST.md` — both say plainly what's measured vs. blocked. Matches the acceptance criterion "every claim in the video is shown working or backed by a measured number."
+- `npx @mermaid-js/mermaid-cli` needed one retry with `-y` — the first bare `npx` call declined to install without an explicit yes flag. Once given `-y`, headless rendering worked fine on this Windows box with no extra browser setup, so no PNG-generation fallback note was needed in the README after all.
+- Did not touch `docs/PRODUCT.md`, `plan/INTEGRATION_LOG.md`, or any application code — stayed within README.md / submission/** / LICENSE / docs/diagrams/architecture.{mmd,png} as instructed.
 **Contract change requests:**
 - none
 **Learning log entries added:** no (this session was writeup/docs only, no new engineering finding to log)

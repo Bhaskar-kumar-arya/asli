@@ -1,7 +1,11 @@
 # Asli — Is this medicine batch flagged by CDSCO?
 
 > Built in 48 hours for WeMakeDevs × AWS "First Commit" (Ship It track).
-> {{Insert demo video thumbnail/GIF here once submission/DEMO_SCRIPT.md is recorded.}}
+>
+> **TODO (human, before final submission):** demo video thumbnail/GIF goes here once
+> `submission/DEMO_SCRIPT.md` is recorded. Screenshots are also still outstanding — take them
+> against the live PWA at **https://main.d2ag2oukltn4mc.amplifyapp.com** (see "Screenshots" below
+> for exactly which screens).
 
 ## The problem
 India's Central Drugs Standard Control Organisation (CDSCO) publishes monthly lists of drug
@@ -81,6 +85,20 @@ NO_ALERT_FOUND). No LLM ever decides or influences a tier; Bedrock is only used 
 from a photo, never to judge safety. See `docs/ARCHITECTURE.md` for the full service-choice
 rationale and `docs/MATCHING.md` for the tier rules.
 
+Exported image (GitHub renders the mermaid block above natively, but here's a static PNG too):
+`docs/diagrams/architecture.png` (source: `docs/diagrams/architecture.mmd`, rendered with
+`npx @mermaid-js/mermaid-cli`).
+
+## Screenshots
+**TODO (human):** capture these against the live PWA at
+**https://main.d2ag2oukltn4mc.amplifyapp.com** and drop them here — these are the 2–3 screens that
+carry the most weight in `submission/DEMO_SCRIPT.md`:
+1. **Flagged result card** (0:55–1:25 in the script) — the red FLAGGED card with the CDSCO source
+   link, showing "this batch" wording and a citation, not a brand or manufacturer callout.
+2. **"No alert found" result card** (0:30–0:55) — the neutral result, to show it never says "safe".
+3. **Shared cabinet with a caregiver alert arriving** (1:45–2:35) — a second phone/account showing
+   the same saved medicine and a push/email alert landing after a simulated CDSCO ingestion.
+
 ## Repository layout
 ```
 apps/web                 React + Vite PWA
@@ -134,8 +152,8 @@ and `plan/`. See `submission/WRITEUP.md` for the full AI-tools credit and `submi
 for what broke and what we measured along the way.
 
 ## Licence
-{{Add a licence — MIT is the common default for hackathon submissions unless the team wants
-otherwise.}}
+MIT — see [`LICENSE`](./LICENSE). Copyright holder is left as `{{TEAM_NAME}}` pending the team's
+final name (see `plan/tasks/Z2-submission-package.md` Deliverable 6).
 
 ## Credits / team
 {{Team member names, roles, and Builder Center profile links — see plan/tasks/Z2-submission-package.md
