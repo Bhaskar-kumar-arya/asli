@@ -19,14 +19,15 @@
   --sheet-edge: color-mix(in srgb, var(--ink-carbon) 10%, var(--ink-stock));
 
   /* --- ink on sheet --- */
+  /* Tints hold 4.5:1 against the stock; rules hold 3:1 as control boundaries. */
   --text: var(--ink-carbon);
-  --text-2: color-mix(in srgb, var(--ink-carbon) 64%, var(--ink-stock));
-  --text-3: color-mix(in srgb, var(--ink-carbon) 44%, var(--ink-stock));
+  --text-2: color-mix(in srgb, var(--ink-carbon) 76%, var(--ink-stock));
+  --text-3: color-mix(in srgb, var(--ink-carbon) 62%, var(--ink-stock));
 
   /* --- ruling --- */
   --rule: var(--ink-rule);
   --rule-faint: color-mix(in srgb, var(--ink-rule) 55%, var(--ink-stock));
-  --rule-strong: color-mix(in srgb, var(--ink-carbon) 32%, var(--ink-stock));
+  --rule-strong: color-mix(in srgb, var(--ink-carbon) 48%, var(--ink-stock));
   --margin: var(--ink-oxide);
 
   /* --- verdict inks --- */
@@ -94,7 +95,7 @@
     --sheet: var(--ink-stock);
     --sheet-sunk: #16170f;
     --sheet-edge: #2a2b24;
-    --rule-strong: color-mix(in srgb, var(--ink-carbon) 30%, var(--ink-stock));
+    --rule-strong: color-mix(in srgb, var(--ink-carbon) 46%, var(--ink-stock));
     --flagged-wash: color-mix(in srgb, var(--ink-oxide) 12%, var(--ink-stock));
     --verify-wash: color-mix(in srgb, var(--ink-violet) 12%, var(--ink-stock));
 
@@ -112,7 +113,7 @@
   --sheet: var(--ink-stock);
   --sheet-sunk: #16170f;
   --sheet-edge: #2a2b24;
-  --rule-strong: color-mix(in srgb, var(--ink-carbon) 30%, var(--ink-stock));
+  --rule-strong: color-mix(in srgb, var(--ink-carbon) 46%, var(--ink-stock));
   --flagged-wash: color-mix(in srgb, var(--ink-oxide) 12%, var(--ink-stock));
   --verify-wash: color-mix(in srgb, var(--ink-violet) 12%, var(--ink-stock));
 
@@ -250,17 +251,17 @@ a:hover {
   padding: 0.5rem 0;
 }
 
-/* The entry number, printed out in the margin. */
+/* The entry number, printed out in the margin, level with the entry's first line. */
 .reg-no {
   position: absolute;
+  top: 1.05rem;
   inset-inline-start: calc(var(--margin-w) * -1);
-  width: calc(var(--margin-w) - 14px);
+  width: calc(var(--margin-w) - 16px);
   text-align: end;
   font-family: var(--face-record);
   font-size: var(--step-small);
   color: var(--margin);
-  line-height: 1.5;
-  padding-top: 0.15em;
+  line-height: 1.2;
 }
 
 /* Printed label: small tracked caps, the form's own voice. */
@@ -354,7 +355,7 @@ a:hover {
   gap: 0.75rem;
   border-bottom: 1px solid var(--text);
   padding-bottom: 0.35rem;
-  margin: 1.9rem 0 0;
+  margin: 1.45rem 0 0;
 }
 
 .reg-head > h2,
@@ -374,9 +375,10 @@ a:hover {
   justify-content: space-between;
   gap: 0.75rem;
   width: 100%;
-  min-height: 96px;
-  margin: 1.1rem 0 0.4rem;
-  padding: 0 0 0.55rem;
+  align-items: flex-end;
+  min-height: 62px;
+  margin: 0.7rem 0 0.2rem;
+  padding: 0.6rem 0 0.45rem;
   background: none;
   border: 0;
   border-bottom: 2px solid var(--text);
@@ -600,6 +602,22 @@ a:hover {
   animation: reg-strike 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* Stamp plus the reviewed sentence printed beneath it. */
+.reg-verdict-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+}
+
+.reg-verdict-note {
+  font-family: var(--face-print);
+  font-size: var(--step-small);
+  font-weight: 600;
+  color: var(--text-2);
+  line-height: 1.35;
+}
+
 /* The printed alternative to a stamp: nothing was found, so nothing is struck. */
 .reg-nil {
   flex: none;
@@ -714,6 +732,48 @@ a:hover {
 .reg-empty {
   padding: 1.6rem 0 1.9rem;
   border-bottom: 1px solid var(--rule);
+}
+
+/* A numbered option on its own rule. */
+.reg-choice {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  width: 100%;
+  min-height: 72px;
+  padding: 0.9rem 0;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  color: var(--text);
+  font-family: var(--face-print);
+  font-size: var(--step-lead);
+  font-weight: 700;
+  font-stretch: 100%;
+  letter-spacing: 0.01em;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--press);
+}
+
+.reg-choice:hover {
+  background: color-mix(in srgb, var(--margin) 6%, transparent);
+}
+
+.reg-choice__next {
+  margin-inline-start: auto;
+  color: var(--margin);
+}
+
+.reg-choice__sub {
+  display: block;
+  font-size: var(--step-small);
+  font-weight: 500;
+  color: var(--text-2);
+  letter-spacing: 0;
+  margin-top: 0.15rem;
 }
 
 /* A ruled block of the register. Not a card: no radius, no shadow, no fill. */

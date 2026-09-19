@@ -7,19 +7,11 @@ import type { Category, MedicineStatus } from '@asli/contracts';
  * which is why nothing here can ever read "safe".
  */
 
-const MARK: Record<MedicineStatus, { d: string; fill: string; label: string }> = {
-  FLAGGED: { d: 'M2 2h12v12H2z', fill: 'currentColor', label: 'On record' },
-  VERIFY: { d: 'M2 2h12v12H2zM2 8h12', fill: 'none', label: 'Referred' },
-  NO_ALERT_FOUND: { d: 'M2 2h12v12H2z', fill: 'none', label: 'No entry' },
-  PENDING: { d: 'M2 2h12v12H2z', fill: 'none', label: 'Pending' },
-};
-
 export function MarginMark({ tier }: { tier: MedicineStatus }) {
-  const m = MARK[tier];
   return (
     <svg
-      width="16"
-      height="16"
+      width="14"
+      height="14"
       viewBox="0 0 16 16"
       fill="none"
       stroke="currentColor"
@@ -28,19 +20,28 @@ export function MarginMark({ tier }: { tier: MedicineStatus }) {
       focusable="false"
       style={{ flex: 'none' }}
     >
-      {tier === 'VERIFY' ? <path d="M2 8h12v6H2z" fill="currentColor" stroke="none" /> : null}
-      {tier === 'PENDING' ? <path d="M2 2h12v12H2z" strokeDasharray="3 3" /> : <path d={m.d} fill={m.fill} />}
-      {tier === 'VERIFY' ? <path d="M2 2h12v12H2z" /> : null}
+      {tier === 'FLAGGED' ? <path d="M2 2h12v12H2z" fill="currentColor" /> : null}
+      {tier === 'VERIFY' ? (
+        <>
+          <path d="M2 8h12v6H2z" fill="currentColor" stroke="none" />
+          <path d="M2 2h12v12H2z" />
+        </>
+      ) : null}
+      {tier === 'NO_ALERT_FOUND' ? <path d="M2 2h12v12H2z" /> : null}
+      {tier === 'PENDING' ? <path d="M2 2h12v12H2z" strokeDasharray="3 3" /> : null}
     </svg>
   );
 }
 
+/** Short enough to be a stamp. The reviewed sentence rides underneath as a note. */
 export function stampWords(tier: MedicineStatus, category?: Category): string {
   if (tier === 'FLAGGED') {
-    return category === 'SPURIOUS' ? 'Declared spurious' : 'Not of standard quality';
+    if (category === 'SPURIOUS') return 'Declared spurious';
+    if (category === 'NSQ') return 'Not of standard quality';
+    return 'On record';
   }
-  if (tier === 'VERIFY') return 'Referred — particulars incomplete';
-  if (tier === 'PENDING') return 'Checking against the register';
+  if (tier === 'VERIFY') return 'Referred';
+  if (tier === 'PENDING') return 'Checking';
   return 'No entry on record';
 }
 
@@ -50,36 +51,54 @@ export interface VerdictProps {
   large?: boolean;
   /** The stamp lands once, when a result first resolves. */
   struck?: boolean;
+  /** Reviewed tier copy, printed under the stamp (docs/SAFETY_AND_CONTENT.md). */
+  note?: string;
+  role?: string;
 }
 
 /**
  * FLAGGED and VERIFY are struck with a stamp. NO_ALERT_FOUND and PENDING are
  * printed, because the register has no stamp for an absence.
  */
-export function Verdict({ tier, category, large, struck }: VerdictProps) {
+export function Verdict({ tier, category, large, struck, note, role }: VerdictProps) {
   const words = stampWords(tier, category);
+  const stamped = tier === 'FLAGGED' || tier === 'VERIFY';
 
-  if (tier === 'NO_ALERT_FOUND' || tier === 'PENDING') {
-    return (
-      <span className="reg-nil">
-        <MarginMark tier={tier} /> <span style={{ marginInlineStart: '0.4rem' }}>{words}</span>
+  const mark = stamped ? (
+    <span
+      className={[
+        'reg-stamp',
+        tier === 'FLAGGED' ? 'reg-stamp--flagged' : 'reg-stamp--verify',
+        large ? 'reg-stamp--lg' : '',
+        struck ? 'reg-stamp--struck' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
+      <MarginMark tier={tier} />
+      {words}
+    </span>
+  ) : (
+    <span className="reg-nil">
+      <MarginMark tier={tier} />
+      <span style={{ marginInlineStart: '0.4rem' }}>{words}</span>
+    </span>
+  );
+
+  if (!note) {
+    return role ? (
+      <span role={role} className="reg-verdict-group">
+        {mark}
       </span>
+    ) : (
+      mark
     );
   }
 
-  const cls = [
-    'reg-stamp',
-    tier === 'FLAGGED' ? 'reg-stamp--flagged' : 'reg-stamp--verify',
-    large ? 'reg-stamp--lg' : '',
-    struck ? 'reg-stamp--struck' : '',
-  ]
-    .filter(Boolean)
-    .join(' ');
-
   return (
-    <span className={cls}>
-      <MarginMark tier={tier} />
-      {words}
+    <span className="reg-verdict-group" role={role}>
+      {mark}
+      <span className={['reg-verdict-note', stamped ? '' : 'reg-verdict-note--nil'].filter(Boolean).join(' ')}>{note}</span>
     </span>
   );
 }

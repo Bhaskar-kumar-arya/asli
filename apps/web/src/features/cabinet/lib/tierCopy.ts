@@ -3,15 +3,13 @@ import type { MedicineStatus } from '@asli/contracts';
 // Wording follows docs/SAFETY_AND_CONTENT.md - never "safe"/"genuine"/"verified", always "batch" not brand.
 export interface TierCopy {
   label: string;
-  icon: string;
-  colorVar: string;
 }
 
 const TIER_COPY: Record<MedicineStatus, TierCopy> = {
-  FLAGGED: { label: 'On a CDSCO alert list', icon: '⚠', colorVar: 'var(--tier-flagged)' },
-  VERIFY: { label: 'Please check with your pharmacist', icon: '❓', colorVar: 'var(--tier-verify)' },
-  NO_ALERT_FOUND: { label: 'No alert found for this batch', icon: '🔍', colorVar: 'var(--tier-none)' },
-  PENDING: { label: 'Checking…', icon: '⏳', colorVar: 'var(--tier-pending)' },
+  FLAGGED: { label: 'On a CDSCO alert list' },
+  VERIFY: { label: 'Please check with your pharmacist' },
+  NO_ALERT_FOUND: { label: 'No alert found for this batch' },
+  PENDING: { label: 'Checking…' },
 };
 
 export function tierCopy(status: MedicineStatus): TierCopy {

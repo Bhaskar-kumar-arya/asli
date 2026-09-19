@@ -30,11 +30,16 @@ export function SignInScreen() {
   }
 
   return (
-    <Page title="Sign in to Asli">
-      <p style={{ color: 'var(--color-text-muted)' }}>
+    <Page title="Asli" subtitle="दवा के बैच की जाँच · ಔಷಧಿ ಬ್ಯಾಚ್ ಪರಿಶೀಲನೆ">
+      <p className="reg-prose">
         Asli checks whether a medicine your family owns has been flagged by India's drug regulator (CDSCO).
       </p>
-      <form onSubmit={(e) => void handleSubmit(e)}>
+
+      <div className="reg-head">
+        <h2>Sign in</h2>
+      </div>
+
+      <form onSubmit={(e) => void handleSubmit(e)} style={{ marginTop: '1.4rem' }}>
         <Field
           label="Email"
           type="email"
@@ -52,7 +57,7 @@ export function SignInScreen() {
           onChange={(e) => setPassword(e.target.value)}
         />
         {error ? (
-          <p role="alert" style={{ color: 'var(--color-danger)' }}>
+          <p role="alert" className="reg-note reg-note--flagged" style={{ margin: '0 0 1rem' }}>
             {error}
           </p>
         ) : null}

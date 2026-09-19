@@ -54,23 +54,51 @@ export function HomeMedicineList() {
   const anyPending = rows?.some((r) => r.medicine.latestTier === 'PENDING') ?? false;
   usePendingPoll(anyPending, load);
 
-  if (error) return <p role="alert">{error}</p>;
-  if (rows === null) return <p>Loading your family's medicines…</p>;
+  /* States print themselves into the record; there are no toasts or spinners. */
+  if (error)
+    return (
+      <p role="alert" className="reg-line reg-line--flagged" style={{ textTransform: 'none' }}>
+        {error}
+      </p>
+    );
+  if (rows === null)
+    return (
+      <p className="reg-line">
+        <span className="reg-line__ellipsis">Loading your family's medicines</span>
+      </p>
+    );
 
   return (
     <section aria-labelledby="home-medicines-heading">
-      <h2 id="home-medicines-heading">My family's medicines</h2>
-      {lastUpdate && <p>Last CDSCO update: {formatMonth(lastUpdate)}</p>}
+      <div className="reg-head">
+        <h2 id="home-medicines-heading">My family's medicines</h2>
+        {lastUpdate && <span className="reg-masthead__currency">Last CDSCO update: {formatMonth(lastUpdate)}</span>}
+      </div>
+
       {rows.length === 0 ? (
-        <p>No medicines saved yet.</p>
+        <div className="reg-empty">
+          <p className="reg-prose reg-prose--muted" style={{ margin: 0 }}>
+            No medicines saved yet. Check one and it will be entered here, then re-checked against every new CDSCO list.
+          </p>
+        </div>
       ) : (
-        <ul style={{ listStyle: 'none', padding: 0 }}>
-          {rows.map(({ cabinet, medicine }) => (
+        <ul className="cabinet-list">
+          {rows.map(({ cabinet, medicine }, i) => (
             <li key={medicine.medId} className="cabinet-medicine-row">
-              <Link to={`/cabinets/${cabinet.cabinetId}/medicines/${medicine.medId}`} className="tap-target">
-                {medicine.label ?? medicine.identity.productName ?? medicine.identity.batchNumber}
-                {medicine.forPerson ? ` — ${medicine.forPerson}` : ''}
-              </Link>
+              <span className="reg-no" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <span className="reg-grow">
+                <Link to={`/cabinets/${cabinet.cabinetId}/medicines/${medicine.medId}`} className="tap-target">
+                  {medicine.label ?? medicine.identity.productName ?? medicine.identity.batchNumber}
+                  {medicine.forPerson ? ` — ${medicine.forPerson}` : ''}
+                </Link>
+                {medicine.identity.batchNumber ? (
+                  <span className="reg-value" style={{ display: 'block', fontSize: 'var(--step-small)', color: 'var(--text-2)' }}>
+                    Batch {medicine.identity.batchNumber}
+                  </span>
+                ) : null}
+              </span>
               <StatusChip status={medicine.latestTier} />
             </li>
           ))}

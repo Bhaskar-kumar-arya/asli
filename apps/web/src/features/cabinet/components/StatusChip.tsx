@@ -1,12 +1,8 @@
 import type { MedicineStatus } from '@asli/contracts';
+import { Verdict } from '../../../shell/components/Verdict';
 import { tierCopy } from '../lib/tierCopy';
 
+/** The register's mark, with the reviewed tier wording printed beneath it. */
 export function StatusChip({ status }: { status: MedicineStatus }) {
-  const copy = tierCopy(status);
-  return (
-    <span className="status-chip" style={{ color: copy.colorVar }} role="status">
-      <span aria-hidden="true">{copy.icon}</span>
-      {copy.label}
-    </span>
-  );
+  return <Verdict tier={status} note={tierCopy(status).label} role="status" />;
 }

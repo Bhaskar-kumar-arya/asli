@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Page } from '../shell/components/Page';
-import { Card } from '../shell/components/Card';
 import { Button } from '../shell/components/Button';
 import { SUPPORTED_LANGUAGES, setLanguage, type SupportedLanguage } from '../i18n';
 import { applyTextSize, getStoredTextSize, type TextSize } from '../theme/textSize';
@@ -61,48 +60,70 @@ export function SettingsScreen() {
 
   return (
     <Page title={t('settings')} onBack={() => navigate(-1)}>
-      <Card style={{ marginBottom: '1rem' }}>
-        <h2 style={{ marginTop: 0 }}>{t('language')}</h2>
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+      <section>
+        <div className="reg-head">
+          <h2>{t('language')}</h2>
+        </div>
+        <div className="reg-stack">
           {SUPPORTED_LANGUAGES.map((lang) => (
             <Button
               key={lang}
               variant={i18n.language === lang ? 'primary' : 'secondary'}
               onClick={() => setLanguage(lang)}
+              aria-pressed={i18n.language === lang}
             >
               {LANGUAGE_LABEL[lang]}
             </Button>
           ))}
         </div>
-      </Card>
+      </section>
 
-      <Card style={{ marginBottom: '1rem' }}>
-        <h2 style={{ marginTop: 0 }}>{t('textSize')}</h2>
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+      <section>
+        <div className="reg-head">
+          <h2>{t('textSize')}</h2>
+        </div>
+        <div className="reg-stack">
           {(Object.keys(TEXT_SIZE_LABEL) as TextSize[]).map((size) => (
-            <Button key={size} variant={textSize === size ? 'primary' : 'secondary'} onClick={() => handleTextSize(size)}>
+            <Button
+              key={size}
+              variant={textSize === size ? 'primary' : 'secondary'}
+              onClick={() => handleTextSize(size)}
+              aria-pressed={textSize === size}
+            >
               {TEXT_SIZE_LABEL[size]}
             </Button>
           ))}
         </div>
-      </Card>
+      </section>
 
-      <Card style={{ marginBottom: '1rem' }}>
-        <h2 style={{ marginTop: 0 }}>{t('notifications')}</h2>
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
-          <Button variant={pushEnabled ? 'primary' : 'secondary'} onClick={() => void handleToggleNotifications()}>
+      <section>
+        <div className="reg-head">
+          <h2>{t('notifications')}</h2>
+        </div>
+        <div className="reg-stack">
+          <Button
+            variant={pushEnabled ? 'primary' : 'secondary'}
+            onClick={() => void handleToggleNotifications()}
+            aria-pressed={pushEnabled}
+          >
             {pushEnabled ? 'Notifications on' : 'Turn on notifications'}
           </Button>
           <Button variant="secondary" onClick={() => void handleTestPush()}>
             Send test notification
           </Button>
         </div>
-        {notice ? <p role="status">{notice}</p> : null}
-      </Card>
+        {notice ? (
+          <p role="status" className="reg-line" style={{ textTransform: 'none', marginTop: '1rem' }}>
+            {notice}
+          </p>
+        ) : null}
+      </section>
 
-      <Button variant="danger" fullWidth onClick={() => void handleSignOut()}>
-        {t('signOut')}
-      </Button>
+      <div style={{ marginTop: '2.2rem' }}>
+        <Button variant="danger" fullWidth onClick={() => void handleSignOut()}>
+          {t('signOut')}
+        </Button>
+      </div>
     </Page>
   );
 }
