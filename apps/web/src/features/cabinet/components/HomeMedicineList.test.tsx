@@ -10,22 +10,26 @@ afterEach(() => {
 });
 
 describe('HomeMedicineList', () => {
-  it("lists every cabinet's medicines with status chips and the latest CDSCO update month", async () => {
+  it("lists every cabinet's medicines with status chips and reports the latest CDSCO update month", async () => {
     installMockFetch({
       '/v1/cabinets': () => ({ status: 200, body: cabinetListFixture }),
       '/v1/cabinets/cab-mom-001': () => ({ status: 200, body: cabinetDetailFixture }),
     });
 
+    // The register's currency prints on the masthead, so the list reports it upward
+    // rather than rendering it a second time on the same screen.
+    const onSummary = vi.fn();
+
     render(
       <MemoryRouter>
-        <HomeMedicineList />
+        <HomeMedicineList onSummary={onSummary} />
       </MemoryRouter>,
     );
 
     await waitFor(() => expect(screen.getByText(/mom - morning tablet/i)).toBeInTheDocument());
     expect(screen.getByText(/mom - fever tablet/i)).toBeInTheDocument();
-    expect(screen.getByText(/last cdsco update: may 2025/i)).toBeInTheDocument();
     expect(screen.getAllByRole('status')).toHaveLength(2);
+    await waitFor(() => expect(onSummary).toHaveBeenCalledWith({ entryCount: 2, latestAlertMonth: '2025-05' }));
   });
 
   it('shows a friendly error when the cabinet list fails to load', async () => {

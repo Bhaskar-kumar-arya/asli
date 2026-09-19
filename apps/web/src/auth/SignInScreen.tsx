@@ -30,7 +30,7 @@ export function SignInScreen() {
   }
 
   return (
-    <Page title="Asli" subtitle="दवा के बैच की जाँच · ಔಷಧಿ ಬ್ಯಾಚ್ ಪರಿಶೀಲನೆ">
+    <Page title="Asli" subtitle={{ hi: 'दवा के बैच की जाँच', kn: 'ಔಷಧಿ ಬ್ಯಾಚ್ ಪರಿಶೀಲನೆ' }}>
       <p className="reg-prose">
         Asli checks whether a medicine your family owns has been flagged by India's drug regulator (CDSCO).
       </p>

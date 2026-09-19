@@ -23,20 +23,12 @@
   }
 }
 
-/* A matched entry is marked in the margin, not fenced in a coloured card. */
+/* A matched entry is washed, not fenced. The margin mark and the stamp
+   already carry the state; a coloured bar would be a third copy of it. */
 .cabinet-medicine-row[data-highlighted='true'] {
   background: var(--flagged-wash);
   margin-inline: -0.6rem;
   padding-inline: 0.6rem;
-}
-
-.cabinet-medicine-row[data-highlighted='true']::before {
-  content: '';
-  position: absolute;
-  inset-block: 0;
-  inset-inline-start: -1.35rem;
-  width: 3px;
-  background: var(--flagged);
 }
 
 /* A link on the rule: the entry's own designation. */

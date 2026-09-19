@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import type { CabinetDetail, CabinetSummary, MedicineWithStatus } from '@asli/contracts';
 import { getCabinet, listCabinets } from '../api/cabinets';
 import { StatusChip } from './StatusChip';
-import { formatMonth } from '../lib/tierCopy';
+
 import { usePendingPoll } from '../hooks/usePendingPoll';
 import '../cabinet.css';
 
@@ -19,9 +19,13 @@ function latestAlertMonth(detail: CabinetDetail): string | undefined {
     .at(-1);
 }
 
-export function HomeMedicineList() {
+export interface HomeMedicineListProps {
+  /** Lets the masthead print what the register is current to, per the surface brief. */
+  onSummary?: (summary: { entryCount: number; latestAlertMonth?: string }) => void;
+}
+
+export function HomeMedicineList({ onSummary }: HomeMedicineListProps = {}) {
   const [rows, setRows] = useState<Row[] | null>(null);
-  const [lastUpdate, setLastUpdate] = useState<string | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -40,12 +44,12 @@ export function HomeMedicineList() {
         if (month && (!newest || month > newest)) newest = month;
       });
       setRows(nextRows);
-      setLastUpdate(newest);
       setError(null);
+      onSummary?.({ entryCount: nextRows.length, latestAlertMonth: newest });
     } catch {
       setError("Couldn't load your family's medicines. Check your connection and try again.");
     }
-  }, []);
+  }, [onSummary]);
 
   useEffect(() => {
     void load();
@@ -70,9 +74,9 @@ export function HomeMedicineList() {
 
   return (
     <section aria-labelledby="home-medicines-heading">
+      {/* The register's currency prints on the masthead, not twice on one screen. */}
       <div className="reg-head">
         <h2 id="home-medicines-heading">My family's medicines</h2>
-        {lastUpdate && <span className="reg-masthead__currency">Last CDSCO update: {formatMonth(lastUpdate)}</span>}
       </div>
 
       {rows.length === 0 ? (

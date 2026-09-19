@@ -6,7 +6,7 @@ export interface PageProps {
   children: ReactNode;
   onBack?: () => void;
   /** Indic band under the masthead rule, as a station board stacks its scripts. */
-  subtitle?: string;
+  subtitle?: { hi: string; kn: string };
   /** What the register is current to — printed along the masthead's lower edge. */
   currency?: string;
 }
@@ -24,7 +24,13 @@ export function Page({ title, children, onBack, subtitle, currency }: PageProps)
 
       <header className={onBack ? 'reg-pagehead' : 'reg-masthead'}>
         <h1>{title}</h1>
-        {subtitle ? <p className="reg-masthead__indic">{subtitle}</p> : null}
+        {subtitle ? (
+          <p className="reg-masthead__indic">
+            <span lang="hi">{subtitle.hi}</span>
+            {' · '}
+            <span lang="kn">{subtitle.kn}</span>
+          </p>
+        ) : null}
         {currency ? <p className="reg-masthead__currency">{currency}</p> : null}
       </header>
 

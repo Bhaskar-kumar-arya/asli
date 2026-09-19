@@ -33,12 +33,16 @@ export function MarginMark({ tier }: { tier: MedicineStatus }) {
   );
 }
 
-/** Short enough to be a stamp. The reviewed sentence rides underneath as a note. */
+/**
+ * Short enough to be a stamp. The reviewed sentence rides underneath as a note.
+ * Every FLAGGED legend names the finding: a stamp that reads as registered or
+ * legitimate would work against the tier it is marking.
+ */
 export function stampWords(tier: MedicineStatus, category?: Category): string {
   if (tier === 'FLAGGED') {
     if (category === 'SPURIOUS') return 'Declared spurious';
     if (category === 'NSQ') return 'Not of standard quality';
-    return 'On record';
+    return 'Listed by CDSCO';
   }
   if (tier === 'VERIFY') return 'Referred';
   if (tier === 'PENDING') return 'Checking';
@@ -98,7 +102,7 @@ export function Verdict({ tier, category, large, struck, note, role }: VerdictPr
   return (
     <span className="reg-verdict-group" role={role}>
       {mark}
-      <span className={['reg-verdict-note', stamped ? '' : 'reg-verdict-note--nil'].filter(Boolean).join(' ')}>{note}</span>
+      <span className="reg-verdict-note">{note}</span>
     </span>
   );
 }

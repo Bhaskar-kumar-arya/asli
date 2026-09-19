@@ -98,16 +98,14 @@ export function ResultCard({ result, lang = 'en', onSave, saveLabel = 'Save to f
         </div>
       ) : null}
 
+      {/* One primary action per screen (docs/UX.md): saving is what carries the
+          batch into the monthly re-check, so it leads. */}
       <div className="reg-stack">
+        {onSave ? <Button onClick={onSave}>{saveLabel}</Button> : null}
         <Button variant="secondary" onClick={() => void handleReadAloud()} disabled={reading}>
           <Icon name="aloud" size={18} />
           {reading ? 'Reading…' : 'Read aloud'}
         </Button>
-        {onSave ? (
-          <Button variant="secondary" onClick={onSave}>
-            {saveLabel}
-          </Button>
-        ) : null}
         <ReportProblemButton identity={result.identity} alertRef={match?.alertRef} />
       </div>
     </section>
