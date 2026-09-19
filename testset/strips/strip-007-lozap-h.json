@@ -1,0 +1,10 @@
+{
+  "kind": "strip",
+  "truth": {
+    "productName": "Lozap H 50mg/12.5mg Tablets (Losartan/Hydrochlorothiazide)",
+    "batchNumber": "2100518",
+    "manufacturer": "Zentiva",
+    "expMonth": "2020-04"
+  },
+  "conditions": { "foil": true, "lighting": "good", "angle": "tilted", "blur": false }
+}

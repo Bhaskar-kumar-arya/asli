@@ -1,0 +1,10 @@
+{
+  "kind": "strip",
+  "truth": {
+    "productName": "Plendil ER 10mg Tablets (Felodipine)",
+    "batchNumber": "ZKDK",
+    "manufacturer": "AstraZeneca",
+    "expMonth": "2019-09"
+  },
+  "conditions": { "foil": true, "lighting": "good", "angle": "tilted", "blur": false }
+}

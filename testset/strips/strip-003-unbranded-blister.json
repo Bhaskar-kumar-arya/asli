@@ -1,0 +1,8 @@
+{
+  "kind": "strip",
+  "truth": {
+    "batchNumber": "H05806",
+    "expMonth": "2027-08"
+  },
+  "conditions": { "foil": true, "lighting": "good", "angle": "tilted", "blur": false }
+}

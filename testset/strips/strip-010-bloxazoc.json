@@ -1,0 +1,10 @@
+{
+  "kind": "strip",
+  "truth": {
+    "productName": "Bloxazoc 50mg Tablets (Metoprolol)",
+    "batchNumber": "SEC386",
+    "manufacturer": "KRKA",
+    "expMonth": "2027-06"
+  },
+  "conditions": { "foil": true, "lighting": "good", "angle": "tilted", "blur": false }
+}

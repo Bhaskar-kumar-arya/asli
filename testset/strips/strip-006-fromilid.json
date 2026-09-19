@@ -1,0 +1,10 @@
+{
+  "kind": "strip",
+  "truth": {
+    "productName": "Fromilid 500mg Tablets (Clarithromycin)",
+    "batchNumber": "NE7324",
+    "manufacturer": "KRKA",
+    "expMonth": "2022-11"
+  },
+  "conditions": { "foil": true, "lighting": "good", "angle": "tilted", "blur": false }
+}

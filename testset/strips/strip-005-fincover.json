@@ -1,0 +1,10 @@
+{
+  "kind": "strip",
+  "truth": {
+    "productName": "Fincover Tablets (Finasteride 1mg)",
+    "batchNumber": "FCR004",
+    "manufacturer": "Micro Labs Limited",
+    "expMonth": "2012-11"
+  },
+  "conditions": { "foil": true, "lighting": "good", "angle": "flat", "blur": false }
+}

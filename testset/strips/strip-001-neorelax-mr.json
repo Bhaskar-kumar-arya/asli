@@ -1,0 +1,10 @@
+{
+  "kind": "strip",
+  "truth": {
+    "productName": "Neorelax MR (Thiocolchicoside, Aceclofenac & Paracetamol Tablets)",
+    "batchNumber": "446AG710",
+    "manufacturer": "Meyer Organics Pvt Ltd",
+    "expMonth": "2020-05"
+  },
+  "conditions": { "foil": true, "lighting": "good", "angle": "tilted", "blur": false }
+}

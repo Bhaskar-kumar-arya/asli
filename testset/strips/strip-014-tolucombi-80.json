@@ -1,0 +1,10 @@
+{
+  "kind": "strip",
+  "truth": {
+    "productName": "Tolucombi 80mg/12.5mg Tablets (Telmisartan/Hydrochlorothiazide)",
+    "batchNumber": "SE9061",
+    "manufacturer": "KRKA",
+    "expMonth": "2022-04"
+  },
+  "conditions": { "foil": true, "lighting": "good", "angle": "tilted", "blur": false }
+}

@@ -1,0 +1,9 @@
+{
+  "kind": "bill",
+  "truth": {
+    "lines": [
+      { "productName": "Cetomacrogolcreme FNA 50% vaseline" }
+    ]
+  },
+  "conditions": { "foil": false, "lighting": "poor", "angle": "flat", "blur": false }
+}

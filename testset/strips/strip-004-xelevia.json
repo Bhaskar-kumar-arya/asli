@@ -1,0 +1,10 @@
+{
+  "kind": "strip",
+  "truth": {
+    "productName": "Xelevia 50mg Tablets (Sitagliptin)",
+    "batchNumber": "Y002666",
+    "manufacturer": "Organon",
+    "expMonth": "2026-10"
+  },
+  "conditions": { "foil": true, "lighting": "good", "angle": "tilted", "blur": false }
+}

@@ -1,0 +1,9 @@
+{
+  "kind": "strip",
+  "truth": {
+    "productName": "Xarelto 20mg Tablets (Rivaroxaban)",
+    "batchNumber": "BXH8JS1",
+    "manufacturer": "Bayer"
+  },
+  "conditions": { "foil": true, "lighting": "good", "angle": "tilted", "blur": false }
+}

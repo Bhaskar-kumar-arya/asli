@@ -1,0 +1,10 @@
+{
+  "kind": "strip",
+  "truth": {
+    "productName": "Zinnat 250mg Tablets (Cefuroxime axetil)",
+    "batchNumber": "C540425",
+    "manufacturer": "GlaxoSmithKline",
+    "expMonth": "2014-07"
+  },
+  "conditions": { "foil": true, "lighting": "good", "angle": "flat", "blur": false }
+}

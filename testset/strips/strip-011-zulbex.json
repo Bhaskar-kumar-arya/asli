@@ -1,0 +1,10 @@
+{
+  "kind": "strip",
+  "truth": {
+    "productName": "Zulbex 20mg Tablets (Rabeprazole)",
+    "batchNumber": "T71455",
+    "manufacturer": "KRKA",
+    "expMonth": "2027-01"
+  },
+  "conditions": { "foil": true, "lighting": "good", "angle": "tilted", "blur": false }
+}

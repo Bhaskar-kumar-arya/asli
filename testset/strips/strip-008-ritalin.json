@@ -1,0 +1,10 @@
+{
+  "kind": "strip",
+  "truth": {
+    "productName": "Ritalin 10mg Tablets (Methylphenidate)",
+    "batchNumber": "BH806",
+    "manufacturer": "Novartis",
+    "expMonth": "2018-05"
+  },
+  "conditions": { "foil": true, "lighting": "good", "angle": "tilted", "blur": false }
+}
