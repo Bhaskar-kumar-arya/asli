@@ -60,7 +60,7 @@ async function main(): Promise<void> {
     console.warn(`No labelled testset items found under ${TESTSET_ROOT}. See testset/README.md to collect and label some first.`);
   }
 
-  const config = await resolveStageConfig(args.stage);
+  const config = await resolveStageConfig();
   const idToken = await signInTestUser(config.userPoolClientId);
 
   const scoredStrips: ScoredStripItem[] = [];

@@ -12,10 +12,14 @@ export interface StageConfig {
   publicBucket: string;
 }
 
-/** Resolves the SSM parameters a lane stack exports under `/asli/<stage>/...` (docs/DATA_MODEL.md, CLAUDE.md). */
-export async function resolveStageConfig(stage: string): Promise<StageConfig> {
+/**
+ * Resolves the shared-resource SSM parameters (API endpoint, Cognito client, public bucket)
+ * that only `shared-stack.ts` publishes, under `/asli/<sharedStage>/...`. Per CLAUDE.md, lanes
+ * import shared resources via `SHARED_STAGE` (default `dev-shared`), not their own `--stage`.
+ */
+export async function resolveStageConfig(sharedStage: string = process.env.SHARED_STAGE ?? 'dev-shared'): Promise<StageConfig> {
   const client = new SSMClient({ region: REGION });
-  const prefix = `/asli/${stage}`;
+  const prefix = `/asli/${sharedStage}`;
   const names = [
     `${prefix}${SSM_PATHS.httpApi.endpoint}`,
     `${prefix}${SSM_PATHS.cognito.userPoolClientId}`,
@@ -26,7 +30,7 @@ export async function resolveStageConfig(stage: string): Promise<StageConfig> {
 
   const missing = names.filter((n) => !byName.get(n));
   if (missing.length > 0) {
-    throw new Error(`Missing SSM parameters for stage "${stage}": ${missing.join(', ')}`);
+    throw new Error(`Missing SSM parameters for shared stage "${sharedStage}": ${missing.join(', ')}`);
   }
 
   return {
