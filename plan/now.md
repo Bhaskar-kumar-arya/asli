@@ -1,27 +1,33 @@
 # NOW.md — updated whenever a lane starts, stops, or finishes
 
+**2026-09-19: this file was stale (still showed T01/D1+D2 as active from 2026-09-18).**
+**`plan/INTEGRATION_LOG.md` is the up-to-date source of truth for lane status — check there first.**
+
 ## Active right now
 | Lane | Folder | Started | Status |
 |---|---|---|---|
-| T01 | asli-T01 (worktree, branch lane/T01) | 2026-09-17 19:35 IST | BLOCKED - endpoint (`ENDPOINT_OK`) and PDF-listing spikes done with real evidence; Bedrock/Translate/Textract/Verified Permissions all blocked by AWS account restrictions that need a human console action (see Blocked). |
-| D1+D2 | asli-D2 (worktree, branch lane/D2) | 2026-09-18 01:15 IST | IN PROGRESS - human approved building D1's web shell opportunistically in this same session so D2 (scan/confirm/result screens) wasn't blocked waiting on it. `pnpm -r lint/test/build` green (24 new tests). Not yet run against a real `int` deploy or a real device - see D1/D2 task Handoffs. |
+| Z2 | main | not started | Submission package (README, WRITEUP.md, demo video, Builder Center post) - the only lane left with no code/deploy started. See plan/tasks/Z2-submission-package.md. |
 
 ## Ready to start next
 | Lane | Note |
 |---|---|
-| I, S | **`contracts-v1` is tagged, `dev-shared` is deployed and seeded, and `@asli/matching`'s real implementation is merged to `main`** (human-reviewed 2026-09-18, see B Handoff) - fully unblocked now, including real `cdk deploy` (SSM imports resolve) and real tier decisions (no more stub). A3 (PDF/Textract fallback) can likely drop to P2 - T01 confirmed `ENDPOINT_OK` with strong evidence. Note: Verified Permissions isn't deployed yet (`ENABLE_AVP=false`, see T02 Handoff) - H can build against the stub authz mode until that's resolved. `@asli/ingestion`'s `services/ingestion/src/cdsco/**` (A1) is ready to import - `createCdscoClient`, `parseSnapshot`, `normalizeRows`. `packages/lookup`'s real `findCandidates`/`getCheckedAgainst` (C) is ready to import too, and D2 needs `services/scan`'s presigned-POST upload contract (see C Handoff Gotchas: it's a POST with `fields`, not a raw PUT). |
+| Z1 | `cdk synth LaneZ1Stack-dev-z1` clean; `cdk deploy LaneZ1Stack-int` still needs to be folded into the next full `int` redeploy. Demo-replay screen recording still needs a human with an Android phone. |
 
-## Blocked
+## Blocked (all on the same AWS account-wide restriction, see T01 Handoff)
 | Lane | Blocked on |
 |---|---|
-| T00 | Human: Amplify Hosting connected and live (https://main.d2ag2oukltn4mc.amplifyapp.com). Only remaining: create the AWS Budgets alert (50%/80%). `cdk bootstrap` confirmed done. See plan/tasks/T00-scaffold.md Handoff. |
-| T01 | Human: (1) grant Bedrock model access for Anthropic models in the AWS console - blocks C/A2/N (scanning). Deferred for now, not urgent - CDSCO endpoint matching doesn't need vision extraction. (2) Check whether the "account is currently being verified" state has cleared - it's blocking Verified Permissions (blocks H), Translate (blocks I), and Textract (blocks A3) identically with `SubscriptionRequiredException`. Deferred for now - T02 already ships `ENABLE_AVP=false` as a workaround. (3) ~~Pick a real sender identity/domain + demo recipient emails~~ **DONE 2026-09-17** - sender + recipient emails verified in SES sandbox, G1's real email sends unblocked. (4) ~~A real Android phone for the web push spike~~ **DONE 2026-09-18** - human has an Android phone available, web push spike unblocked. See plan/tasks/T01-spikes.md Handoff for full evidence and exact repro commands (`spikes/*.ts`). |
+| A3 (PDF/Textract fallback) | Account-wide `SubscriptionRequiredException` on Textract. Unmerged on `lane/A3`, not wired into A2's `build.ts`. Per the P2 cutting rule, recommended to stay unmerged unless this clears. |
+| Scans (`POST /v1/scans`, real photo), N's invoice-photo path | Account-wide Bedrock `ValidationException: Operation not allowed` (confirmed not IAM/SCP). Code-complete + fixture-tested, never invoked live. |
+| H (avp mode) | Verified Permissions blocked the same way; ships with `ENABLE_AVP=false` stub authz. |
+| I (Polly hi/kn read-aloud) | Translate/Polly blocked the same way; also Polly has zero hi-IN/kn-IN voices in `ap-south-1` regardless. Falls back to browser `speechSynthesis`. |
 
-## Recently finished
-| Lane | Finished | Notes |
-|---|---|---|
-| A2 | 2026-09-18 11:52 IST | **DONE. Merged to `main`.** Ingestion state machine (`asli-<stage>-ingest`), daily `check-months`, `scripts/backfill.ts`, demo replay (`services/admin-demo`), and `build-reference`. Deployed `LaneA2Stack-dev-a2` for real and verified all 6 acceptance criteria against it, not just unit tests - see plan/tasks/A2-ingestion-pipeline.md Handoff for full evidence. Found and fixed 2 real bugs only visible by deploying: a `rowHash`/alias idempotency bug (reruns were creating duplicates) and a missing `invoke-stats` IAM policy. Also fixed `infra/tsconfig.json`'s `outDir`/`rootDir` (was blocking any infra lane file that does a real cross-package TS import, not just a `NodejsFunction` entry path). `pnpm -r lint/test/build` green (90 new ingestion tests, 7 admin-demo tests). |
-| C | 2026-09-18 | **DONE. Merged to `main`.** Upload/scan/check/alert-detail APIs (`services/scan/**`) + `packages/lookup` (owned by C, committed early for F/G2/N to import). `POST /v1/uploads` (presigned POST, not PUT - see Handoff), `POST /v1/checks`, `POST /v1/scans` (Bedrock Converse extraction + matching, code complete and fully unit-tested against every `scan-responses.json` fixture state but not invoked against a live model - blocked on the same T01 Bedrock access issue as A2/N), `GET /v1/alerts/{alertRef}`. Rate limiting, alias-map/brand-candidate lookups, Powertools metrics/logging. Deployed `LaneCStack-dev-c` for real; `ChecksHandler`/`AlertsHandler`/`UploadsHandler` invoked directly against real seeded data (FLAGGED result, SPURIOUS-first ordering, real presigned POST, clean CloudWatch logs). See plan/tasks/C-scan-check-api.md Handoff. |
-| A1 | 2026-09-18 | **DONE. Merged to `main`.** CDSCO endpoint client/parser (`services/ingestion/src/cdsco/**`): fetches `filteredNsqDrugTable`/`filteredSpuriousDrugTable` politely, saves raw responses to S3, parses into schema-valid `FlaggedBatch[]`. Parser tests pass against T01's real fixtures (217 NSQ + 4 Spurious rows). Deployed `LaneA1Stack-dev-a1` for real and invoked it against the live CDSCO endpoint - confirmed real S3 write. See plan/tasks/A1-cdsco-client-parser.md Handoff. |
-| B | 2026-09-18 | **DONE. Merged to `main`.** Human reviewed `classify.ts` against docs/MATCHING.md's tier table in chat and approved. All 10 required test cases, 100% branch coverage on `classifyMatch`/`decide`, property tests, and benchmark pass. `@asli/matching` is now the real implementation on `main` - C, F, G2, A1 no longer need a stub. See plan/tasks/B-matching-library.md Handoff. |
-| T02 | 2026-09-17 22:35 IST | **DONE. Merged to `main`.** `SharedStack` deployed to `dev-shared` (verified: 26 SSM params present), VAPID keys generated, fixtures seeded, `contracts-v1` tagged and pushed. Verified Permissions deferred (`ENABLE_AVP=false`) pending the same AWS account restriction T01 found - redeploy without the flag once that clears. Also: force-pushed over a stale parallel `origin/lane/T02` from an earlier, never-deployed attempt on a different device (human confirmed it was abandoned) - see T02 Handoff Gotchas.
+## Human-only follow-ups (not AWS-restriction related)
+- T00: AWS Budgets alert (50%/80%) still needs a console click-through.
+- K (QR): needs ≥3 real pack QR photos shot and decode rate logged (`VITE_FEATURE_QR` off by default).
+- E (accuracy harness): needs 30 real strip photos + 10 real bills labeled to produce real accuracy numbers.
+- Push/email: fan-out verified, but real *delivery* needs a live push subscription + an SES-verified recipient inbox.
+- D1: real Cognito sign-in never smoke-tested against Amplify Hosting's deployed env vars.
+- hi/kn guidance strings: hand-drafted only, need native-speaker review (`scripts/content/review.md`).
+
+## Recently finished (see plan/INTEGRATION_LOG.md for full detail and evidence)
+All of T00–T02, A1, A2, B, C, D1/D2/D3, F, G1, G2, H, I, S, J, L, M, N are merged to `main`; Wave 1 (A1/A2/C/F/G1/G2/H/I/S) and Wave 2 (J/L/M/N) are deployed to `int`. Z1's hardening pass (audit, demo seed data, pricing table, `DELETE /v1/me`) is done but not yet redeployed to `int`. Z2 has not started.

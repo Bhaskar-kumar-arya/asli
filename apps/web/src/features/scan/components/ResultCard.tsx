@@ -21,7 +21,7 @@ export interface ResultCardProps {
 
 export function ResultCard({ result, lang = 'en', onSave, saveLabel = 'Save to family medicines' }: ResultCardProps) {
   const [reading, setReading] = useState(false);
-  const copy = getResultCopy(result);
+  const copy = getResultCopy(result, lang);
   const style = TIER_STYLE[result.tier];
   const match = result.matches[0];
 

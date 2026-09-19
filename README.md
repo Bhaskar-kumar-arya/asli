@@ -1,19 +1,85 @@
 # Asli — Is this medicine batch flagged by CDSCO?
 
-> Placeholder README. Lane Z2 rewrites this before submission with screenshots, the architecture diagram, measured cost and accuracy numbers, and the demo video link.
+> Built in 48 hours for WeMakeDevs × AWS "First Commit" (Ship It track).
+> {{Insert demo video thumbnail/GIF here once submission/DEMO_SCRIPT.md is recorded.}}
 
 ## The problem
-CDSCO publishes monthly lists of drug batches that failed quality tests (Not of Standard Quality) or were found Spurious. Families almost never see them. In a hand check of 171 flagged batches from three CDSCO central-lab alerts (Sep 2024, Jan 2025, Mar 2025), 170 were still within their expiry date when announced, with an average of about 9.6 months between manufacture and announcement. These batches can still be sitting in a family's medicine cabinet. (Replace with the figures computed by the stats job across the full backfill.)
+India's Central Drugs Standard Control Organisation (CDSCO) publishes monthly lists of drug
+batches that failed quality tests (Not of Standard Quality) or were found Spurious. Families
+almost never see them — the lists are published as government tables and PDFs, not pushed to
+anyone who actually owns the medicine.
+
+In a hand check of 171 flagged batches from three CDSCO central-lab alerts (Sep 2024, Jan 2025,
+Mar 2025), **170 (99.4%) were still within their expiry date when announced**, with an average of
+about 9.6 months between manufacture and announcement — meaning the batch was very likely still
+sitting in a medicine cabinet by the time CDSCO published the alert.
+
+We confirmed this against a full real ingestion run on `int` (2026-09-19, 21 months of CDSCO
+data, `2024-11` to `2026-07`):
+
+| | Value |
+|---|---|
+| Total flagged batches ingested | 3,326 (3,274 NSQ + 52 Spurious) |
+| Within expiry at announcement | 3,204 (99.47%) |
+| Avg months from manufacture to alert | 10.7 (median 9) |
+| By reporting source | Central lab 1,072 · State lab 2,249 · Unknown 5 |
+
+See `docs/PRODUCT.md` "Evidence" for the full reconciliation between the hand-verified spot check
+and the live numbers.
 
 ## What Asli does
-- Scan a strip, a pharmacy bill, or a pack QR code, or type the details
-- Match the batch against every official CDSCO NSQ and Spurious list, deterministically, with a link to the source
-- Save a family's medicines in a shared cabinet, checked against the whole history
-- Alert every caregiver by web push and email when a new CDSCO list matches
-- Explain what to do next in English, Hindi and Kannada, with read-aloud
+- Scan a strip, a pharmacy bill, or a pack QR code, or type the details in
+- Match the batch against every official CDSCO NSQ and Spurious list, deterministically, with a
+  link back to the original CDSCO source
+- Save a family's medicines in a shared cabinet, checked against the whole CDSCO history, and
+  re-checked automatically every time a new list is published
+- Alert every caregiver in the cabinet by web push and email when a new CDSCO list matches
+- Explain what to do next in plain language (English, Hindi, Kannada, with read-aloud) — never
+  "safe", always "this batch", always cite the source, and never advise stopping a prescribed
+  medicine without a doctor
+- Bulk-check a pharmacy's stock from a CSV (pharmacy mode) and route problem reports to India's
+  official PvPI pharmacovigilance channel instead of broadcasting user reports to other users
 
-## Architecture (summary)
-EventBridge Scheduler → Step Functions ingestion (CDSCO endpoint, PDF + Textract fallback) → S3 snapshots → DynamoDB → DynamoDB Streams → matching Lambdas → SNS → web push and SES email. React PWA on Amplify Hosting, Cognito sign-in, Amazon Verified Permissions (Cedar) for caregiver sharing, Bedrock for image extraction, Translate and Polly for guidance. All infrastructure in AWS CDK.
+## Architecture
+```mermaid
+flowchart LR
+  subgraph Ingestion
+    SCH[EventBridge Scheduler daily] --> CHK[Lambda check-months]
+    CHK -->|new month| SFN[Step Functions ingest]
+    SFN --> FETCH[Lambda fetch CDSCO endpoint]
+    SFN -->|endpoint fails| PDF[PDF download + Textract]
+    FETCH --> S3R[(S3 raw snapshots)]
+    PDF --> S3R
+    SFN --> PARSE[Lambda parse + normalize]
+    PARSE --> FB[(DynamoDB FlaggedBatches)]
+    SFN --> STATS[Lambda stats]
+  end
+  subgraph User
+    WEB[React PWA on Amplify] --> COG[Cognito]
+    WEB --> API[API Gateway HTTP API]
+    API --> SCAN[Lambda scan]
+    SCAN --> S3U[(S3 uploads, 1-day lifecycle)]
+    SCAN --> BR2[Bedrock vision]
+    API --> CHECK[Lambda check]
+    API --> CAB[Lambda cabinet API]
+    CAB --> AVP[Verified Permissions / Cedar]
+    CAB --> CT[(DynamoDB Cabinets)]
+  end
+  subgraph Matching and alerts
+    FB -->|stream INSERT| FAN[Lambda new-alert fan-out]
+    CT -->|stream MED INSERT| RETRO[Lambda retroactive check]
+    FAN --> MT[(Cabinets: MATCH items)]
+    RETRO --> MT
+    FAN --> SNS[SNS alerts topic]
+    RETRO --> SNS
+    SNS --> PUSH[Lambda web push sender]
+    SNS --> MAIL[Lambda SES email sender]
+  end
+```
+Matching is fully deterministic — `packages/matching` decides the tier (FLAGGED / VERIFY /
+NO_ALERT_FOUND). No LLM ever decides or influences a tier; Bedrock is only used to extract fields
+from a photo, never to judge safety. See `docs/ARCHITECTURE.md` for the full service-choice
+rationale and `docs/MATCHING.md` for the tier rules.
 
 ## Repository layout
 ```
@@ -29,6 +95,32 @@ testset                  Labelled strip and bill photos (no personal data)
 docs, plan, submission   Specs, build plan, submission material
 ```
 
+## Status
+All engineering lanes (ingestion, matching, scan/check API, cabinet sharing, alerts, permissions,
+content/i18n, dashboard, QR, PvPI reporting, insights, pharmacy mode, hardening) are merged to
+`main` and deployed to the shared `int` stage, verified against real AWS infrastructure — not just
+unit tests. The one open engineering gap is account-wide: Bedrock, Textract, Translate and
+Verified Permissions are blocked in this AWS account behind a `ValidationException` /
+`SubscriptionRequiredException` unrelated to IAM, so real photo scanning, PDF fallback ingestion,
+Cedar authorization and Polly hi/kn read-aloud are code-complete and fixture-tested but not yet
+verified against live calls to those services. See `plan/INTEGRATION_LOG.md` for the full,
+evidence-backed lane-by-lane status.
+
+## Measured cost and accuracy
+- **Accuracy:** not yet measurable — the accuracy harness (`tools/accuracy`) is built and unit
+  tested, but scoring it needs real strip/bill photos and a live scan path, both blocked by the
+  account restriction above. {{Fill in once E's harness has run against real photos.}}
+- **Cost:** the AWS pricing table (`packages/contracts/src/pricing.ts`) is filled in for
+  `ap-south-1` (all 13 tracked SKUs except `bedrockOutputTokenPer1k`, which has no SKU in any
+  region — no Anthropic Bedrock model is priced in `ap-south-1` at all, so a production vision
+  Lambda would need a cross-region inference profile). Per-scan cost isn't yet computable from
+  real traffic, since no live scan has hit `int` in the trailing CloudWatch window (same Bedrock
+  restriction). `GET /v1/public/metrics` (the `/dashboard` page) shows the real ingestion, alert
+  fan-out and CDSCO-check cost figures that *are* measurable today.
+- **Latency:** retroactive check (add medicine → CDSCO match → alert fan-out) verified end-to-end
+  on real `int` data in well under 10 seconds. Pharmacy bulk-check verified at 3.0–3.4s warm for a
+  200-row CSV.
+
 ## Deploy
 ```
 pnpm install
@@ -37,7 +129,17 @@ STAGE=int pnpm --filter infra cdk deploy --all
 ```
 
 ## Built with
-Claude Code was used to write most of the code. See submission/WRITEUP.md.
+Claude Code (Anthropic) wrote most of the code under our direction, using the specs in `docs/`
+and `plan/`. See `submission/WRITEUP.md` for the full AI-tools credit and `submission/LEARNING_LOG.md`
+for what broke and what we measured along the way.
+
+## Licence
+{{Add a licence — MIT is the common default for hackathon submissions unless the team wants
+otherwise.}}
+
+## Credits / team
+{{Team member names, roles, and Builder Center profile links — see plan/tasks/Z2-submission-package.md
+Deliverable 6.}}
 
 ## Running a lane
 
@@ -63,4 +165,4 @@ Each lane = one Claude Code session working in its own git worktree and branch.
    Never deploy to `int` unless your task is T02, X, or Z1.
 6. Before ending a session: `pnpm -r lint && pnpm -r test`, then update the Handoff section at the bottom of your task file and append anything learned to `submission/LEARNING_LOG.md`.
 
-See `plan/BUILD_PLAN.md` for lane dependencies and `plan/now.md` / `plan/INTEGRATION_LOG.md` for current status.
+See `plan/BUILD_PLAN.md` for lane dependencies and `plan/INTEGRATION_LOG.md` for current status.
