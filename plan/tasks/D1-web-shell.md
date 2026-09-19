@@ -49,8 +49,8 @@ Feature screens.
 - `app/routes.tsx` registry (D2 already added its one line for `scanRoutes`).
 - `OfflineBanner` wired globally in `AppRoot`.
 **Remaining:**
-- Real Cognito sign-in has **not** been tested against `int` (no deployed User Pool reachable from this session) - X/human needs to set `VITE_COGNITO_USER_POOL_ID`/`VITE_COGNITO_USER_POOL_CLIENT_ID`/`VITE_API_BASE_URL` in the Amplify Hosting build env and smoke-test a real sign-in.
-- Lighthouse accessibility audit not run (no browser automation tool available in this sandboxed session) - please run manually before the demo.
+- **Real Cognito sign-in against the live Amplify Hosting site: done (2026-09-19, follow-up session).** Set `VITE_COGNITO_USER_POOL_ID`/`VITE_COGNITO_USER_POOL_CLIENT_ID`/`VITE_API_BASE_URL` on the real Amplify app (`aws amplify update-app --environment-variables ...` + `start-job --job-type RELEASE`) and verified end-to-end with a real headless-browser (Playwright) session signed in as the seeded demo user. This surfaced and fixed three more real, stacked bugs along the way (API Gateway CORS never allowing the real origin, a double `/v1/v1` path prefix in the cabinet API client, and the cabinet client never actually using D1's real auth session) - full writeup in `submission/LEARNING_LOG.md`'s 2026-09-19 entry. Real screenshots from this session are now in `docs/screenshots/`, linked from `README.md`.
+- Lighthouse accessibility audit not run - please run manually before the demo.
 - Confirm-signup / forgot-password flows are not built (only sign-in) - add if the demo needs new user self-signup instead of pre-created test accounts.
 **Gotchas / decisions:**
 - Content package (`packages/content`, lane I) is still a placeholder, so shell i18n only carries chrome strings (nav labels, settings). Result-card guidance copy lives in D2's own `features/scan/lib/content.ts` as a stand-in - see D2 Handoff for the swap-over plan.
