@@ -1,7 +1,7 @@
 import type { ApiError } from '@asli/contracts';
 import { getIdToken } from './auth';
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
+const BASE_URL: string = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '/v1';
 
 export class ApiRequestError extends Error {
   readonly code: ApiError['error']['code'];
