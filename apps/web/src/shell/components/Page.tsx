@@ -16,14 +16,13 @@ export function Page({ title, children, onBack, subtitle, currency }: PageProps)
   return (
     <main className="reg-sheet">
       {onBack ? (
-        <div className="reg-row reg-row--tight" style={{ borderBottom: 0, paddingTop: '0.9rem' }}>
-          <button type="button" onClick={onBack} aria-label="Back" className="reg-btn" style={{ padding: '0.4rem 0.6rem' }}>
-            <Icon name="back" size={20} />
-          </button>
-        </div>
+        <button type="button" onClick={onBack} className="reg-back">
+          <Icon name="back" size={18} />
+          Back
+        </button>
       ) : null}
 
-      <header className="reg-masthead">
+      <header className={onBack ? 'reg-pagehead' : 'reg-masthead'}>
         <h1>{title}</h1>
         {subtitle ? <p className="reg-masthead__indic">{subtitle}</p> : null}
         {currency ? <p className="reg-masthead__currency">{currency}</p> : null}

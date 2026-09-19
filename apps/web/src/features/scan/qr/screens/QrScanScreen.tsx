@@ -60,14 +60,14 @@ export function QrScanScreen() {
         <p style={{ fontSize: '3em', margin: 0 }} aria-hidden="true">
           🔲
         </p>
-        <p style={{ color: 'var(--color-text-muted)' }}>
+        <p style={{ color: 'var(--text-2)' }}>
           Photograph the QR code printed on the pack. It's decoded on your device - the photo is
           never uploaded.
         </p>
       </Card>
 
       {status === 'not_found' || status === 'error' ? (
-        <p role="alert" style={{ color: 'var(--color-danger)' }}>
+        <p role="alert" style={{ color: 'var(--flagged)' }}>
           {status === 'not_found'
             ? "We couldn't find a QR code in that photo. Try again with the code centred and in focus."
             : 'Something went wrong reading that photo. Please try again.'}
@@ -78,7 +78,7 @@ export function QrScanScreen() {
         <Card style={{ marginBottom: '1rem' }}>
           <p role="alert">We read the QR code, but couldn't make sense of the details in it.</p>
           {rawText ? (
-            <p style={{ color: 'var(--color-text-muted)', wordBreak: 'break-all' }}>
+            <p style={{ color: 'var(--text-2)', wordBreak: 'break-all' }}>
               What we read: <span style={{ fontFamily: 'monospace' }}>{rawText}</span>
             </p>
           ) : null}

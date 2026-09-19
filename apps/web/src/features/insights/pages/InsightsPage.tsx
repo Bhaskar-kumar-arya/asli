@@ -36,7 +36,7 @@ function fmtPct(n: number): string {
 /** "Source: CDSCO alerts, computed by Asli on <date>" (this task's Deliverable 2). */
 function SourceLine({ generatedAt }: { generatedAt: string }) {
   return (
-    <p style={{ margin: '0.25rem 0 1rem', fontSize: '0.85rem', color: 'var(--color-text-muted, #666)' }}>
+    <p style={{ margin: '0.25rem 0 1rem', fontSize: '0.85rem', color: 'var(--text-2, #666)' }}>
       Source: CDSCO alerts, computed by Asli on {fmtDate(generatedAt)}
     </p>
   );
@@ -79,7 +79,7 @@ export function InsightsPage() {
   return (
     <main style={{ maxWidth: 720, margin: '0 auto', padding: '1rem 1rem 3rem' }}>
       <h1 style={{ margin: '0 0 0.25rem' }}>CDSCO alerts, at a glance</h1>
-      <p style={{ color: 'var(--color-text-muted, #666)', marginTop: 0 }}>
+      <p style={{ color: 'var(--text-2, #666)', marginTop: 0 }}>
         This does not certify any medicine as safe. It summarises batches CDSCO has already reported as Not of
         Standard Quality or spurious.
       </p>
@@ -118,8 +118,8 @@ export function InsightsPage() {
               <YAxis allowDecimals={false} fontSize={12} />
               <Tooltip />
               <Legend />
-              <Bar dataKey="NSQ" name="Not of Standard Quality" stackId="a" fill="var(--color-chart-1, #b91c1c)" />
-              <Bar dataKey="SPURIOUS" name="Spurious" stackId="a" fill="var(--color-chart-2, #92400e)" />
+              <Bar dataKey="NSQ" name="Not of Standard Quality" stackId="a" fill="var(--chart-1)" />
+              <Bar dataKey="SPURIOUS" name="Spurious" stackId="a" fill="var(--chart-2)" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -161,7 +161,7 @@ export function InsightsPage() {
               <XAxis type="number" allowDecimals={false} fontSize={12} />
               <YAxis type="category" dataKey="code" width={110} fontSize={12} />
               <Tooltip formatter={(value: number, _name, item) => [value, item.payload.label]} />
-              <Bar dataKey="count" name="Batches" fill="var(--color-chart-1, #b91c1c)" />
+              <Bar dataKey="count" name="Batches" fill="var(--chart-1)" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -182,7 +182,7 @@ export function InsightsPage() {
               <XAxis type="number" allowDecimals={false} fontSize={12} />
               <YAxis type="category" dataKey="label" width={140} fontSize={12} />
               <Tooltip />
-              <Bar dataKey="count" name="Batches" fill="var(--color-chart-2, #92400e)" />
+              <Bar dataKey="count" name="Batches" fill="var(--chart-2)" />
             </BarChart>
           </ResponsiveContainer>
         </div>

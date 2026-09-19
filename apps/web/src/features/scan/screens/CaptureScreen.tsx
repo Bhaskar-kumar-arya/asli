@@ -2,7 +2,7 @@ import { useRef, useState, type ChangeEvent } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Page } from '../../../shell/components/Page';
 import { Button } from '../../../shell/components/Button';
-import { Card } from '../../../shell/components/Card';
+import { BatchLocationDiagram } from '../components/BatchLocationDiagram';
 import { api } from '../../../api/endpoints';
 import { uploadToPresignedUrl } from '../../../api/upload';
 import { downscaleImage } from '../lib/imageProcessing';
@@ -71,27 +71,24 @@ export function CaptureScreen() {
 
   return (
     <Page title={kind === 'strip' ? 'Photo of strip' : 'Photo of bill'} onBack={() => navigate('/scan')}>
-      <Card style={{ marginBottom: '1rem', textAlign: 'center' }}>
-        <p style={{ fontSize: '3em', margin: 0 }} aria-hidden="true">
-          {kind === 'strip' ? '💊' : '🧾'}
-        </p>
-        <p style={{ color: 'var(--color-text-muted)' }}>
-          {kind === 'strip'
-            ? 'Look for "B.No" or "Batch" printed on the strip or carton, usually near the expiry date.'
-            : 'Make sure the batch number column on the bill is clear and not cut off.'}
-        </p>
-      </Card>
+      <p className="reg-prose">
+        {kind === 'strip'
+          ? 'Look for "B.No" or "Batch" printed on the strip or carton, usually near the expiry date.'
+          : 'Make sure the batch number column on the bill is clear and not cut off.'}
+      </p>
+
+      <BatchLocationDiagram kind={kind} />
 
       {isMockMode() ? (
-        <Card style={{ marginBottom: '1rem' }}>
-          <label htmlFor="mock-scenario" style={{ display: 'block', fontWeight: 600, marginBottom: '0.4rem' }}>
+        <div className="reg-field">
+          <label htmlFor="mock-scenario" className="reg-legend">
             Demo scenario (mock mode)
           </label>
           <select
             id="mock-scenario"
             value={mockScenario}
             onChange={(e) => setMockScenario(e.target.value as ScanFixtureState)}
-            style={{ width: '100%', minHeight: 'var(--tap-target-min)', padding: '0.5rem' }}
+            className="reg-field__input"
           >
             {scanFixtures.map((f) => (
               <option key={f.state} value={f.state}>
@@ -99,7 +96,7 @@ export function CaptureScreen() {
               </option>
             ))}
           </select>
-        </Card>
+        </div>
       ) : null}
 
       <input
@@ -121,9 +118,13 @@ export function CaptureScreen() {
         {progress === 'extracting' ? 'Reading the details…' : null}
       </Button>
       {progress === 'error' ? (
-        <p role="alert" style={{ color: 'var(--color-danger)' }}>
+        <p role="alert" className="reg-line reg-line--flagged" style={{ textTransform: 'none', marginTop: '1rem' }}>
           Something went wrong. Please try again, or{' '}
-          <button type="button" onClick={() => navigate('/scan/manual')} style={{ color: 'inherit', textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer' }}>
+          <button
+            type="button"
+            onClick={() => navigate('/scan/manual')}
+            style={{ color: 'inherit', textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer', padding: 0, font: 'inherit' }}
+          >
             type the details instead
           </button>
           .

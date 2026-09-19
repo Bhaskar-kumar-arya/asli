@@ -45,7 +45,7 @@ export function DashboardPage() {
   return (
     <main style={{ maxWidth: 640, margin: '0 auto', padding: '1rem 1rem 3rem' }}>
       <h1 style={{ margin: '0 0 0.25rem' }}>Cost and accuracy dashboard</h1>
-      <p style={{ color: 'var(--color-text-muted, #666)', marginTop: 0 }}>
+      <p style={{ color: 'var(--text-2, #666)', marginTop: 0 }}>
         Measured on {fmtDate(costDetail.window.end)} · last 24h on this stage
       </p>
 

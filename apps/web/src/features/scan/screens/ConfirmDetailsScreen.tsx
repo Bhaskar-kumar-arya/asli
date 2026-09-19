@@ -50,11 +50,11 @@ export function ConfirmDetailsScreen() {
 
   return (
     <Page title="Confirm details" onBack={() => navigate(-1)}>
-      <p style={{ color: 'var(--color-text-muted)' }}>
+      <p style={{ color: 'var(--text-2)' }}>
         Please check these details are correct before we look them up.
       </p>
       {error ? (
-        <p role="alert" style={{ color: 'var(--color-danger)' }}>
+        <p role="alert" style={{ color: 'var(--flagged)' }}>
           {error}
         </p>
       ) : null}

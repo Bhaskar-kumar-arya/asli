@@ -42,12 +42,12 @@ export function ManualEntryScreen() {
   return (
     <Page title="Type details" onBack={() => navigate('/scan')}>
       {extractionFailed ? (
-        <p style={{ color: 'var(--color-text-muted)' }}>
+        <p style={{ color: 'var(--text-2)' }}>
           We couldn't read the photo clearly. Please type the details from the strip or bill instead.
         </p>
       ) : null}
       {error ? (
-        <p role="alert" style={{ color: 'var(--color-danger)' }}>
+        <p role="alert" style={{ color: 'var(--flagged)' }}>
           {error}
         </p>
       ) : null}

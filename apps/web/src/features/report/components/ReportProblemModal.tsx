@@ -86,7 +86,7 @@ export function ReportProblemModal({ identity, alertRef, onClose }: ReportProble
           </>
         ) : (
           <>
-            <p style={{ color: 'var(--color-text-muted)' }}>
+            <p style={{ color: 'var(--text-2)' }}>
               Asli does not investigate reports. PvPI is the official channel.
             </p>
 
@@ -119,9 +119,9 @@ export function ReportProblemModal({ identity, alertRef, onClose }: ReportProble
                 width: '100%',
                 padding: '0.6rem 0.75rem',
                 borderRadius: '0.6rem',
-                border: '2px solid var(--color-border)',
-                background: 'var(--color-bg)',
-                color: 'var(--color-text)',
+                border: '2px solid var(--rule-strong)',
+                background: 'var(--sheet)',
+                color: 'var(--text)',
                 marginBottom: '1rem',
               }}
             />
@@ -131,8 +131,8 @@ export function ReportProblemModal({ identity, alertRef, onClose }: ReportProble
               <pre
                 style={{
                   whiteSpace: 'pre-wrap',
-                  background: 'var(--color-bg)',
-                  border: '1px solid var(--color-border)',
+                  background: 'var(--sheet)',
+                  border: '1px solid var(--rule-strong)',
                   borderRadius: '0.6rem',
                   padding: '0.6rem 0.75rem',
                   margin: '0 0 0.5rem',
@@ -146,7 +146,7 @@ export function ReportProblemModal({ identity, alertRef, onClose }: ReportProble
             </div>
 
             {status === 'error' ? (
-              <p role="alert" style={{ color: 'var(--color-danger)' }}>
+              <p role="alert" style={{ color: 'var(--flagged)' }}>
                 Couldn't save your report. Please try again.
               </p>
             ) : null}

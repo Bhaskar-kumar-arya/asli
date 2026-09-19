@@ -3,21 +3,7 @@ function monthLabel(yyyyMm: string): string {
   return new Date(Number(y), Number(m) - 1).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
 }
 
+/** An annotation pencilled onto the entry, disclosed as a replay. */
 export function DemoLabel({ alertMonth }: { alertMonth: string }) {
-  return (
-    <p
-      style={{
-        display: 'inline-block',
-        background: 'var(--color-surface)',
-        border: '1px dashed var(--color-border)',
-        borderRadius: '0.5rem',
-        padding: '0.25rem 0.6rem',
-        fontSize: '0.85em',
-        color: 'var(--color-text-muted)',
-        margin: '0 0 0.75rem',
-      }}
-    >
-      Demo replay of a real {monthLabel(alertMonth)} CDSCO alert
-    </p>
-  );
+  return <p className="reg-annotation">Demo replay of a real {monthLabel(alertMonth)} CDSCO alert</p>;
 }

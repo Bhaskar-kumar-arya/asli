@@ -44,11 +44,11 @@ export function QrConfirmScreen() {
 
   return (
     <Page title="Confirm details" onBack={() => navigate('/scan/qr')}>
-      <p style={{ color: 'var(--color-text-muted)' }}>
+      <p style={{ color: 'var(--text-2)' }}>
         This is what we read from the QR code. Please check it's correct before we look it up.
       </p>
       {error ? (
-        <p role="alert" style={{ color: 'var(--color-danger)' }}>
+        <p role="alert" style={{ color: 'var(--flagged)' }}>
           {error}
         </p>
       ) : null}

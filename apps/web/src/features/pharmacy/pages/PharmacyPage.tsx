@@ -52,7 +52,7 @@ export function PharmacyPage() {
   return (
     <main style={{ maxWidth: 900, margin: '0 auto', padding: '1rem 1rem 3rem' }}>
       <h1 style={{ margin: '0 0 0.25rem' }}>Pharmacy mode</h1>
-      <p style={{ color: 'var(--color-text-muted)', marginTop: 0 }}>
+      <p style={{ color: 'var(--text-2)', marginTop: 0 }}>
         Check your stock or a supplier invoice against CDSCO alert lists in bulk. Up to 500 rows.
       </p>
 
@@ -121,7 +121,7 @@ export function PharmacyPage() {
                 {rows.map((row, i) => {
                   const match = row.matches[0];
                   return (
-                    <tr key={`${row.identity.batchNumber}-${i}`} style={{ borderTop: '1px solid var(--color-border)' }}>
+                    <tr key={`${row.identity.batchNumber}-${i}`} style={{ borderTop: '1px solid var(--rule-strong)' }}>
                       <td style={{ padding: '0.5rem' }}>{row.identity.productName ?? '—'}</td>
                       <td style={{ padding: '0.5rem' }}>{row.identity.batchNumber}</td>
                       <td style={{ padding: '0.5rem' }}>{row.identity.manufacturer ?? '—'}</td>

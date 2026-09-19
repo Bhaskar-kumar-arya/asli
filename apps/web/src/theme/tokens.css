@@ -38,6 +38,12 @@
   --flagged-wash: color-mix(in srgb, var(--ink-oxide) 8%, var(--ink-stock));
   --verify-wash: color-mix(in srgb, var(--ink-violet) 8%, var(--ink-stock));
 
+  /* --- tabulated returns: the same inks, no new hues --- */
+  --chart-1: var(--ink-oxide);
+  --chart-2: var(--ink-violet);
+  --chart-3: color-mix(in srgb, var(--ink-carbon) 72%, var(--ink-stock));
+  --chart-grid: var(--rule);
+
   /* --- type --- */
   --face-print: 'Archivo', 'Noto Sans Devanagari', 'Noto Sans Kannada', system-ui, sans-serif;
   --face-record: 'Anonymous Pro', ui-monospace, 'Cascadia Mono', monospace;
@@ -338,6 +344,45 @@ a:hover {
   padding-top: 0.4rem;
 }
 
+/* Sub-sheets carry a smaller head; the masthead belongs to the register's front. */
+.reg-pagehead {
+  border-bottom: 2px solid var(--text);
+  padding: 0.5rem 0 0.55rem;
+  margin-bottom: 0.3rem;
+}
+
+.reg-pagehead h1 {
+  font-size: clamp(1.35rem, 6vw, 1.7rem);
+  font-stretch: 106%;
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 1.05;
+}
+
+.reg-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: var(--tap-target-min);
+  padding: 0 0.4rem 0 0;
+  margin-top: 0.7rem;
+  background: none;
+  border: 0;
+  color: var(--margin);
+  font-family: var(--face-print);
+  font-size: var(--step-legend);
+  font-weight: 700;
+  font-stretch: 88%;
+  letter-spacing: var(--track-legend);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.reg-back:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+
 .reg-masthead__currency {
   font-family: var(--face-record);
   font-size: var(--step-legend);
@@ -572,10 +617,14 @@ a:hover {
   color: var(--verify);
 }
 
+/* Rotated ink still has to sit inside the rule it was struck on. */
 .reg-stamp--lg {
   font-size: var(--step-small);
-  padding: 0.55rem 0.9rem;
-  gap: 0.6rem;
+  padding: 0.5rem 0.8rem;
+  gap: 0.55rem;
+  max-width: 88%;
+  white-space: normal;
+  text-wrap: balance;
 }
 
 /* The strike: the stamp lands once, then the sheet settles. */
@@ -636,9 +685,8 @@ a:hover {
 /* ---------- result sheet ---------- */
 
 .reg-verdict {
-  border-top: 3px double var(--text);
   border-bottom: 1px solid var(--text);
-  padding: 1.1rem 0 1.3rem;
+  padding: 1.1rem 0 1.4rem;
   margin-bottom: 1.25rem;
 }
 
@@ -732,6 +780,97 @@ a:hover {
 .reg-empty {
   padding: 1.6rem 0 1.9rem;
   border-bottom: 1px solid var(--rule);
+}
+
+/* A slip laid on the register for one focused task. */
+.reg-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 1rem;
+  background: color-mix(in srgb, var(--ink-iron) 72%, transparent);
+}
+
+@media (min-width: 30rem) {
+  .reg-scrim {
+    align-items: center;
+  }
+}
+
+.reg-docket {
+  width: 100%;
+  max-width: 400px;
+  background: var(--sheet);
+  border: 1px solid var(--text);
+  border-top: 4px double var(--text);
+  padding: 1.25rem 1.15rem 1.35rem;
+}
+
+.reg-docket h2 {
+  font-size: var(--step-small);
+  font-weight: 700;
+  font-stretch: 88%;
+  letter-spacing: var(--track-legend);
+  text-transform: uppercase;
+  margin: 0 0 1rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+/* Selects read as recorded values on a rule. */
+.reg-select {
+  width: 100%;
+  min-height: var(--tap-target-min);
+  padding: 0.35rem 0.1rem;
+  background: none;
+  border: 0;
+  border-bottom: 2px solid var(--rule-strong);
+  border-radius: 0;
+  font-family: var(--face-record);
+  font-size: var(--step-body);
+  color: var(--text);
+}
+
+.reg-select:focus {
+  outline: none;
+  border-bottom-color: var(--margin);
+}
+
+/* An annotation on the entry — disclosed, not decorative. */
+.reg-annotation {
+  display: inline-block;
+  margin: 0 0 0.85rem;
+  padding: 0.2rem 0 0.25rem;
+  border-bottom: 1px dashed var(--rule-strong);
+  font-family: var(--face-record);
+  font-size: var(--step-legend);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+/* A specimen figure, ruled into the sheet. */
+.reg-figure {
+  margin: 1.2rem 0 1.5rem;
+  padding: 1rem 0.75rem 0.85rem;
+  background: var(--sheet-sunk);
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule-strong);
+  color: var(--text-2);
+}
+
+.reg-figure svg {
+  display: block;
+  max-width: 320px;
+  margin: 0 auto 0.6rem;
+}
+
+.reg-figure figcaption {
+  text-align: center;
+  margin: 0;
 }
 
 /* A numbered option on its own rule. */
@@ -838,7 +977,18 @@ a:hover {
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem;
-  margin-top: 1rem;
+  margin-top: 1.2rem;
+}
+
+/* Ragged button widths read as an accident; on a phone they take the full rule. */
+.reg-stack > .reg-btn {
+  flex: 1 1 100%;
+}
+
+@media (min-width: 26rem) {
+  .reg-stack > .reg-btn {
+    flex: 0 1 auto;
+  }
 }
 
 .reg-between {

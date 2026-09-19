@@ -1,6 +1,5 @@
 import type { CheckItemResult } from '@asli/contracts';
-import { StatusChip } from '../../../shell/components/StatusChip';
-import { Card } from '../../../shell/components/Card';
+import { Verdict } from '../../../shell/components/Verdict';
 import { Button } from '../../../shell/components/Button';
 
 export interface BillResultRowProps {
@@ -8,21 +7,24 @@ export interface BillResultRowProps {
   onOpen: () => void;
 }
 
+/** One line of the bill, entered on its own rule. */
 export function BillResultRow({ result, onOpen }: BillResultRowProps) {
   return (
-    <Card style={{ marginBottom: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
-      <div>
-        <p style={{ margin: '0 0 0.35rem', fontWeight: 600 }}>{result.identity.productName ?? 'Unnamed item'}</p>
-        <p style={{ margin: 0, color: 'var(--color-text-muted)', fontSize: '0.9em' }}>
+    <div className="cabinet-medicine-row">
+      <span className="reg-grow">
+        <span style={{ display: 'block', fontWeight: 700, fontSize: 'var(--step-body)' }}>
+          {result.identity.productName ?? 'Unnamed item'}
+        </span>
+        <span className="reg-value" style={{ display: 'block', fontSize: 'var(--step-small)', color: 'var(--text-2)' }}>
           Batch {result.identity.batchNumber}
-        </p>
-      </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        <StatusChip tier={result.tier} />
+        </span>
+      </span>
+      <span style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', flexWrap: 'wrap' }}>
+        <Verdict tier={result.tier} category={result.matches[0]?.category} />
         <Button variant="secondary" onClick={onOpen}>
           View
         </Button>
-      </div>
-    </Card>
+      </span>
+    </div>
   );
 }

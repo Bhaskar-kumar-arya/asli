@@ -7,9 +7,11 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
 
   if (status === 'loading') {
     return (
-      <div role="status" style={{ padding: '2rem', textAlign: 'center' }}>
-        Loading…
-      </div>
+      <main className="reg-sheet">
+        <p role="status" className="reg-line" style={{ marginTop: '2rem' }}>
+          <span className="reg-line__ellipsis">Opening the register</span>
+        </p>
+      </main>
     );
   }
 

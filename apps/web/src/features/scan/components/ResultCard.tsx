@@ -48,7 +48,7 @@ export function ResultCard({ result, lang = 'en', onSave, saveLabel = 'Save to f
       <span className="reg-legend">Batch entered</span>
       <span className="reg-value--batch">{batch ?? '—'}</span>
 
-      <div style={{ margin: '1.1rem 0 0.2rem' }}>
+      <div style={{ margin: '1.2rem 0 0.4rem', paddingInlineStart: '0.35rem' }}>
         <Verdict tier={result.tier} category={match?.category} large struck />
       </div>
 
