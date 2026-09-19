@@ -3,9 +3,7 @@
 > Built in 48 hours for WeMakeDevs × AWS "First Commit" (Ship It track).
 >
 > **TODO (human, before final submission):** demo video thumbnail/GIF goes here once
-> `submission/DEMO_SCRIPT.md` is recorded. Screenshots are also still outstanding — take them
-> against the live PWA at **https://main.d2ag2oukltn4mc.amplifyapp.com** (see "Screenshots" below
-> for exactly which screens).
+> `submission/DEMO_SCRIPT.md` is recorded.
 
 ## The problem
 India's Central Drugs Standard Control Organisation (CDSCO) publishes monthly lists of drug
@@ -90,14 +88,26 @@ Exported image (GitHub renders the mermaid block above natively, but here's a st
 `npx @mermaid-js/mermaid-cli`).
 
 ## Screenshots
-**TODO (human):** capture these against the live PWA at
-**https://main.d2ag2oukltn4mc.amplifyapp.com** and drop them here — these are the 2–3 screens that
-carry the most weight in `submission/DEMO_SCRIPT.md`:
-1. **Flagged result card** (0:55–1:25 in the script) — the red FLAGGED card with the CDSCO source
-   link, showing "this batch" wording and a citation, not a brand or manufacturer callout.
+Captured live against the deployed PWA at **https://main.d2ag2oukltn4mc.amplifyapp.com**, signed
+in as the seeded demo user — real data, not mocked. These are the screens that carry the most
+weight in `submission/DEMO_SCRIPT.md`:
+
+1. **Flagged result card** (0:55–1:25 in the script) — the red "On a CDSCO alert list" card with
+   the CDSCO alert month, reporting lab, reason, and source link, showing "this batch" wording,
+   not a brand or manufacturer callout.
+
+   ![Flagged result card](docs/screenshots/flagged-result.png)
+
 2. **"No alert found" result card** (0:30–0:55) — the neutral result, to show it never says "safe".
-3. **Shared cabinet with a caregiver alert arriving** (1:45–2:35) — a second phone/account showing
-   the same saved medicine and a push/email alert landing after a simulated CDSCO ingestion.
+
+   ![No alert found result card](docs/screenshots/no-alert-result.png)
+
+3. **Shared cabinet** (1:45–2:35) — "Mom's medicines" with both the clean and flagged medicine
+   saved together, matching the real seeded demo data used for `submission/DEMO_SCRIPT.md`. The
+   full "second phone/caregiver alert arriving" moment is best shown live in the video rather than
+   a static screenshot.
+
+   ![Shared cabinet](docs/screenshots/shared-cabinet.png)
 
 ## Repository layout
 ```
