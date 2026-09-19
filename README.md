@@ -162,11 +162,16 @@ and `plan/`. See `submission/WRITEUP.md` for the full AI-tools credit and `submi
 for what broke and what we measured along the way.
 
 ## Licence
-MIT — see [`LICENSE`](./LICENSE). Copyright holder is left as `{{TEAM_NAME}}` pending the team's
-final name (see `plan/tasks/Z2-submission-package.md` Deliverable 6).
+MIT — see [`LICENSE`](./LICENSE). Copyright holder is `bskry`.
 
 ## Credits / team
-{{Team member names, roles, and Builder Center profile links — see plan/tasks/Z2-submission-package.md
+Team **bskry**:
+- Bhaskar Kumar Arya — Backend
+- Pushya Jain — Frontend
+- Heet Shah — Design
+- Yashas Yogindra — Architecture
+
+See `submission/WRITEUP.md` for the full AI-tools credit.
 Deliverable 6.}}
 
 ## Running a lane

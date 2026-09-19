@@ -150,5 +150,11 @@ not a tool used to write the code, and it never influences the matching decision
 1: `packages/matching` alone decides the tier).
 
 ## Team
-{{Names, roles, and Builder Center profile links for all teammates — needed for fast-track
-eligibility per plan/tasks/Z2-submission-package.md Deliverable 6.}}
+Team **bskry**:
+- Bhaskar Kumar Arya — Backend
+- Pushya Jain — Frontend
+- Heet Shah — Design
+- Yashas Yogindra — Architecture
+
+Builder Center profile links: **TODO (human)** — pending, add once available for fast-track
+eligibility per `plan/tasks/Z2-submission-package.md` Deliverable 6.
