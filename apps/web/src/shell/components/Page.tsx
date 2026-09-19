@@ -1,36 +1,34 @@
 import type { ReactNode } from 'react';
+import { Icon } from './Icon';
 
 export interface PageProps {
   title: string;
   children: ReactNode;
   onBack?: () => void;
+  /** Indic band under the masthead rule, as a station board stacks its scripts. */
+  subtitle?: string;
+  /** What the register is current to — printed along the masthead's lower edge. */
+  currency?: string;
 }
 
-/** One primary action per screen (docs/UX.md). Layout shell only - actions live in children. */
-export function Page({ title, children, onBack }: PageProps) {
+/** One primary action per screen (docs/UX.md). The sheet only; entries live in children. */
+export function Page({ title, children, onBack, subtitle, currency }: PageProps) {
   return (
-    <main style={{ maxWidth: 480, margin: '0 auto', padding: '1rem 1rem 6rem', minHeight: '100vh' }}>
-      <header style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-        {onBack ? (
-          <button
-            type="button"
-            onClick={onBack}
-            aria-label="Back"
-            style={{
-              minHeight: 'var(--tap-target-min)',
-              minWidth: 'var(--tap-target-min)',
-              background: 'none',
-              border: 'none',
-              fontSize: '1.5em',
-              cursor: 'pointer',
-              color: 'var(--color-text)',
-            }}
-          >
-            ←
+    <main className="reg-sheet">
+      {onBack ? (
+        <div className="reg-row reg-row--tight" style={{ borderBottom: 0, paddingTop: '0.9rem' }}>
+          <button type="button" onClick={onBack} aria-label="Back" className="reg-btn" style={{ padding: '0.4rem 0.6rem' }}>
+            <Icon name="back" size={20} />
           </button>
-        ) : null}
-        <h1 style={{ margin: 0 }}>{title}</h1>
+        </div>
+      ) : null}
+
+      <header className="reg-masthead">
+        <h1>{title}</h1>
+        {subtitle ? <p className="reg-masthead__indic">{subtitle}</p> : null}
+        {currency ? <p className="reg-masthead__currency">{currency}</p> : null}
       </header>
+
       {children}
     </main>
   );

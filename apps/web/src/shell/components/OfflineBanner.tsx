@@ -16,18 +16,21 @@ export function OfflineBanner() {
 
   if (online) return null;
 
+  /* A state prints itself into the record. It is not a floating banner. */
   return (
     <div
       role="status"
+      className="reg-line reg-line--flagged"
       style={{
         position: 'sticky',
         top: 0,
-        zIndex: 10,
-        background: 'var(--color-verify-bg)',
-        color: 'var(--color-verify-text)',
-        padding: '0.6rem 1rem',
-        textAlign: 'center',
-        fontWeight: 600,
+        zIndex: 30,
+        maxWidth: 'var(--sheet-max)',
+        margin: '0 auto',
+        padding: '0.7rem 1rem',
+        background: 'var(--sheet)',
+        borderBottom: '2px solid currentColor',
+        textTransform: 'none',
       }}
     >
       You're offline. Some things - like checking a new medicine - need the internet.
