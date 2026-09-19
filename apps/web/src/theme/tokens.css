@@ -224,6 +224,20 @@ a:hover {
   border-inline: 1px solid var(--rule-faint);
 }
 
+/* On a desk the sheet is a page lying on the bench, not a stranded column. */
+@media (min-width: 40rem) {
+  :root {
+    --sheet-max: 600px;
+    --pad-x: 1.75rem;
+    --margin-w: 58px;
+  }
+
+  .reg-sheet {
+    border-inline: 0;
+    box-shadow: 0 2px 28px color-mix(in srgb, var(--ink-iron) 16%, transparent);
+  }
+}
+
 .reg-sheet::before {
   content: '';
   position: absolute;
@@ -429,12 +443,13 @@ a:hover {
   border-bottom: 2px solid var(--text);
   color: var(--text);
   font-family: var(--face-print);
-  font-size: clamp(1.35rem, 6.2vw, 1.85rem);
+  font-size: clamp(1.3rem, 5.6vw, 1.62rem);
   font-weight: 800;
   font-stretch: 112%;
   letter-spacing: var(--track-caps);
   text-transform: uppercase;
   text-align: start;
+  text-wrap: balance;
   cursor: pointer;
   transition: background var(--press);
 }
