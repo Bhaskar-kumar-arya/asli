@@ -14,6 +14,16 @@ export async function getIdToken(): Promise<string | undefined> {
   }
 }
 
+export async function getCurrentUserId(): Promise<string | undefined> {
+  if (isMockMode()) return 'mock-user-id';
+  try {
+    const user = await getCurrentUser();
+    return user.userId;
+  } catch {
+    return undefined;
+  }
+}
+
 export async function isSignedIn(): Promise<boolean> {
   if (isMockMode()) return true;
   try {

@@ -1,5 +1,5 @@
 import type { ApiError } from '@asli/contracts';
-import { getIdToken } from './auth';
+import { getIdToken } from '../../../auth/session';
 
 const BASE_URL: string = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '/v1';
 
@@ -15,7 +15,7 @@ export class ApiRequestError extends Error {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const token = getIdToken();
+  const token = await getIdToken();
   const headers = new Headers(init?.headers);
   headers.set('Accept', 'application/json');
   if (init?.body) {

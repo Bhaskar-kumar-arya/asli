@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import type { CabinetDetail, Invite, Role } from '@asli/contracts';
 import { createInvite, getCabinet, removeMember, updateMember } from '../api/cabinets';
-import { getCurrentUserId } from '../api/auth';
+import { getCurrentUserId } from '../../../auth/session';
 import '../cabinet.css';
 
 const ROLES: Role[] = ['OWNER', 'EDITOR', 'VIEWER'];
@@ -20,7 +20,7 @@ async function shareInvite(invite: Invite, cabinetName: string) {
 export function MembersPage() {
   const { cabinetId } = useParams<{ cabinetId: string }>();
   const navigate = useNavigate();
-  const currentUserId = getCurrentUserId();
+  const [currentUserId, setCurrentUserId] = useState<string | undefined>(undefined);
 
   const [detail, setDetail] = useState<CabinetDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -40,6 +40,10 @@ export function MembersPage() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  useEffect(() => {
+    void getCurrentUserId().then(setCurrentUserId);
+  }, []);
 
   async function handleCreateInvite() {
     if (!cabinetId) return;
