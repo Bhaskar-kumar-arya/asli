@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-20T00:00:00.000Z",
+  "title": "Design System: Asli",
+  "extensions": {
+    "colorMeta": {
+      "stock": {
+        "role": "neutral",
+        "displayName": "Register Stock",
+        "canonical": "#ecebe1",
+        "tonalRamp": ["#ecebe1", "#e4e3d9", "#d5d4cb", "#a7a69c", "#676659", "#16150f"]
+      },
+      "carbon": {
+        "role": "neutral",
+        "displayName": "Carbon",
+        "canonical": "#16150f",
+        "tonalRamp": ["#676659", "#494838", "#16150f"]
+      },
+      "ledger-rule": {
+        "role": "neutral",
+        "displayName": "Ledger Blue-Green",
+        "canonical": "#a3b3ac",
+        "tonalRamp": ["#cdd5d0", "#a3b3ac"]
+      },
+      "oxide": {
+        "role": "primary",
+        "displayName": "Oxide Red",
+        "canonical": "#b0342a",
+        "tonalRamp": ["#f4e2df", "#c8695d", "#b0342a"]
+      },
+      "methyl-violet": {
+        "role": "secondary",
+        "displayName": "Methyl Violet",
+        "canonical": "#5b3e8e",
+        "tonalRamp": ["#e6e0f0", "#8876b1", "#5b3e8e"]
+      },
+      "iron": {
+        "role": "neutral",
+        "displayName": "Iron",
+        "canonical": "#12130f",
+        "tonalRamp": ["#2a2b24", "#1c1d18", "#12130f"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Masthead", "purpose": "The register's front. One per sheet." },
+      "headline": { "displayName": "Sheet head", "purpose": "Sub-sheet titles and the verdict title." },
+      "title": { "displayName": "Batch", "purpose": "The batch number on a result sheet — the largest ink on the page." },
+      "body": { "displayName": "Prose", "purpose": "Guidance and explanation, max 68ch." },
+      "record": { "displayName": "Recorded value", "purpose": "Anything read off a pack or returned by the register." },
+      "label": { "displayName": "Printed legend", "purpose": "Tracked uppercase legends above fields and particulars keys." }
+    },
+    "shadows": [
+      {
+        "name": "bench",
+        "value": "0 2px 28px color-mix(in srgb, #12130f 16%, transparent)",
+        "purpose": "The sheet at desk widths only — a page lying on a bench. The only shadow in the system; the content layer is flat."
+      }
+    ],
+    "motion": [
+      { "name": "press", "value": "90ms cubic-bezier(0.2, 0, 0, 1)", "purpose": "A control being pressed. Fast, no overshoot." },
+      { "name": "strike", "value": "160ms cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "The stamp landing." },
+      { "name": "settle", "value": "260ms cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "The sheet settling after a strike." }
+    ],
+    "breakpoints": [
+      { "name": "row", "value": "30rem" },
+      { "name": "desk", "value": "40rem" },
+      { "name": "bench", "value": "64rem" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one primary action on a screen. A struck rectangle; hovers to oxide.",
+      "html": "<button class=\"ds-btn-primary\">Save to family medicines</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0.6rem 1.1rem; background: #16150f; color: #ecebe1; border: 1px solid #16150f; border-radius: 0; font-family: 'Archivo', system-ui, sans-serif; font-size: 0.95rem; font-weight: 700; font-stretch: 96%; letter-spacing: 0.055em; text-transform: uppercase; cursor: pointer; transition: background 90ms cubic-bezier(0.2,0,0,1), color 90ms cubic-bezier(0.2,0,0,1); } .ds-btn-primary:hover { background: #b0342a; border-color: #b0342a; } .ds-btn-primary:focus-visible { outline: 2px solid #b0342a; outline-offset: 2px; } .ds-btn-primary:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Everything that is not the one primary action. Inverts to carbon on hover.",
+      "html": "<button class=\"ds-btn-secondary\">Read aloud</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 48px; padding: 0.6rem 1.1rem; background: #ecebe1; color: #16150f; border: 1px solid #16150f; border-radius: 0; font-family: 'Archivo', system-ui, sans-serif; font-size: 0.95rem; font-weight: 700; font-stretch: 96%; letter-spacing: 0.055em; text-transform: uppercase; cursor: pointer; transition: background 90ms cubic-bezier(0.2,0,0,1), color 90ms cubic-bezier(0.2,0,0,1); } .ds-btn-secondary:hover { background: #16150f; color: #ecebe1; } .ds-btn-secondary:focus-visible { outline: 2px solid #b0342a; outline-offset: 2px; }"
+    },
+    {
+      "name": "Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "A rule you write on, with its printed legend above. Never a box.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-legend\">Batch number</span><input class=\"ds-field-input\" value=\"GTL 1258\" /></label>",
+      "css": ".ds-field { display: block; margin-bottom: 1.35rem; } .ds-field-legend { display: block; font-family: 'Archivo', system-ui, sans-serif; font-size: 0.82rem; font-weight: 600; font-stretch: 88%; letter-spacing: 0.16em; text-transform: uppercase; color: #676659; margin-bottom: 0.25rem; } .ds-field-input { display: block; width: 100%; min-height: 48px; padding: 0.35rem 0.1rem; background: none; border: 0; border-bottom: 2px solid #8b8a80; border-radius: 0; font-family: 'Anonymous Pro', ui-monospace, monospace; font-size: 1.22rem; color: #16150f; transition: border-color 90ms cubic-bezier(0.2,0,0,1); } .ds-field-input:focus { outline: none; border-bottom-color: #b0342a; }"
+    },
+    {
+      "name": "Stamp — Flagged",
+      "kind": "custom",
+      "refersTo": "stamp-flagged",
+      "description": "The verdict, struck across the rule. Carries a drawn mark so the tier survives greyscale.",
+      "html": "<span class=\"ds-stamp ds-stamp-flagged\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M2 2h12v12H2z\" fill=\"currentColor\"/></svg>Not of standard quality</span>",
+      "css": ".ds-stamp { display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.3rem 0.6rem; rotate: -4.5deg; border: 2px solid currentColor; border-radius: 0; box-shadow: inset 0 0 0 1px #ecebe1, inset 0 0 0 3px currentColor; font-family: 'Archivo', system-ui, sans-serif; font-size: 0.95rem; font-weight: 800; font-stretch: 88%; letter-spacing: 0.16em; text-transform: uppercase; line-height: 1.15; white-space: nowrap; } .ds-stamp-flagged { color: #b0342a; }"
+    },
+    {
+      "name": "Nil mark — No entry on record",
+      "kind": "custom",
+      "refersTo": "stamp-nil",
+      "description": "An absence is printed, never stamped. This is how the system refuses to say 'safe'.",
+      "html": "<span class=\"ds-nil\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M2 2h12v12H2z\"/></svg><span style=\"margin-inline-start:0.4rem\">No entry on record</span></span>",
+      "css": ".ds-nil { display: inline-flex; align-items: center; font-family: 'Archivo', system-ui, sans-serif; font-size: 0.95rem; font-weight: 700; font-stretch: 88%; letter-spacing: 0.16em; text-transform: uppercase; color: #494838; border-bottom: 1px solid #8b8a80; padding-bottom: 0.15rem; white-space: nowrap; }"
+    },
+    {
+      "name": "Entry row",
+      "kind": "card",
+      "refersTo": "entry-row",
+      "description": "A medicine on its rule: numbered in the margin, batch in recorded type, verdict at the end.",
+      "html": "<div class=\"ds-entry\"><span class=\"ds-entry-no\">01</span><span class=\"ds-entry-main\"><a class=\"ds-entry-link\" href=\"#\">Telmisartan 40mg — Amma</a><span class=\"ds-entry-batch\">Batch TLM2408A</span></span></div>",
+      "css": ".ds-entry { position: relative; display: flex; flex-direction: column; gap: 0.4rem; min-height: 56px; padding: 0.85rem 0 0.95rem 46px; border-bottom: 1px solid #a3b3ac; } .ds-entry-no { position: absolute; top: 1.05rem; left: 0; width: 30px; text-align: right; font-family: 'Anonymous Pro', ui-monospace, monospace; font-size: 0.95rem; color: #b0342a; } .ds-entry-link { font-family: 'Archivo', system-ui, sans-serif; font-weight: 600; color: #16150f; text-decoration-color: #8b8a80; text-underline-offset: 0.22em; } .ds-entry-link:hover { text-decoration-color: #b0342a; } .ds-entry-batch { display: block; font-family: 'Anonymous Pro', ui-monospace, monospace; font-size: 0.95rem; color: #494838; }"
+    },
+    {
+      "name": "Index tabs",
+      "kind": "nav",
+      "refersTo": "nav-tabs",
+      "description": "The register's thumb-index tabs. Always labelled, never icon-only.",
+      "html": "<nav class=\"ds-tabs\"><a class=\"ds-tab\" href=\"#\" aria-current=\"page\">Home</a><a class=\"ds-tab\" href=\"#\">Check a medicine</a><a class=\"ds-tab\" href=\"#\">Settings</a></nav>",
+      "css": ".ds-tabs { display: flex; background: #ecebe1; border-top: 3px double #16150f; } .ds-tab { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 60px; padding: 0.5rem 0.25rem; color: #494838; text-decoration: none; text-align: center; font-family: 'Archivo', system-ui, sans-serif; font-size: 0.82rem; font-weight: 600; font-stretch: 88%; letter-spacing: 0.16em; text-transform: uppercase; border-right: 1px solid #a3b3ac; } .ds-tab:last-child { border-right: 0; } .ds-tab[aria-current='page'] { background: #16150f; color: #ecebe1; }"
+    },
+    {
+      "name": "Particulars",
+      "kind": "custom",
+      "refersTo": "particulars",
+      "description": "Every claim pinned where it is made — alert month, lab, batch, source. Never behind a disclosure.",
+      "html": "<dl class=\"ds-particulars\"><dt>Alert month</dt><dd>2025-03</dd><dt>Reported by</dt><dd>State Drug Testing Laboratory, Chandigarh</dd></dl>",
+      "css": ".ds-particulars { display: grid; grid-template-columns: minmax(7.5rem, auto) 1fr; column-gap: 1rem; border-top: 1px solid #a3b3ac; margin: 0; } .ds-particulars > dt { font-family: 'Archivo', system-ui, sans-serif; font-size: 0.82rem; font-weight: 600; font-stretch: 88%; letter-spacing: 0.16em; text-transform: uppercase; color: #676659; padding: 0.6rem 0 0; border-bottom: 1px solid #a3b3ac; } .ds-particulars > dd { font-family: 'Anonymous Pro', ui-monospace, monospace; font-size: 0.95rem; color: #16150f; margin: 0; padding: 0.6rem 0 0.55rem; border-bottom: 1px solid #a3b3ac; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Analyst's Record",
+    "overview": "Asli is not a health app that happens to cite a government list. It is the bench register a government drug-testing laboratory actually writes in, handed to a family. Every screen is a ruled sheet with an oxide-red double margin rule running its full height; every medicine is a numbered entry on a rule; every verdict is a rubber stamp struck across that rule. The density is generous rather than tight, because a register earns its authority from ruling and whitespace. Depth does not exist in the content layer: there are no shadows, only rules of varying weight. The system refuses the health-app card stack, the rounded status pill and above all the green tick, because a register has no vocabulary for 'safe' — it can only say what is on record and what is not. That constraint is the product's hardest safety rule, and here it is enforced by the medium rather than by anyone remembering it.",
+    "keyCharacteristics": [
+      "Ruled, never carded — structure from horizontal rules and a vertical margin, not containers",
+      "Zero radius anywhere; zero content-layer shadow",
+      "Two Latin faces with jobs: Archivo prints the form, Anonymous Pro records the values",
+      "Six inks, locked; every other value is one of them at a stated proportion",
+      "Verdicts are struck, absences are printed — there is no stamp for 'nothing found'"
+    ],
+    "rules": [
+      { "name": "The Six Ink Rule", "body": "There are six inks. Every other colour is one of them at a stated proportion via color-mix, never a value picked by eye. A new hex in this codebase is a bug.", "section": "colors" },
+      { "name": "The Reserved Accent Rule", "body": "Oxide red is the margin rule and the stamp. Never a highlight, a hover fill, or a background. When a red thing appears, the register has an entry.", "section": "colors" },
+      { "name": "The No Green Rule", "body": "There is no green in this system and there will not be one. Green reads as approval, and Asli is never permitted to approve a medicine.", "section": "colors" },
+      { "name": "The Chroma Lift Rule", "body": "Dark-mode stamps lift in oklch toward white, not toward the stock; mixing a saturated ink into warm cream greys it out. Current ratios are the most saturated that still hold 4.5:1 on iron.", "section": "colors" },
+      { "name": "The Printed / Recorded Rule", "body": "If the form printed it, it is Archivo. If someone wrote it into the form, it is Anonymous Pro.", "section": "typography" },
+      { "name": "The 18px Floor", "body": "Base text is 18px, scaling to 22/26px. No tier-bearing word sits below 0.95rem. A verdict a 70-year-old cannot read is not a verdict.", "section": "typography" },
+      { "name": "The Flat Record Rule", "body": "Nothing in the content layer casts a shadow. If a thing needs to feel separate, rule it.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do derive every new colour with color-mix from one of the six inks, and state the proportion.",
+      "Do give every screen exactly one primary button.",
+      "Do pin every claim where it is made: alert month, reporting lab, batch and source link live on the entry, never behind a disclosure.",
+      "Do print states into the record — one ruled line for loading, offline, error and empty.",
+      "Do keep Archivo for printed matter and Anonymous Pro for recorded values, and give Indic bands their own lang attribute.",
+      "Do number entries in the oxide margin; a bench register numbers its lines."
+    ],
+    "donts": [
+      "Don't introduce a radius, a shadow in the content layer, a gradient, glass, or a pill.",
+      "Don't use oxide red for anything but the margin rule and the stamp.",
+      "Don't add green, a tick, or any word in the 'safe / genuine / verified' family — and don't invent a stamp for an absence.",
+      "Don't ship a toast, a snackbar, or a spinner; the only permitted overlay is the docket, for a genuinely focus-protecting task.",
+      "Don't set a tier-bearing word below 0.95rem, or let any tap target fall under 48px.",
+      "Don't let colour alone carry a tier; the drawn mark and the words ride with it always.",
+      "Don't use emoji or unicode glyphs as icons. Icons are authored SVG at 1.75px, square caps."
+    ]
+  }
+}
