@@ -103,7 +103,6 @@ export function CaptureScreen() {
         ref={fileInputRef}
         type="file"
         accept="image/*"
-        capture="environment"
         onChange={(e) => void handleFile(e)}
         style={{ display: 'none' }}
       />
