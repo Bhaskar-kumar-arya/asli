@@ -46,6 +46,7 @@ CLAUDE.md, submission/DEMO_SCRIPT.md, submission/WRITEUP.md, submission/LEARNING
 
 **Remaining (all human-only):**
 - ~~Screenshots/GIF for the README~~ — done, `docs/screenshots/` exists and is linked (this line was stale).
+- **Amplify SPA rewrite rule (found 2026-09-20):** direct loads of `/insights`, `/dashboard` and `/sign-in` on the live site return 301 then 404, because Amplify has no rule sending unknown paths to `index.html` (in-app navigation works, so browser tests missed it). Fix in the Amplify console, Hosting, Rewrites and redirects: source `</^[^.]+$|\.(?!(css|gif|ico|jpg|js|png|txt|svg|woff|woff2|ttf|map|json|webp)$)([^.]+$)/>`, target `/index.html`, type `200 (Rewrite)`. Not applied by Claude (live infrastructure). Until then the docs that say a judge can open `/insights` directly are wrong; either add the rule or reword to "use 'Open to anyone' on the sign-in page".
 - Video: record per `submission/DEMO_SCRIPT.md`, ≤3:00, captions, mock-strip disclosure on screen, upload and link.
 - Publish `submission/BLOG_POST.md` to AWS Builder Center and fill in `{{BUILDER_CENTER_BLOG_URL}}` in `WRITEUP.md`.
 - Builder Center profile links (Deliverable 6, fast-track eligibility). Team name and roles are done (team **bskry**, one owner per area).

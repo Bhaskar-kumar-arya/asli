@@ -1,25 +1,28 @@
 # DEMO_SCRIPT.md — three-minute video
 
-The notice is explicit: **3 minutes maximum, a screen recording or phone video is fine, upload it to
+The notice is explicit: **3 minutes maximum, a screen recording or a phone video is fine, upload it to
 YouTube (unlisted or public) before starting the form, and there is no live demo, so the video is
 what the judges see.** Anything the video does not show does not count. The judging rubric asks the
-video to show three things: what it does, who it is for, and where AWS fits.
+video to show three things: what it does, who it is for, and where AWS fits. Learning is a fourth
+criterion the video can also earn, so the script closes on it.
 
 Record on a real Android phone (screen recording) plus a laptop for the AWS console. Captions on.
-Total ≤ 3:00, so aim for 2:50 and leave slack. Every number below is a measured one from the repo or
-the live `/dashboard`. Do not add a number that is not in this table.
+The timings below total **2:52**, which leaves 8 seconds of slack under the 3:00 cap. Every number
+is a measured one from the repo or the live `/dashboard`. Do not add a number that is not in this
+table.
 
 | Time | Shot | Voice-over | Must show |
 |---|---|---|---|
-| 0:00–0:18 | A parent's medicine box; then the CDSCO alerts page and a PDF scrolling | "Every month India's drug regulator, CDSCO, lists medicine batches that failed quality tests. Almost no family ever sees those lists. This is Asli." | Real CDSCO page |
-| 0:18–0:32 | Stat card: **3,326 flagged batches · 99.47% still within expiry when announced · median 9 months after manufacture** | "We ingested 21 months of CDSCO lists. Nearly all of these batches were still in date when the alert came out. They are probably still in someone's home." | The three numbers, from the real backfill |
-| 0:32–0:58 | Phone: Check a medicine → strip photo → confirm fields → result card | "Take a photo of the strip. Asli reads the batch and checks it against every list." Result: **"No alert found for this batch."** | The neutral card. Never the word "safe" |
-| 0:58–1:28 | Second strip → red result → tap the source link (opens CDSCO) → tap read-aloud in Hindi | "This batch matches a CDSCO alert. The match is on batch and manufacturer, and it is decided by our code, not by AI. Here is the month, the lab and the original source." | **On-screen caption: "Mock strip matching a real CDSCO alert, made for this demo."** Source link. "Do not stop a prescribed medicine without talking to your doctor" visible |
-| 1:28–1:45 | Bill photo → per-line results | "Or photograph a pharmacy bill and check several medicines at once." | Per-line chips. Show a bill that reads well. Do not claim more than the 50% line recall |
-| 1:45–2:05 | Save to "Mom's medicines". Second phone signed in as `vikram.demo@asli.internal` (the seeded **Editor**) sees the same cabinet, then tries to invite or manage members and is refused | "Save a medicine once and your sibling sees it too. Roles decide who can add, remove or manage." | The refused action. The seed has an Owner and an Editor only, so show the Editor refused on **members**, not on removing a medicine (Editors may remove). Rehearse this once to confirm the UI shows the refusal. Say "roles", not "Verified Permissions": sharing runs on a stub of the same Cedar rules |
-| 2:05–2:35 | **Laptop, AWS console.** Trigger the demo replay → Step Functions execution graph runs green → phone buzzes and an email arrives | "When CDSCO publishes a new list, this pipeline ingests it and checks every saved medicine. Here we replay a real past alert, labelled as a demo." | The execution graph; the push on the phone; the "Demo replay of a real Feb 2026 CDSCO alert" label |
-| 2:35–2:52 | Architecture diagram, then the public `/dashboard` | "Serverless on AWS: EventBridge, Step Functions, Lambda, DynamoDB Streams, S3, SNS, SES, Cognito and Amplify, all in Mumbai. 44 of 44 tier checks correct. Batch number read exactly on 12 of 15 real strip photos. A small sample, and we show it." | Diagram, then the dashboard's real figures |
-| 2:52–3:00 | Title card: logo, live URL, "Try it: `asha.demo@asli.internal` / `AsliDemo!2026`, or open /insights with no sign-in" | "Asli. Know your batch." | Live URL |
+| 0:00–0:12 | A parent's medicine box, then the CDSCO alerts page and a PDF scrolling | "These are my mother's tablets. Every month India's drug regulator, CDSCO, lists medicine batches that failed quality tests. Almost no family ever sees the list. This is Asli." | Real CDSCO page. **Say the first sentence only if it is true for you.** If not, open on the box and start at "Every month…" |
+| 0:12–0:28 | Stat card: **3,326 flagged batches · 99.47% still within expiry when announced · median 9 months after manufacture** | "We ingested 21 months of CDSCO lists. Nearly all of these batches were still in date when the alert came out — still in an elderly parent's cabinet, while the adult child managing their medicines has no way to know." | The three numbers, from the real backfill. This is the "who it is for" line, so do not cut it |
+| 0:28–0:54 | Phone: Check a medicine → strip photo → **jump-cut the wait** → confirm fields → result card | "Take a photo of the strip. Asli reads the batch and checks it against every list." Result: **"No alert found for this batch."** | **Caption during the cut: "upload + extraction, about 6 s".** The neutral card, never the word "safe" |
+| 0:54–1:22 | Second strip → red result → tap the source link (opens CDSCO) → tap read-aloud in Hindi | "This batch matches a CDSCO alert. The match is on batch and manufacturer, and it is decided by our code, not by AI. Here is the month, the lab and the original source." | **On-screen caption: "Mock strip matching a real CDSCO alert, made for this demo."** Source link. "Do not stop a prescribed medicine without talking to your doctor" visible |
+| 1:22–1:34 | Bill photo → per-line results | "Or photograph a pharmacy bill and check several medicines at once." | Per-line chips. **Use a bill that reads well.** Optional caption: "6 real bills tested, 50% of lines read". Claim no more than that |
+| 1:34–1:54 | Save to "Mom's medicines". Second phone signed in as `vikram.demo@asli.internal` (the seeded **Editor**) sees the same cabinet, then tries to invite or manage members and is refused | "Save a medicine once and your sibling sees it too. Roles decide who can add, remove or manage." | The refusal message actually rendering. The seed has an Owner and an Editor only, so show the Editor refused on **members**, not on removing a medicine (Editors may remove). Say "roles", not "Verified Permissions": sharing runs on a stub of the same Cedar rules. **If it does not render cleanly on the second try, cut this segment** |
+| 1:54–2:20 | **Laptop, AWS console.** Trigger the demo replay → Step Functions execution graph runs green → phone buzzes and an email arrives | "When CDSCO publishes a new list, this pipeline ingests it and checks every saved medicine. Here we replay a real past alert, labelled as a demo." | The execution graph; the push on the phone; the "Demo replay of a real Feb 2026 CDSCO alert" label |
+| 2:20–2:33 | Architecture diagram (5 s), then the public `/dashboard` (8 s) | "Serverless on AWS, in Mumbai: EventBridge, Step Functions, Lambda, DynamoDB Streams. Tier checks: 44 of 44 correct. Batch number read exactly on 12 of 15 real photos." | Say **four** services aloud. Let the diagram's labels carry the rest, plus a caption: "Also S3 · SNS · SES · Cognito · Amplify · CloudWatch · CDK". Caption on the accuracy figure: "15 strips, 6 bills: a small sample" |
+| 2:33–2:43 | The live site in a real browser, with four captions appearing one by one | "Every unit test passed, but the deployed site had never worked in a real browser. Four stacked bugs, found only by driving the live site." | Captions: **① env vars never set ② doubled /v1/v1 path ③ placeholder auth module ④ CORS**. This is the Learning criterion |
+| 2:43–2:52 | Title card: logo, live URL, the demo login below, "or use 'Open to anyone' on the sign-in page" | "Asli. Know your batch." | Live URL and `asha.demo@asli.internal` / `AsliDemo!2026`. Hold it long enough to read, about 5 s |
 
 ## Say and show honestly
 - **Photo reading is not Bedrock today.** Bedrock invocation is refused in our AWS account, so the
@@ -30,21 +33,32 @@ the live `/dashboard`. Do not add a number that is not in this table.
   account. Say "roles". Do not say "Verified Permissions" on camera.
 - **Never say safe, genuine or verified**, and never blame a brand. Say "this batch".
 - **Mock strip and demo replay must be disclosed on screen**, not only spoken.
+- **Do not hide the scan wait.** Jump-cut it, and caption the cut with the real figure.
 - **No cost-per-scan figure.** None is measured. If you mention cost, say only that everything
   scales to zero.
+- **The learning line is true to the log**, not a flourish: `submission/LEARNING_LOG.md`, entry
+  "The live deployed site had never actually worked in a real browser".
 
-## The fallback if the live replay misbehaves (2:05–2:35)
+## The fallback if the live replay misbehaves (1:54–2:20)
 Show the seeded "Mom's medicines" cabinet with its FLAGGED match already resolved, then open a past
 successful ingestion execution in the Step Functions console and a CloudWatch alert-fan-out log line.
 Say "a previous run", not "live".
 
 ## Before recording
 - [ ] Open the live URL in a **private window with no cache** and confirm a judge can get in: the
-      public pages load, and the demo login above signs in. The judges will not sign up.
+      sign-in page loads, the demo login signs in, and the "Open to anyone" links open the public
+      pages. **Also open `/insights` and `/dashboard` directly.** If those return 404, the Amplify
+      rewrite rule is missing (see `plan/tasks/Z2-submission-package.md`, Remaining). Until it is added,
+      do not show or say a bare `/insights` URL anywhere in the video
+- [ ] **Second phone: signed in as the Editor (`vikram.demo@asli.internal`), and the members refusal
+      renders.** Try it twice. If it is not clean on the second try, cut the 1:34–1:54 segment and
+      keep the rest; the video stays under 3:00
 - [ ] Reset demo data (`pnpm seed-demo --stage dev-shared`), notifications on, Do Not Disturb off
 - [ ] Warm the scan Lambda once; confirm the SES recipient is verified
 - [ ] Rehearse the replay twice on the phone (`plan/tasks/Z1-hardening-freeze.md` Handoff has the steps)
+- [ ] **Read each voice-over line aloud with a stopwatch** against its slot. If a line runs over,
+      cut words, not shots
 - [ ] Record each segment separately and keep the raw files
 - [ ] Captions on; total length under 3:00 on the exported file, not the timeline
 - [ ] **Upload to YouTube as unlisted or public first**, before opening the form, since uploads are
-      slow. Put the link in `submission/WRITEUP.md` and `submission/FORM_ANSWERS.md`
+      slow. Put the link in `README.md`, `submission/WRITEUP.md` and `submission/FORM_ANSWERS.md`
