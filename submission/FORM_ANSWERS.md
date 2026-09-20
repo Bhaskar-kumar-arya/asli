@@ -103,11 +103,13 @@ in a Lambda has no working retry; and that a fresh reviewer caught a FLAGGED sta
 (which reads as legitimate) that passed every automated check. Full log: `submission/LEARNING_LOG.md`.
 
 ## What is measured, and what is not?
-Measured: 44 of 44 deterministic tier checks correct; batch number read exactly on 12 of 15 strip
-photos (80.0%); bill line recall 50.0% on 6 real bills; about 5.7 s average scan latency; alert
-fan-out well under 10 s; 200-row pharmacy CSV in 3.0–3.4 s. Not measured: cost per scan (no scans in
-the CloudWatch window, and Bedrock is unpriced in our region). The test set is small (15 strips, 6
-bills) and we say so.
+Measured: 44 of 44 deterministic tier checks correct; batch number read exactly on 12 of 15
+sourced-online strip photos (80.0%); bill line recall 50.0% on 6 real bills; about 5.7 s average
+scan latency; alert fan-out well under 10 s; 200-row pharmacy CSV in 3.0–3.4 s. Separately, an
+informal hand-checked pass on our own real strip photos (not run through the automated harness)
+got the batch number exactly right on 49 of 53 (92.5%). Not measured: cost per scan (no scans in
+the CloudWatch window, and Bedrock is unpriced in our region). The harness test set is small (15
+strips, 6 bills) and we say so.
 
 ## Which AI tools did you use?
 Claude Code (Anthropic) is the AI coding tool we used. We used it during the coding process,

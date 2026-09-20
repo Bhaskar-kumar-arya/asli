@@ -91,12 +91,14 @@ isn't:
   profile. `GET /v1/public/metrics` (our public `/dashboard`) shows real, measured ingestion and
   alert fan-out cost and volume from actual pipeline runs.
 - **Accuracy:** measured with our harness (`tools/accuracy`) against the deployed stage. All 44
-  seeded tier-correctness probes were right. On 15 real strip photos the batch number was read
-  exactly 80.0% of the time (12 of 15; 3 of 3 flat-on, 9 of 12 tilted), the manufacturer was
+  seeded tier-correctness probes were right. On 15 sourced-online strip photos the batch number was
+  read exactly 80.0% of the time (12 of 15; 3 of 3 flat-on, 9 of 12 tilted), the manufacturer was
   identified strongly on 86.7%, and the expiry month was exact on only 40.0% — our weakest field.
   On 6 real, redacted pharmacy bills, line recall was 50.0%. Average scan latency was about 5.7
   seconds. It is a small sample (15 strips and 6 bills against a target of 30 and 10), and the
-  numbers are on the public `/dashboard`.
+  numbers are on the public `/dashboard`. Separately, an informal hand-checked pass on our own real
+  strip photos — not run through the automated harness — read the batch number exactly right on 49
+  of 53 (92.5%).
 
 We'd rather show a small honest sample than an invented number, which is also why there is no
 per-scan cost figure: no scans landed in the CloudWatch window, and Bedrock is unpriced in our region.

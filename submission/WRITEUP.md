@@ -152,7 +152,8 @@ influences a tier.
 | | Result | Basis |
 |---|---|---|
 | Deterministic tiering | **44 / 44** seeded cases correct | Probes generated from real CDSCO rows |
-| Strip reading, batch number exact | **80.0%** (12 of 15) | Real photos. Flat-on 3 of 3, tilted 9 of 12. Small sample |
+| Strip reading, batch number exact | **80.0%** (12 of 15) | Sourced-online photos (Wikimedia Commons). Flat-on 3 of 3, tilted 9 of 12. Small sample |
+| Strip reading, batch number exact (own photos, hand-checked) | **92.5%** (49 of 53) | A separate, informal pass on our own real strip photos, checked by eye, not run through the automated `tools/accuracy/` harness |
 | Strip reading, manufacturer identified strongly | 86.7% (13 of 15) | Same 15 photos |
 | Strip reading, expiry month exact | 40.0% (6 of 15) | Same 15 photos. Our weakest field |
 | Bill reading, line recall | 50.0% | 6 real, redacted pharmacy invoices |

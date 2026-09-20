@@ -7,9 +7,7 @@ video to show three things: what it does, who it is for, and where AWS fits. Lea
 criterion the video can also earn, so the script closes on it.
 
 Record on a real Android phone (screen recording) plus a laptop for the AWS console. Captions on.
-The timings below total **2:52**, which leaves 8 seconds of slack under the 3:00 cap. Every number
-is a measured one from the repo or the live `/dashboard`. Do not add a number that is not in this
-table.
+The timings below total **3:00**, exactly at the cap — no slack left.
 
 | Time | Shot | Voice-over | Must show |
 |---|---|---|---|
@@ -20,9 +18,9 @@ table.
 | 1:22–1:34 | Bill photo → per-line results | "Or photograph a pharmacy bill and check several medicines at once." | Per-line chips. **Use a bill that reads well.** Optional caption: "6 real bills tested, 50% of lines read". Claim no more than that |
 | 1:34–1:54 | Save to "Mom's medicines". Second phone signed in as `vikram.demo@asli.internal` (the seeded **Editor**) sees the same cabinet, then tries to invite or manage members and is refused | "Save a medicine once and your sibling sees it too. Roles decide who can add, remove or manage." | The refusal message actually rendering. The seed has an Owner and an Editor only, so show the Editor refused on **members**, not on removing a medicine (Editors may remove). Say "roles", not "Verified Permissions": sharing runs on a stub of the same Cedar rules. **If it does not render cleanly on the second try, cut this segment** |
 | 1:54–2:20 | **Laptop, AWS console.** Trigger the demo replay → Step Functions execution graph runs green → an email arrives | "When CDSCO publishes a new list, this pipeline ingests it and checks every saved medicine. Here we replay a real past alert, labelled as a demo." | The execution graph; the "Demo replay of a real Feb 2026 CDSCO alert" label |
-| 2:20–2:33 | Architecture diagram (5 s), then the public `/dashboard` (8 s) | "Serverless on AWS, in Mumbai: EventBridge, Step Functions, Lambda, DynamoDB Streams. Tier checks: 44 of 44 correct. Batch number read exactly on 12 of 15 real photos." | Say **four** services aloud. Let the diagram's labels carry the rest, plus a caption: "Also S3 · SNS · SES · Cognito · Amplify · CloudWatch · CDK". Caption on the accuracy figure: "15 strips, 6 bills: a small sample" |
-| 2:33–2:43 | The live site in a real browser, with four captions appearing one by one | "Every unit test passed, but the deployed site had never worked in a real browser. Four stacked bugs, found only by driving the live site." | Captions: **① env vars never set ② doubled /v1/v1 path ③ placeholder auth module ④ CORS**. This is the Learning criterion |
-| 2:43–2:52 | Title card: logo, live URL, and the line "Press **Continue as guest**. No sign-up." | "Asli. Know your batch." | Live URL and that one line. Hold it long enough to read, about 5 s |
+| 2:20–2:43 | Architecture diagram, held for the full 23 s | "Serverless on AWS, in Mumbai: EventBridge, Step Functions, Lambda, DynamoDB Streams, and SNS and SES for that alert email you just saw. Our matching logic decided the right tier on all 44 test cases. And when we tested it by hand against 53 real medicine-strip photos, it read the batch number exactly on 49 of them." | Say **six** services aloud. Let the diagram's labels carry the rest, plus a caption: "Also S3 · Cognito · Amplify · CloudWatch · CDK" |
+| 2:43–2:53 | `submission/learning-card.html`, full-screen in a browser. Eight entries rule in one at a time over ~6 s, then hold | "Every test passed. Lint passed. CDK synth passed. None of these showed up until real traffic hit real AWS — that's where the actual learning was." | The card carries the content; no captions needed. Every entry is sourced from `submission/LEARNING_LOG.md`. This is the Learning criterion |
+| 2:53–3:00 | Title card: logo, live URL, and the line "Press **Continue as guest**. No sign-up." | "Asli. Know your batch." | Live URL and that one line. Hold it long enough to read, about 3 s |
 
 ## Say and show honestly
 - **Photo reading is not Bedrock today.** Bedrock invocation is refused in our AWS account, so the
