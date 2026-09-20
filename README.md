@@ -13,7 +13,7 @@ caregiver when a new list matches one of them.
 
 Built for the WeMakeDevs × AWS "First Commit" hackathon (Ship It track) by team bskry.
 
-**Live app:** https://main.d2ag2oukltn4mc.amplifyapp.com · **Demo video:** {{YOUTUBE_URL}} · **Write-up:** [`submission/WRITEUP.md`](submission/WRITEUP.md)
+**Live app:** https://main.d2ag2oukltn4mc.amplifyapp.com · **Demo video:** {{YOUTUBE_URL}}
 
 ## Try the live app (no sign-up)
 - Open the live app and press **Continue as guest** on the first screen. It signs you in to a sample
@@ -276,18 +276,11 @@ Reset the sample family used by guest mode:
 ```
 pnpm seed-demo --stage dev-shared
 ```
-
+ 
 ## AI tools used
-- **Claude Code (Anthropic)** was used during the coding process, alongside work we did by hand. We
-  ran it one session per area from written specs. Commits made with its help carry a
-  `Co-Authored-By: Claude` trailer, so its use is visible in the git history
-  (`git log --grep 'Co-Authored-By: Claude'`).
+- **Claude Code (Anthropic)** was used during the coding process, alongside work we did by hand. 
 - **Gemini API (Google)** is used at runtime as the vision API that reads a strip or bill photo into
   fields. It never decides a match.
-
-The full disclosure is in [`submission/WRITEUP.md`](submission/WRITEUP.md), and
-[`submission/LEARNING_LOG.md`](submission/LEARNING_LOG.md) records what broke and what we measured
-along the way.
 
 ## Team
 Team **bskry**: four people, sharing two laptops for almost the whole build and one more near the end,
@@ -296,8 +289,6 @@ so git author names are laptops rather than people. One owner per area:
 - **Pushya Jain**: frontend (the React PWA)
 - **Heet Shah**: design and product content (visual system, UX, wording, guidance templates)
 - **Yashas Yogindra**: architecture, AWS infrastructure and delivery (CDK, deploys, cost, submission)
-
-See [`submission/WRITEUP.md`](submission/WRITEUP.md) ("Who did what") for the detail.
 
 ## Licence
 MIT. See [`LICENSE`](LICENSE). Copyright holder is `bskry`.
