@@ -167,8 +167,15 @@ pnpm -r build
 STAGE=int pnpm --filter infra cdk deploy --all
 ```
 
-## Learning log
-`submission/LEARNING_LOG.md` records what broke and what we measured along the way.
+## AI tools used
+- **Claude Code (Anthropic)** — used while coding. It wrote most of the code, tests and CDK
+  infrastructure, one session per area, from the written specs in `docs/` and `plan/`.
+- **Gemini API (Google)** — used at runtime as the vision API that reads a strip or bill photo into
+  fields (batch, manufacturer, expiry). It never decides a match: `packages/matching` alone decides
+  the tier. The provider is switchable to Bedrock by one SSM parameter.
+
+The full disclosure is in `submission/WRITEUP.md`. `submission/LEARNING_LOG.md` records what broke
+and what we measured along the way.
 
 ## Licence
 MIT — see [`LICENSE`](./LICENSE). Copyright holder is `bskry`.
