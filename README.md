@@ -168,8 +168,10 @@ STAGE=int pnpm --filter infra cdk deploy --all
 ```
 
 ## AI tools used
-- **Claude Code (Anthropic)** — used while coding. It wrote most of the code, tests and CDK
-  infrastructure, one session per area, from the written specs in `docs/` and `plan/`.
+- **Claude Code (Anthropic)** — used during the coding process, alongside work we did by hand. We
+  ran it one session per area from the written specs in `docs/` and `plan/`. Commits made with its
+  help carry a `Co-Authored-By: Claude` trailer, so the extent of its use is visible in the git
+  history (`git log --grep 'Co-Authored-By: Claude'`).
 - **Gemini API (Google)** — used at runtime as the vision API that reads a strip or bill photo into
   fields (batch, manufacturer, expiry). It never decides a match: `packages/matching` alone decides
   the tier. The provider is switchable to Bedrock by one SSM parameter.

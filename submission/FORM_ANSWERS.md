@@ -109,9 +109,10 @@ the CloudWatch window, and Bedrock is unpriced in our region). The test set is s
 bills) and we say so.
 
 ## Which AI tools did you use?
-Claude Code (Anthropic) is the AI coding tool we used. We ran one session per area from written
-specs, and it wrote most of the code, tests, CDK infrastructure and this writeup, with each area's
-owner directing and reviewing. Models, per the commit trailers: Claude Sonnet 5, Claude Opus 5 and
+Claude Code (Anthropic) is the AI coding tool we used. We used it during the coding process,
+alongside work we did by hand, one session per area from written specs, with each area's owner
+directing and reviewing. Commits made with its help carry a `Co-Authored-By: Claude` trailer, so the
+extent is visible in the public git history. The trailers name Claude Sonnet 5, Claude Opus 5 and
 Claude Haiku 4.5. No other AI coding tool was used. Impeccable (a design-linting CLI) ran over the web
 redesign. Separately, the Google Gemini API is a runtime dependency for reading photos, not a coding
 tool.

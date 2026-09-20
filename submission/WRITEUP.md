@@ -258,13 +258,15 @@ Written for the people who make these services, from a team building on them for
 - Real pharmacy pilots for the CSV bulk-check.
 
 ## AI tools used
-- **Claude Code (Anthropic)** is the AI coding tool we used to build this project. We ran it one
-  session per area, each working from the written specs in `docs/` and `plan/` and the rules in
-  `CLAUDE.md`. It wrote most of the code, the tests, the CDK infrastructure, this document and the
-  blog post. The owner of each area (see "Who did what") directed and reviewed the work, and we
-  checked the results against the deployed app. The commit trailers record the models: Claude
-  Sonnet 5 on 63 commits, Claude Opus 5 on 11 (the web redesign) and Claude Haiku 4.5 on 1. No other
-  AI coding tool (Copilot, Cursor and so on) was used.
+- **Claude Code (Anthropic)** is the AI coding tool we used. We used it during the coding process,
+  alongside work we did by hand, running it one session per area from the written specs in `docs/`
+  and `plan/` and the rules in `CLAUDE.md`. We also used it to draft documentation such as this
+  document and the blog post. The owner of each area (see "Who did what") directed and reviewed the
+  work, and we checked the results against the deployed app. Commits made with its help carry a
+  `Co-Authored-By: Claude` trailer, so the extent of its use is visible in the repository's commit
+  history (`git log --grep 'Co-Authored-By: Claude'`). The trailers name three models: Claude
+  Sonnet 5, Claude Opus 5 (used for the web redesign) and Claude Haiku 4.5. No other AI coding tool
+  (Copilot, Cursor and so on) was used.
 - **Impeccable**, a design-linting CLI, ran over the redesign (`.impeccable/`). Its `detect` check
   returned no findings.
 - **Google Gemini API** is a *runtime* dependency for reading photos (see "Where AWS fits"), not a
