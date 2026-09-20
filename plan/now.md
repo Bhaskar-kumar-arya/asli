@@ -1,5 +1,20 @@
 # NOW.md — updated whenever a lane starts, stops, or finishes
 
+**2026-09-20 (update 5): correction + a real live-site bug fixed. The live Amplify site
+(`https://main.d2ag2oukltn4mc.amplifyapp.com`) actually runs against `dev-shared`, not `int` as
+update 4 implied — confirmed via `aws amplify get-app`'s `environmentVariables`
+(`VITE_API_BASE_URL` points at the `asli-dev-shared` HTTP API). Browser photo uploads (strip/bill
+scan) were failing there: first a CORS error (the `dev-shared` uploads bucket had no CORS rules at
+all — `SharedStack-dev-shared` had never been deployed with `AMPLIFY_URL` set), then a `403
+AccessDenied` from S3 (`apps/web/src/api/upload.ts` was appending the `Content-Type` form field
+twice — once from the presign response's `fields`, once manually — which breaks S3's presigned-POST
+`eq $Content-Type` policy condition). Fixed both: redeployed `SharedStack-dev-shared` with
+`AMPLIFY_URL` set (CORS now allows both `localhost:5173` and the Amplify origin), and fixed the
+duplicate-field bug in a real commit (`26df60d`), verified live via Amplify build job 27
+(`SUCCEED`). Confirmed working end-to-end by the human after redeploy. `SharedStack-int` also
+picked up the same CORS fix as a side effect of an earlier deploy attempt aimed at the wrong stage
+— harmless, but not what the live site actually uses.**
+
 **2026-09-19 (update 4): all engineering work is done. `int` is fully current with `main` across
 all 14 stacks. E's accuracy harness has run for real against `int` (15 strips + all 6 bills, zero
 timeouts) and produced a real report, after finding and fixing a real bug in lane C's Gemini

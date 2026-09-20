@@ -138,8 +138,11 @@ export class SharedStack extends Stack {
       }
     }
 
-    const amplifyOrigin = process.env.AMPLIFY_URL;
-    const allowOrigins = ['http://localhost:5173', ...(amplifyOrigin ? [amplifyOrigin] : [])];
+    // Falls back to the live Amplify URL rather than defaulting to nothing: a deploy without
+    // AMPLIFY_URL set would otherwise silently drop it from both the HTTP API and uploads-bucket
+    // CORS config, breaking the live site with no warning (see submission/LEARNING_LOG.md 2026-09-20).
+    const amplifyOrigin = process.env.AMPLIFY_URL ?? 'https://main.d2ag2oukltn4mc.amplifyapp.com';
+    const allowOrigins = ['http://localhost:5173', amplifyOrigin];
 
     // ---- S3 buckets ----
     const bucketLifecycle: Partial<Record<BucketName, s3.LifecycleRule[]>> = {
