@@ -14,12 +14,14 @@ criteria and Best UI, per the event's "one submission, all tracks" rule)**
 The judges' notice asks that a live demo be openable without signing up. Asli has three ways in,
 fastest first:
 
-1. **Two pages need no account at all.** `/insights` (CDSCO alert counts by month and reason) and
-   `/dashboard` (measured accuracy and running cost, straight from CloudWatch) are public.
-2. **A ready-made demo account with a family cabinet already in it.** On the sign-in page enter
-   `asha.demo@asli.internal` / `AsliDemo!2026`. This is a seeded demo account holding fake data
-   only (no personal information). It opens on "Mom's medicines" with two saved medicines: one that
-   matches a real CDSCO alert, one with no alert found.
+1. **Press "Continue as guest" (guest mode) on the first screen.** No account and no typing. It signs in to a
+   seeded demo account holding fake data only (no personal information) and opens on "Mom's
+   medicines", with two saved medicines: one that matches a real CDSCO alert, one with no alert
+   found. If the button ever fails, the same account works by hand: `asha.demo@asli.internal` /
+   `AsliDemo!2026`.
+2. **Two pages need no account at all.** Use the links under "Open to anyone" on the sign-in
+   screen: CDSCO alert counts by month and reason, and the measured accuracy and running cost,
+   straight from CloudWatch.
 3. **Or type a batch in by hand** (Check a medicine → Type details) once signed in. Two inputs to try,
    both confirmed against the live API on 2026-09-20:
    - Product `Montelukast & Levocetirizine`, batch `E9AIY029`, manufacturer `Pharma Force Lab`
@@ -29,7 +31,7 @@ fastest first:
      → **No alert found for this batch**.
 
 "Create an account" also works, but it sends a real confirmation code by email, which is why the
-demo account exists.
+guest button exists.
 
 ## The problem
 Every month India's drug regulator, the Central Drugs Standard Control Organisation (CDSCO),

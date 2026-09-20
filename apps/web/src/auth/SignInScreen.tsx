@@ -6,6 +6,7 @@ import { Button } from '../shell/components/Button';
 import { RegisterIndex } from '../shell/components/RegisterIndex';
 import { UNCONFIRMED, authErrorMessage, emailSignIn, errorName } from './session';
 import { useAuth } from './AuthProvider';
+import { DEMO_EMAIL, DEMO_PASSWORD } from './demoAccount';
 
 export function SignInScreen() {
   const [email, setEmail] = useState('');
@@ -13,6 +14,8 @@ export function SignInScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string>();
   const [submitting, setSubmitting] = useState(false);
+  const [demoOpening, setDemoOpening] = useState(false);
+  const [demoError, setDemoError] = useState<string>();
   const { refresh } = useAuth();
   const navigate = useNavigate();
 
@@ -39,13 +42,45 @@ export function SignInScreen() {
     }
   }
 
+  async function handleDemo() {
+    setDemoOpening(true);
+    setDemoError(undefined);
+    try {
+      await emailSignIn(DEMO_EMAIL, DEMO_PASSWORD);
+      refresh();
+      navigate('/');
+    } catch (err) {
+      setDemoError(authErrorMessage(err, 'Guest mode could not open just now. Please try again in a moment.'));
+    } finally {
+      setDemoOpening(false);
+    }
+  }
+
   return (
     <Page title="Asli" subtitle={{ hi: 'दवा के बैच की जाँच', kn: 'ಔಷಧಿ ಬ್ಯಾಚ್ ಪರಿಶೀಲನೆ' }}>
       <p className="reg-prose">
         Asli checks whether a medicine your family owns has been flagged by India's drug regulator (CDSCO).
       </p>
 
-      <div className="reg-head">
+      <Button
+        type="button"
+        fullWidth
+        disabled={submitting || demoOpening}
+        onClick={() => void handleDemo()}
+        style={{ marginTop: '1.2rem' }}
+      >
+        {demoOpening ? 'Opening guest mode…' : 'Continue as guest'}
+      </Button>
+      <p className="reg-prose reg-prose--muted" style={{ margin: '0.6rem 0 0' }}>
+        No sign-up. Guest mode opens a sample family's cabinet, with sample data only.
+      </p>
+      {demoError ? (
+        <p role="alert" className="reg-note reg-note--flagged" style={{ margin: '0.6rem 0 0' }}>
+          {demoError}
+        </p>
+      ) : null}
+
+      <div className="reg-head" style={{ marginTop: '1.8rem' }}>
         <h2>Sign in</h2>
       </div>
 
@@ -74,7 +109,7 @@ export function SignInScreen() {
             {error}
           </p>
         ) : null}
-        <Button type="submit" fullWidth disabled={submitting} style={{ marginTop: '1rem' }}>
+        <Button type="submit" fullWidth disabled={submitting || demoOpening} style={{ marginTop: '1rem' }}>
           {submitting ? 'Signing in…' : 'Sign in'}
         </Button>
       </form>

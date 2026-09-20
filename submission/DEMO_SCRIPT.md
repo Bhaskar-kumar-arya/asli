@@ -22,7 +22,7 @@ table.
 | 1:54–2:20 | **Laptop, AWS console.** Trigger the demo replay → Step Functions execution graph runs green → phone buzzes and an email arrives | "When CDSCO publishes a new list, this pipeline ingests it and checks every saved medicine. Here we replay a real past alert, labelled as a demo." | The execution graph; the push on the phone; the "Demo replay of a real Feb 2026 CDSCO alert" label |
 | 2:20–2:33 | Architecture diagram (5 s), then the public `/dashboard` (8 s) | "Serverless on AWS, in Mumbai: EventBridge, Step Functions, Lambda, DynamoDB Streams. Tier checks: 44 of 44 correct. Batch number read exactly on 12 of 15 real photos." | Say **four** services aloud. Let the diagram's labels carry the rest, plus a caption: "Also S3 · SNS · SES · Cognito · Amplify · CloudWatch · CDK". Caption on the accuracy figure: "15 strips, 6 bills: a small sample" |
 | 2:33–2:43 | The live site in a real browser, with four captions appearing one by one | "Every unit test passed, but the deployed site had never worked in a real browser. Four stacked bugs, found only by driving the live site." | Captions: **① env vars never set ② doubled /v1/v1 path ③ placeholder auth module ④ CORS**. This is the Learning criterion |
-| 2:43–2:52 | Title card: logo, live URL, the demo login below, "or use 'Open to anyone' on the sign-in page" | "Asli. Know your batch." | Live URL and `asha.demo@asli.internal` / `AsliDemo!2026`. Hold it long enough to read, about 5 s |
+| 2:43–2:52 | Title card: logo, live URL, and the line "Press **Continue as guest**. No sign-up." | "Asli. Know your batch." | Live URL and that one line. Hold it long enough to read, about 5 s |
 
 ## Say and show honestly
 - **Photo reading is not Bedrock today.** Bedrock invocation is refused in our AWS account, so the
@@ -46,8 +46,8 @@ Say "a previous run", not "live".
 
 ## Before recording
 - [ ] Open the live URL in a **private window with no cache** and confirm a judge can get in: the
-      sign-in page loads, the demo login signs in, and the "Open to anyone" links open the public
-      pages. **Also open `/insights` and `/dashboard` directly.** If those return 404, the Amplify
+      sign-in page loads, **the "Continue as guest" button signs in and opens "Mom's medicines"**, and
+      the "Open to anyone" links open the public pages. **Also open `/insights` and `/dashboard` directly.** If those return 404, the Amplify
       rewrite rule is missing (see `plan/tasks/Z2-submission-package.md`, Remaining). Until it is added,
       do not show or say a bare `/insights` URL anywhere in the video
 - [ ] **Second phone: signed in as the Editor (`vikram.demo@asli.internal`), and the members refusal

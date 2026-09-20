@@ -22,9 +22,10 @@ and the AI tools used. Match each block to whichever field the form actually sho
 - **Builder Center profiles (all four, must be accurate):** {{BUILDER_CENTER_PROFILE_LINKS}}
 
 ## Live demo access (put this in the "how do we open it" field)
-No sign-up needed. `/insights` and `/dashboard` are public. For the full app, sign in with the demo
-account `asha.demo@asli.internal` / `AsliDemo!2026` (fake data only). It opens on a "Mom's medicines"
-cabinet. To see a FLAGGED result, choose Check a medicine → Type details and enter product
+No sign-up needed. Open the link and press the **"Continue as guest"** button (guest mode) on the first screen. It
+signs in to a sample family's cabinet ("Mom's medicines", fake data only) with no typing. The public
+pages open from the "Open to anyone" links on the same screen. If the button ever fails, sign in by
+hand with `asha.demo@asli.internal` / `AsliDemo!2026`. To see a FLAGGED result, choose Check a medicine → Type details and enter product
 `Montelukast & Levocetirizine`, batch `E9AIY029`, manufacturer `Pharma Force Lab` (a real row from
 CDSCO's Feb-2026 list). For "No alert found for this batch", enter any other batch.
 

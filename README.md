@@ -5,10 +5,14 @@
 ## Try it (no sign-up)
 **Live app:** https://main.d2ag2oukltn4mc.amplifyapp.com · **Demo video:** {{YOUTUBE_URL}}
 
-- `/insights` and `/dashboard` are public: no account, no sign-in.
-- Full app: sign in with the seeded demo account `asha.demo@asli.internal` / `AsliDemo!2026`
-  (fake data only). It opens on a "Mom's medicines" cabinet.
-- To see a FLAGGED result, choose *Check a medicine → Type details* and enter product
+- **Judges: open the live app and press "Continue as guest"** (guest mode) on the first screen. It
+  signs you in to a sample family's cabinet ("Mom's medicines", sample data only) with no account and no
+  typing.
+- The public pages need no sign-in either: use the links under "Open to anyone" on the same screen
+  (CDSCO alert counts, and Asli's measured accuracy and cost).
+- If the button ever fails, the same account works by hand: `asha.demo@asli.internal` /
+  `AsliDemo!2026`.
+- Once in, to see a FLAGGED result, choose *Check a medicine → Type details* and enter product
   `Montelukast & Levocetirizine`, batch `E9AIY029`, manufacturer `Pharma Force Lab` (a real row from
   CDSCO's Feb-2026 list). Any other batch gives "No alert found for this batch".
 
