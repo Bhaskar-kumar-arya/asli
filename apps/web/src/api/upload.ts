@@ -5,7 +5,6 @@ export async function uploadToPresignedUrl(target: CreateUploadResponse, file: B
   if (target.fields) {
     const form = new FormData();
     for (const [key, value] of Object.entries(target.fields)) form.append(key, value);
-    form.append('Content-Type', contentType);
     form.append('file', file);
     const res = await fetch(target.url, { method: 'POST', body: form });
     if (!res.ok) throw new Error(`Upload failed with ${res.status}`);
