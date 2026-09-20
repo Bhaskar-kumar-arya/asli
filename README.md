@@ -58,17 +58,19 @@ See [`docs/PRODUCT.md`](docs/PRODUCT.md) ("Evidence") for how the hand check and
 ## How it works
 Matching is fully deterministic: [`packages/matching`](packages/matching) alone decides the tier
 (FLAGGED / VERIFY / NO_ALERT_FOUND). No language model ever decides or influences a tier. A model is
-only used to read fields off a photo. See [`docs/MATCHING.md`](docs/MATCHING.md) for the tier rules.
+only used to read fields off a photo, so a misread costs a wrong lookup, never a wrong verdict. See
+[`docs/MATCHING.md`](docs/MATCHING.md) for the tier rules.
 
+### Architecture
 ```mermaid
 flowchart LR
   subgraph Ingestion
     SCH[EventBridge Scheduler daily] --> CHK[Lambda check-months]
     CHK -->|new month| SFN[Step Functions ingest]
     SFN --> FETCH[Lambda fetch CDSCO endpoint]
-    SFN -->|endpoint fails| PDF[PDF download + Textract]
+    SFN -.->|"fallback, not deployed"| PDF["PDF download + Textract"]
     FETCH --> S3R[(S3 raw snapshots)]
-    PDF --> S3R
+    PDF -.-> S3R
     SFN --> PARSE[Lambda parse + normalize]
     PARSE --> FB[(DynamoDB FlaggedBatches)]
     SFN --> STATS[Lambda stats]
@@ -78,10 +80,13 @@ flowchart LR
     WEB --> API[API Gateway HTTP API]
     API --> SCAN[Lambda scan]
     SCAN --> S3U[(S3 uploads, 1-day lifecycle)]
-    SCAN --> BR2[Bedrock vision]
+    SCAN --> VIS["Vision model: Gemini API, Bedrock switchable"]
+    SCAN -->|match| FB
     API --> CHECK[Lambda check]
+    CHECK -->|match| FB
     API --> CAB[Lambda cabinet API]
-    CAB --> AVP[Verified Permissions / Cedar]
+    CAB --> AUTHZ["Role check in Lambda (Cedar role table)"]
+    AUTHZ -.->|"blocked in our account"| AVP[Verified Permissions]
     CAB --> CT[(DynamoDB Cabinets)]
   end
   subgraph Matching and alerts
@@ -95,12 +100,55 @@ flowchart LR
     SNS --> MAIL[Lambda SES email sender]
   end
 ```
-A static copy of the diagram is in [`docs/diagrams/architecture.png`](docs/diagrams/architecture.png).
-[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) explains each service choice.
+Solid arrows are deployed and running. Dotted arrows are written but not live in our AWS account (see
+[Limitations](#limitations)). A static copy of the diagram is in
+[`docs/diagrams/architecture.png`](docs/diagrams/architecture.png), and
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) lists each service choice with the alternative rejected, more information in the above .md file.
 
-Both matching directions run off DynamoDB Streams. A new CDSCO row is checked against every saved
-medicine, and a newly saved medicine is checked against the whole CDSCO history, so a family never
-has to remember to re-check.
+
+### Request flows
+1. **Check by photo.** The app asks the API for an upload target and sends the photo straight to S3
+   (bill images are deleted right after extraction). The scan Lambda reads the batch, manufacturer and
+   dates with a vision model and matches them against the flagged batches. The user confirms or
+   corrects the fields on screen. A flagged result cites the alert month, the reporting lab, the
+   original CDSCO link and our stored S3 snapshot.
+2. **Check by typing or QR code.** The app calls the check Lambda, which runs the same matching and
+   returns the same kind of result.
+3. **Save a medicine.** The cabinet Lambda checks the caller's role, then writes the medicine to the
+   Cabinets table. That write triggers a DynamoDB Stream. The retroactive Lambda checks the whole
+   CDSCO history for that batch, records a MATCH item and publishes to SNS, which sends web push and
+   email to the cabinet's members who have alerts on.
+4. **A new CDSCO list is published.** EventBridge runs a daily check for a new month. Step Functions
+   fetches the CDSCO endpoint, saves the raw response to S3, then parses and normalizes the rows into
+   the FlaggedBatches table. Each new row triggers the fan-out Lambda, which finds saved medicines with
+   the same batch across all cabinets, matches them and alerts through the same SNS topic.
+
+Flows 3 and 4 are the two matching directions. Both are driven by DynamoDB Streams, so a family never
+has to remember to re-check a medicine they already saved.
+
+### Design decisions
+| Decision | Why |
+|---|---|
+| The tier is decided by our own code, not a model | A wrong safety verdict from a model is unacceptable. A model only reads a photo. |
+| Save every raw CDSCO response to S3 before parsing | It proves what CDSCO published and when, lets us re-parse without fetching again, and keeps our fetching polite (at most daily, 2 seconds between requests). |
+| Use CDSCO's structured endpoint, with PDF OCR only as a fallback | A clean endpoint is cheaper and more accurate than OCR. Textract stays a fallback for months the endpoint does not cover, and it is not deployed. |
+| Step Functions for ingestion, not one large Lambda | Retries, a visible execution history, a Map state for the backfill and a Choice state for the fallback. One Lambda would hit timeouts and hide failures. |
+| DynamoDB on demand with Streams, not a relational database | Lookups are by batch key. Streams trigger both matching directions from writes, with no polling and no idle cost. |
+| SNS between the matchers and the senders | Adding a channel is a new subscription. The matchers never call push or email directly. |
+| Idempotent writes throughout | Flagged rows and MATCH items use conditional writes and the senders use Powertools idempotency, so re-running ingestion never duplicates data or notifies anyone twice. |
+| Web Push and email, not SMS or WhatsApp | India's SMS (DLT) and WhatsApp verification take too long, and Web Push needs no app store. |
+| Serverless and pay per use throughout | Lambda, DynamoDB on demand, Step Functions, the HTTP API and S3 cost nothing when idle, which suits a small, spiky workload. |
+
+### Data model
+- **FlaggedBatches:** one item per flagged batch per alert, keyed by the normalized batch number. Secondary
+  indexes cover a normalized batch "skeleton" (for near matches, see [`docs/MATCHING.md`](docs/MATCHING.md))
+  and the alert month.
+- **Cabinets:** a single table holding cabinets, members, invites, saved medicines and MATCH items. An
+  index on the batch skeleton lets a new CDSCO row find every affected saved medicine.
+- **S3:** three buckets, for raw CDSCO snapshots (versioned and kept), uploads (expire after one day)
+  and public metrics.
+
+The full key design is in [`docs/DATA_MODEL.md`](docs/DATA_MODEL.md).
 
 ### AWS services
 Everything runs in `ap-south-1`, is defined in AWS CDK, and scales to zero.
@@ -124,6 +172,11 @@ Everything runs in `ap-south-1`, is defined in AWS CDK, and scales to zero.
 Photo reading currently uses the **Gemini API** from a Lambda (key in Secrets Manager), because
 Bedrock invocation is refused in our AWS account. The provider is an SSM parameter, so switching to
 Bedrock needs no redeploy. It only reads fields and never sees or decides a tier.
+
+### Deployment model
+Infrastructure is AWS CDK (TypeScript) in [`infra/`](infra). A shared stack owns the tables, buckets,
+SNS topic, Cognito user pool and HTTP API. Each service has its own stack that imports those resources
+through SSM parameters and adds its Lambdas, routes and subscriptions. Everything runs in `ap-south-1`.
 
 ## Screenshots
 Screens from the deployed app, using the sample data behind guest mode.

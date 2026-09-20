@@ -3,9 +3,9 @@ flowchart LR
     SCH[EventBridge Scheduler daily] --> CHK[Lambda check-months]
     CHK -->|new month| SFN[Step Functions ingest]
     SFN --> FETCH[Lambda fetch CDSCO endpoint]
-    SFN -->|endpoint fails| PDF[PDF download + Textract]
+    SFN -.->|"fallback, not deployed"| PDF["PDF download + Textract"]
     FETCH --> S3R[(S3 raw snapshots)]
-    PDF --> S3R
+    PDF -.-> S3R
     SFN --> PARSE[Lambda parse + normalize]
     PARSE --> FB[(DynamoDB FlaggedBatches)]
     SFN --> STATS[Lambda stats]
@@ -15,10 +15,13 @@ flowchart LR
     WEB --> API[API Gateway HTTP API]
     API --> SCAN[Lambda scan]
     SCAN --> S3U[(S3 uploads, 1-day lifecycle)]
-    SCAN --> BR2[Bedrock vision]
+    SCAN --> VIS["Vision model: Gemini API, Bedrock switchable"]
+    SCAN -->|match| FB
     API --> CHECK[Lambda check]
+    CHECK -->|match| FB
     API --> CAB[Lambda cabinet API]
-    CAB --> AVP[Verified Permissions / Cedar]
+    CAB --> AUTHZ["Role check in Lambda (Cedar role table)"]
+    AUTHZ -.->|"blocked in our account"| AVP[Verified Permissions]
     CAB --> CT[(DynamoDB Cabinets)]
   end
   subgraph Matching and alerts
