@@ -233,7 +233,20 @@ export const handlers = [
     return HttpResponse.json({ results } satisfies CheckResponse);
   }),
 
-  http.get(`${BASE}/push/vapid-public-key`, () => HttpResponse.json({ publicKey: 'mock-vapid-public-key' })),
+  /*
+   * A real, throwaway VAPID public key. pushManager.subscribe() rejects with
+   * InvalidCharacterError on anything that is not base64url-encoded P-256, so a
+   * placeholder string makes the notification toggle untestable in mock mode.
+   * Demo-only: the deployed stack reads its keypair from Secrets Manager.
+   */
+  http.get(`${BASE}/push/vapid-public-key`, () =>
+    HttpResponse.json({ publicKey: 'BBOl4dpAZMLZ0X4XfWCmbOaHjvAC5cwUkJtstd1sf0qhbB9nRcsg6IclbhvA7KafBYVicqPdjL0g5WB6t0kdwzc' }),
+  ),
+
+  /* Mirror the documented status codes from docs/API.md, empty bodies included. */
+  http.post(`${BASE}/push/subscriptions`, () => HttpResponse.json({}, { status: 201 })),
+  http.delete(`${BASE}/push/subscriptions`, () => new HttpResponse(null, { status: 204 })),
+  http.post(`${BASE}/push/test`, () => new HttpResponse(null, { status: 202 })),
 
   /* Public, no auth. Without these the two open pages render only their error line. */
   http.get(`${BASE}/public/stats`, () => HttpResponse.json(MOCK_STATS)),
