@@ -62,4 +62,27 @@ describe('MedicineIdentityForm', () => {
     await userEvent.click(option);
     expect(nameField).toHaveValue('Amoxicillin 500mg Capsules');
   });
+
+  it('suggests a known manufacturer as the user types a prefix', async () => {
+    render(<MedicineIdentityForm submitLabel="Check" onSubmit={vi.fn()} />);
+    const manufacturerField = screen.getByRole('combobox', { name: /manufacturer/i });
+    await userEvent.type(manufacturerField, 'cipl');
+    expect(await screen.findByRole('option', { name: /cipla ltd/i })).toBeInTheDocument();
+  });
+
+  it('tolerates a minor typo in the manufacturer field', async () => {
+    render(<MedicineIdentityForm submitLabel="Check" onSubmit={vi.fn()} />);
+    const manufacturerField = screen.getByRole('combobox', { name: /manufacturer/i });
+    await userEvent.type(manufacturerField, 'torent');
+    expect(await screen.findByRole('option', { name: /torrent pharmaceuticals ltd/i })).toBeInTheDocument();
+  });
+
+  it('fills the manufacturer field when a suggestion is picked', async () => {
+    render(<MedicineIdentityForm submitLabel="Check" onSubmit={vi.fn()} />);
+    const manufacturerField = screen.getByRole('combobox', { name: /manufacturer/i });
+    await userEvent.type(manufacturerField, 'cipl');
+    const option = await screen.findByRole('option', { name: /cipla ltd/i });
+    await userEvent.click(option);
+    expect(manufacturerField).toHaveValue('Cipla Ltd.');
+  });
 });

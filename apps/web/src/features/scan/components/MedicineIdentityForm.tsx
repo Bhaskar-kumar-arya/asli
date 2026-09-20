@@ -2,8 +2,13 @@ import { useState } from 'react';
 import type { MedicineIdentity } from '@asli/contracts';
 import { Field } from '../../../shell/components/Field';
 import { Button } from '../../../shell/components/Button';
-import { MedicineNameField } from './MedicineNameField';
-import { recordMedicineSearch } from '../lib/medicineNames';
+import { SuggestField } from './SuggestField';
+import { getMedicineSuggestions, getRecentMedicineSearches, recordMedicineSearch } from '../lib/medicineNames';
+import {
+  getManufacturerSuggestions,
+  getRecentManufacturerSearches,
+  recordManufacturerSearch,
+} from '../lib/manufacturerNames';
 
 const LOW_CONFIDENCE_THRESHOLD = 0.7;
 
@@ -39,16 +44,21 @@ export function MedicineIdentityForm({ initial, submitLabel, onSubmit }: Medicin
       return;
     }
     const trimmedProductName = productName.trim();
+    const trimmedManufacturer = manufacturer.trim();
     recordMedicineSearch(trimmedProductName);
-    onSubmit({ productName: trimmedProductName, batchNumber: batchNumber.trim(), manufacturer: manufacturer.trim() }, batchEdited);
+    recordManufacturerSearch(trimmedManufacturer);
+    onSubmit({ productName: trimmedProductName, batchNumber: batchNumber.trim(), manufacturer: trimmedManufacturer }, batchEdited);
   }
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      <MedicineNameField
+      <SuggestField
+        label="Medicine name"
+        placeholder="e.g. Amoxicillin 500mg Capsules"
         value={productName}
         onChange={setProductName}
         lowConfidence={isLowConfidence(initial, 'productName')}
+        getSuggestions={(query) => getMedicineSuggestions(query, getRecentMedicineSearches())}
       />
       <Field
         label="Batch number"
@@ -63,12 +73,13 @@ export function MedicineIdentityForm({ initial, submitLabel, onSubmit }: Medicin
         error={batchError}
         hint='Usually labelled "B.No", "Batch" or "Lot", near the expiry date.'
       />
-      <Field
+      <SuggestField
         label="Manufacturer"
-        value={manufacturer}
-        onChange={(e) => setManufacturer(e.target.value)}
-        lowConfidence={isLowConfidence(initial, 'manufacturer')}
         placeholder="e.g. Cipla Ltd"
+        value={manufacturer}
+        onChange={setManufacturer}
+        lowConfidence={isLowConfidence(initial, 'manufacturer')}
+        getSuggestions={(query) => getManufacturerSuggestions(query, getRecentManufacturerSearches())}
       />
       <Button type="submit" fullWidth>
         {submitLabel}

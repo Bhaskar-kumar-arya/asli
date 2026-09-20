@@ -1,20 +1,22 @@
 import { useEffect, useId, useRef, useState } from 'react';
-import { getMedicineSuggestions, getRecentMedicineSearches } from '../lib/medicineNames';
 
-export interface MedicineNameFieldProps {
+export interface SuggestFieldProps {
+  label: string;
+  placeholder?: string;
   value: string;
   onChange: (value: string) => void;
   lowConfidence?: boolean;
+  getSuggestions: (query: string) => string[];
 }
 
 /**
- * The "Medicine name" input, with Amazon-style type-ahead: the user's own recent/frequent
- * searches and a seed dictionary of common medicine names, ranked by prefix match then a
- * typo-tolerant fuzzy match (see lib/medicineNames.ts) so a few mistyped letters still
- * surface the right suggestion. An ARIA combobox (aria-activedescendant pattern) so screen
- * reader and keyboard users get the same suggestions as everyone else.
+ * A text field with Amazon-style type-ahead: suggestions ranked by prefix match then a
+ * typo-tolerant fuzzy match (the caller supplies `getSuggestions`, backed by
+ * lib/typeahead.ts). An ARIA combobox (aria-activedescendant pattern) so screen reader and
+ * keyboard users get the same suggestions as everyone else. Used for both "Medicine name"
+ * and "Manufacturer" in MedicineIdentityForm.
  */
-export function MedicineNameField({ value, onChange, lowConfidence }: MedicineNameFieldProps) {
+export function SuggestField({ label, placeholder, value, onChange, lowConfidence, getSuggestions }: SuggestFieldProps) {
   const fieldId = useId();
   const listboxId = `${fieldId}-listbox`;
   const [isOpen, setIsOpen] = useState(false);
@@ -23,7 +25,7 @@ export function MedicineNameField({ value, onChange, lowConfidence }: MedicineNa
 
   useEffect(() => () => clearTimeout(blurTimeout.current), []);
 
-  const suggestions = isOpen ? getMedicineSuggestions(value, getRecentMedicineSearches()) : [];
+  const suggestions = isOpen ? getSuggestions(value) : [];
 
   function selectSuggestion(name: string) {
     onChange(name);
@@ -61,7 +63,7 @@ export function MedicineNameField({ value, onChange, lowConfidence }: MedicineNa
   return (
     <div className="reg-field reg-field--combobox">
       <label htmlFor={fieldId} className="reg-legend">
-        Medicine name
+        {label}
       </label>
       <input
         id={fieldId}
@@ -75,7 +77,7 @@ export function MedicineNameField({ value, onChange, lowConfidence }: MedicineNa
         autoCapitalize="off"
         autoCorrect="off"
         spellCheck={false}
-        placeholder="e.g. Amoxicillin 500mg Capsules"
+        placeholder={placeholder}
         className="reg-field__input"
         data-low-confidence={lowConfidence ? 'true' : undefined}
         value={value}
@@ -94,7 +96,7 @@ export function MedicineNameField({ value, onChange, lowConfidence }: MedicineNa
         <p className="reg-note reg-note--verify">Please check this - we're not fully sure we read it right.</p>
       ) : null}
       {showList ? (
-        <ul id={listboxId} role="listbox" aria-label="Medicine name suggestions" className="reg-suggest-list">
+        <ul id={listboxId} role="listbox" aria-label={`${label} suggestions`} className="reg-suggest-list">
           {suggestions.map((name, index) => (
             <li
               key={name}
