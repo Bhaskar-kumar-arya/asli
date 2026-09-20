@@ -88,18 +88,22 @@ These are in `CLAUDE.md`, and most are enforced by code or tests rather than by 
   response to S3 first.
 
 ## Who did what
-Team **bskry**, four people. The roles are the ones the team recorded; the right-hand column is what
-the repository history shows. Git author names differ from real names: `HEET SHAH` is Heet,
-`devestrator` is Bhaskar's account (bhaskarkumararya900@gmail.com), `YashasYogindra` is Yashas.
+Team **bskry**: four people, and **two laptops** between all of us for almost the whole build, with
+**one more laptop brought in near the end**. Git records the laptop, not the person, so the author
+names in the history are laptop identities: `HEET SHAH` (57 commits) and `devestrator` (30) are the
+two shared laptops, and `YashasYogindra` (1 commit, the uploads-bucket CORS fix, `41e1826`) is the
+third laptop, used at the end. **Commit counts do not measure who did what.** The table is the
+division of responsibility: each area has one owner who decides it, reviews it and answers for it.
 
-| Person | Team role | In the repository |
+| Person | Owns | What that covers in this repository |
 |---|---|---|
-| Bhaskar Kumar Arya | Backend | 30 commits. Project scaffold and Amplify deployment; the public stats, metrics, insights, pharmacy-mode, problem-report and account services; the content package and QR parsing; the accuracy harness and end-to-end tests; the "Analyst's Record" redesign of the web app (`apps/web/DESIGN.md`). |
-| Heet Shah | Design | 57 commits, the most of anyone. Froze the API contracts and shared AWS stack (T02); the ingestion pipeline, scan/check API, cabinet, sharing, notification and alert fan-out services; the matching library; wiring the web app to real auth and the real API; and the live-site debugging described under "What we learned". |
-| Pushya Jain | Frontend | {{CONFIRM: Pushya's contribution. No commits appear under a separate git identity.}} |
-| Yashas Yogindra | Architecture | 1 commit under this identity: the CORS fix on the uploads bucket that made browser photo upload work (`41e1826`). {{CONFIRM: architecture and planning work done outside git.}} |
+| Bhaskar Kumar Arya | **Backend and the data pipeline** | The CDSCO ingestion pipeline (EventBridge Scheduler, Step Functions, S3 snapshots, DynamoDB); the deterministic matching library and its tier rules; the scan, check, cabinet, sharing and alert fan-out Lambdas; the public stats, metrics and insights endpoints; pharmacy-mode CSV check; problem reports routed to PvPI; the account-deletion endpoint. |
+| Pushya Jain | **Frontend (the web app)** | The React PWA in `apps/web`: the scan flow (strip, bill and QR capture, confirm-the-fields step), the result screens, the cabinet, members and sharing screens, sign-in and account creation, type-ahead on medicine and manufacturer, web-push subscription, the public insights and dashboard pages. |
+| Heet Shah | **Design and product content** | The visual system, "The Analyst's Record" (`apps/web/DESIGN.md`) and the screen-by-screen UX; the result-card wording rules (never "safe", batch not brand, the spurious-label nuance); the reviewed English, Hindi and Kannada guidance templates and read-aloud behaviour; the mock strip and the README screenshots. |
+| Yashas Yogindra | **Architecture, AWS infrastructure and delivery** | System shape and service choices; the shared CDK stack and every lane's stack (14 in `ap-south-1`), Cognito, Amplify Hosting and API Gateway CORS wiring, and the deploys; observability, alarms, budgets and the cost model; integration across areas; the submission package (README, this writeup, the demo video and the blog post). |
 
-Claude Code did most of the typing under this direction; see "AI tools used".
+Everyone shared the parts that needed several hands: collecting the real strip photos and redacted
+pharmacy bills for the test set, and checking the app on real phones.
 
 ## How it works
 ```
@@ -254,10 +258,13 @@ Written for the people who make these services, from a team building on them for
 - Real pharmacy pilots for the CSV bulk-check.
 
 ## AI tools used
-- **Claude Code (Anthropic)** wrote most of the code under our direction, lane by lane, from the
-  specs in `docs/` and `plan/`. It also wrote this document and the blog post. The commit trailers
-  show 63 commits with Claude Sonnet 5, 11 with Claude Opus 5 (the web redesign) and 1 with Claude
-  Haiku 4.5. No other AI coding tool (Copilot, Cursor and so on) was used.
+- **Claude Code (Anthropic)** is the AI coding tool we used to build this project. We ran it one
+  session per area, each working from the written specs in `docs/` and `plan/` and the rules in
+  `CLAUDE.md`. It wrote most of the code, the tests, the CDK infrastructure, this document and the
+  blog post. The owner of each area (see "Who did what") directed and reviewed the work, and we
+  checked the results against the deployed app. The commit trailers record the models: Claude
+  Sonnet 5 on 63 commits, Claude Opus 5 on 11 (the web redesign) and Claude Haiku 4.5 on 1. No other
+  AI coding tool (Copilot, Cursor and so on) was used.
 - **Impeccable**, a design-linting CLI, ran over the redesign (`.impeccable/`). Its `detect` check
   returned no findings.
 - **Google Gemini API** is a *runtime* dependency for reading photos (see "Where AWS fits"), not a

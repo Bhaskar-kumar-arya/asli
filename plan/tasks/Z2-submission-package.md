@@ -42,13 +42,13 @@ CLAUDE.md, submission/DEMO_SCRIPT.md, submission/WRITEUP.md, submission/LEARNING
 - AI-tools credit corrected: trailers are Sonnet 5 (63), Opus 5 (11), Haiku 4.5 (1); previously omitted Opus 5.
 - Verified the demo login works (Cognito `USER_PASSWORD_AUTH`) and `GET /v1/public/metrics` returns real accuracy data.
 
-**Still `{{CONFIRM}}` / `{{...}}` (human only, do not submit with these):** `{{YOUTUBE_URL}}`, `{{BUILDER_CENTER_BLOG_URL}}`, `{{BUILDER_CENTER_PROFILE_LINKS}}`, Pushya's and Yashas's contribution lines. Git shows Heet 57 commits, `devestrator` (Bhaskar) 30, Yashas 1, Pushya 0, which does not match the recorded roles (Backend/Frontend/Design/Architecture), so the writeup states roles as recorded and commits as found.
+**Still `{{...}}` (human only, do not submit with these):** `{{YOUTUBE_URL}}`, `{{BUILDER_CENTER_BLOG_URL}}`, `{{BUILDER_CENTER_PROFILE_LINKS}}`. Roster resolved 2026-09-20: the team used two shared laptops for almost the whole build plus a third near the end, so git authors (`HEET SHAH` 57, `devestrator` 30, `YashasYogindra` 1) are laptops, not people. WRITEUP/FORM_ANSWERS/README now state a one-owner-per-area split (Bhaskar backend and pipeline, Pushya frontend, Heet design and content, Yashas architecture, infra and delivery). The per-area detail is derived from the recorded roles plus the repo's work areas, so the team should sanity-check it.
 
 **Remaining (all human-only):**
 - ~~Screenshots/GIF for the README~~ — done, `docs/screenshots/` exists and is linked (this line was stale).
 - Video: record per `submission/DEMO_SCRIPT.md`, ≤3:00, captions, mock-strip disclosure on screen, upload and link.
 - Publish `submission/BLOG_POST.md` to AWS Builder Center and fill in `{{BUILDER_CENTER_BLOG_URL}}` in `WRITEUP.md`.
-- Team names/roles, Builder Center profile links (Deliverable 6, fast-track eligibility), and the `{{TEAM_NAME}}` copyright holder in `LICENSE`/README — all still `{{...}}` placeholders, needs the human team.
+- Builder Center profile links (Deliverable 6, fast-track eligibility). Team name and roles are done (team **bskry**, one owner per area).
 - Accuracy numbers in WRITEUP.md "Measured results" and "What we learned" — fill in once lane E's harness has run against real photos (now unblocked in principle since C's Gemini fallback is live and verified against one real photo per commit `7466969`, but a full scored run hasn't happened yet).
 - Early submission Saturday 18:00, final submission ≥3h before deadline — human actions on the hackathon's own form.
 

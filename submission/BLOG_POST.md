@@ -112,7 +112,5 @@ per-scan cost figure: no scans landed in the CloudWatch window, and Bedrock is u
 - Flip the extraction backend to Bedrock the moment this AWS account's model access restriction
   clears — the client is already built and ready.
 
-Built with [Claude Code](https://claude.com/claude-code), working lane by lane from a spec-first
-build plan. The full writeup, architecture, and a 30+ entry timestamped learning log of what broke
-and what we measured along the way are in the
-[GitHub repo](https://github.com/Bhaskar-kumar-arya/asli).
+The full writeup, architecture, and a 30+ entry timestamped learning log of what broke and what we
+measured along the way are in the [GitHub repo](https://github.com/Bhaskar-kumar-arya/asli).

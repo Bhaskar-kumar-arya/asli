@@ -167,23 +167,21 @@ pnpm -r build
 STAGE=int pnpm --filter infra cdk deploy --all
 ```
 
-## Built with
-Claude Code (Anthropic) wrote most of the code under our direction, using the specs in `docs/`
-and `plan/`. See `submission/WRITEUP.md` for the full AI-tools credit and `submission/LEARNING_LOG.md`
-for what broke and what we measured along the way.
+## Learning log
+`submission/LEARNING_LOG.md` records what broke and what we measured along the way.
 
 ## Licence
 MIT — see [`LICENSE`](./LICENSE). Copyright holder is `bskry`.
 
 ## Credits / team
-Team **bskry**:
-- Bhaskar Kumar Arya — Backend
-- Pushya Jain — Frontend
-- Heet Shah — Design
-- Yashas Yogindra — Architecture
+Team **bskry**: four people, two shared laptops for almost the whole build and one more near the end
+(so git author names are laptops, not people). One owner per area:
+- **Bhaskar Kumar Arya** — backend and the data pipeline (ingestion, matching, the API Lambdas)
+- **Pushya Jain** — frontend (the React PWA)
+- **Heet Shah** — design and product content (visual system, UX, wording, guidance templates)
+- **Yashas Yogindra** — architecture, AWS infrastructure and delivery (CDK, deploys, cost, submission)
 
-Roles are the team's own; `submission/WRITEUP.md` ("Who did what") has what the repository history
-shows for each person, and the full AI-tools credit.
+See `submission/WRITEUP.md` ("Who did what") for the detail.
 
 ## Running a lane
 

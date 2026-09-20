@@ -58,16 +58,21 @@ adult child managing an elderly parent's long-term medicines from another city, 
 - Public pages show CDSCO alert counts and the app's own measured accuracy and cost.
 
 ## Who did what?
-- **Bhaskar Kumar Arya (Backend):** scaffold and Amplify deployment; stats, metrics, insights,
-  pharmacy, reports and account services; content and QR packages; accuracy harness and end-to-end
-  tests; the web app redesign.
-- **Heet Shah (Design):** API contracts and shared AWS stack; ingestion pipeline; scan/check API;
-  cabinet, sharing, notification and fan-out services; matching library; wiring the web app to real
-  auth and the real API; live-site debugging.
-- **Pushya Jain (Frontend):** {{CONFIRM: Pushya's contribution}}
-- **Yashas Yogindra (Architecture):** {{CONFIRM: architecture and planning work}}; the CORS fix that
-  made browser photo upload work.
-- Claude Code wrote most of the code under the team's direction.
+Four people, two laptops between us for almost the whole build and one more laptop near the end, so
+git shows laptop names, not people, and commit counts are not a measure of contribution. Each area
+has one owner:
+- **Bhaskar Kumar Arya, backend and data pipeline:** CDSCO ingestion (EventBridge Scheduler, Step
+  Functions, S3, DynamoDB); the deterministic matching library; the scan, check, cabinet, sharing and
+  alert fan-out Lambdas; public stats, metrics and insights; pharmacy CSV check; PvPI problem reports.
+- **Pushya Jain, frontend:** the React PWA: scan flow (strip, bill, QR), result screens, cabinet and
+  sharing screens, sign-in and account creation, type-ahead, web-push subscription, public pages.
+- **Heet Shah, design and product content:** the visual system ("The Analyst's Record") and UX;
+  result-card wording rules; the reviewed English, Hindi and Kannada guidance templates and
+  read-aloud; the mock strip and screenshots.
+- **Yashas Yogindra, architecture, AWS infrastructure and delivery:** system shape and service
+  choices; CDK stacks, Cognito, Amplify and CORS wiring, and deploys; observability and cost model;
+  integration; the submission package (README, writeup, video, blog).
+- Shared: collecting real strip photos and bills for the test set, and testing on real phones.
 
 ## Which AWS services, how, and what feedback?
 **Used, and running:** Amplify Hosting (the live URL), Cognito (sign-in), API Gateway HTTP API and
@@ -104,9 +109,12 @@ the CloudWatch window, and Bedrock is unpriced in our region). The test set is s
 bills) and we say so.
 
 ## Which AI tools did you use?
-Claude Code (Anthropic), which wrote most of the code and this writeup: Claude Sonnet 5, Claude Opus 5
-and Claude Haiku 4.5, per the commit trailers. Impeccable (design-linting CLI) on the web redesign.
-Separately, the Google Gemini API is a runtime dependency for reading photos, not a coding tool.
+Claude Code (Anthropic) is the AI coding tool we used. We ran one session per area from written
+specs, and it wrote most of the code, tests, CDK infrastructure and this writeup, with each area's
+owner directing and reviewing. Models, per the commit trailers: Claude Sonnet 5, Claude Opus 5 and
+Claude Haiku 4.5. No other AI coding tool was used. Impeccable (a design-linting CLI) ran over the web
+redesign. Separately, the Google Gemini API is a runtime dependency for reading photos, not a coding
+tool.
 
 ## Anything the judges should know
 The flagged strip in the video is a **mock strip matching a real CDSCO alert**. The "new alert
