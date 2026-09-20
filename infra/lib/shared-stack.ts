@@ -138,6 +138,9 @@ export class SharedStack extends Stack {
       }
     }
 
+    const amplifyOrigin = process.env.AMPLIFY_URL;
+    const allowOrigins = ['http://localhost:5173', ...(amplifyOrigin ? [amplifyOrigin] : [])];
+
     // ---- S3 buckets ----
     const bucketLifecycle: Partial<Record<BucketName, s3.LifecycleRule[]>> = {
       uploads: [{ expiration: Duration.days(1) }],
@@ -158,6 +161,16 @@ export class SharedStack extends Stack {
         encryption: s3.BucketEncryption.S3_MANAGED,
         enforceSSL: true,
         lifecycleRules: bucketLifecycle.uploads,
+        // The browser POSTs the photo straight to S3 via a presigned POST; without this the
+        // response is unreadable cross-origin and the scan flow fails at the upload step.
+        cors: [
+          {
+            allowedMethods: [s3.HttpMethods.POST, s3.HttpMethods.PUT],
+            allowedOrigins: allowOrigins,
+            allowedHeaders: ['*'],
+            maxAge: 3000,
+          },
+        ],
         removalPolicy,
         autoDeleteObjects: !isInt,
       }),
@@ -249,9 +262,6 @@ export class SharedStack extends Stack {
     });
 
     // ---- HTTP API with JWT authorizer + CORS ----
-    const amplifyOrigin = process.env.AMPLIFY_URL;
-    const allowOrigins = ['http://localhost:5173', ...(amplifyOrigin ? [amplifyOrigin] : [])];
-
     const httpApi = new apigwv2.HttpApi(this, 'HttpApi', {
       apiName: `asli-${stage}`,
       corsPreflight: {
