@@ -19,7 +19,7 @@ table.
 | 0:54–1:22 | Second strip → red result → tap the source link (opens CDSCO) → tap read-aloud in Hindi | "This batch matches a CDSCO alert. The match is on batch and manufacturer, and it is decided by our code, not by AI. Here is the month, the lab and the original source." | **On-screen caption: "Mock strip matching a real CDSCO alert, made for this demo."** Source link. "Do not stop a prescribed medicine without talking to your doctor" visible |
 | 1:22–1:34 | Bill photo → per-line results | "Or photograph a pharmacy bill and check several medicines at once." | Per-line chips. **Use a bill that reads well.** Optional caption: "6 real bills tested, 50% of lines read". Claim no more than that |
 | 1:34–1:54 | Save to "Mom's medicines". Second phone signed in as `vikram.demo@asli.internal` (the seeded **Editor**) sees the same cabinet, then tries to invite or manage members and is refused | "Save a medicine once and your sibling sees it too. Roles decide who can add, remove or manage." | The refusal message actually rendering. The seed has an Owner and an Editor only, so show the Editor refused on **members**, not on removing a medicine (Editors may remove). Say "roles", not "Verified Permissions": sharing runs on a stub of the same Cedar rules. **If it does not render cleanly on the second try, cut this segment** |
-| 1:54–2:20 | **Laptop, AWS console.** Trigger the demo replay → Step Functions execution graph runs green → phone buzzes and an email arrives | "When CDSCO publishes a new list, this pipeline ingests it and checks every saved medicine. Here we replay a real past alert, labelled as a demo." | The execution graph; the push on the phone; the "Demo replay of a real Feb 2026 CDSCO alert" label |
+| 1:54–2:20 | **Laptop, AWS console.** Trigger the demo replay → Step Functions execution graph runs green → an email arrives | "When CDSCO publishes a new list, this pipeline ingests it and checks every saved medicine. Here we replay a real past alert, labelled as a demo." | The execution graph; the "Demo replay of a real Feb 2026 CDSCO alert" label |
 | 2:20–2:33 | Architecture diagram (5 s), then the public `/dashboard` (8 s) | "Serverless on AWS, in Mumbai: EventBridge, Step Functions, Lambda, DynamoDB Streams. Tier checks: 44 of 44 correct. Batch number read exactly on 12 of 15 real photos." | Say **four** services aloud. Let the diagram's labels carry the rest, plus a caption: "Also S3 · SNS · SES · Cognito · Amplify · CloudWatch · CDK". Caption on the accuracy figure: "15 strips, 6 bills: a small sample" |
 | 2:33–2:43 | The live site in a real browser, with four captions appearing one by one | "Every unit test passed, but the deployed site had never worked in a real browser. Four stacked bugs, found only by driving the live site." | Captions: **① env vars never set ② doubled /v1/v1 path ③ placeholder auth module ④ CORS**. This is the Learning criterion |
 | 2:43–2:52 | Title card: logo, live URL, and the line "Press **Continue as guest**. No sign-up." | "Asli. Know your batch." | Live URL and that one line. Hold it long enough to read, about 5 s |
@@ -53,9 +53,9 @@ Say "a previous run", not "live".
 - [ ] **Second phone: signed in as the Editor (`vikram.demo@asli.internal`), and the members refusal
       renders.** Try it twice. If it is not clean on the second try, cut the 1:34–1:54 segment and
       keep the rest; the video stays under 3:00
-- [ ] Reset demo data (`pnpm seed-demo --stage dev-shared`), notifications on, Do Not Disturb off
+- [ ] Reset demo data (`pnpm seed-demo --stage dev-shared`)
 - [ ] Warm the scan Lambda once; confirm the SES recipient is verified
-- [ ] Rehearse the replay twice on the phone (`plan/tasks/Z1-hardening-freeze.md` Handoff has the steps)
+- [ ] Rehearse the replay twice (`plan/tasks/Z1-hardening-freeze.md` Handoff has the steps)
 - [ ] **Read each voice-over line aloud with a stopwatch** against its slot. If a line runs over,
       cut words, not shots
 - [ ] Record each segment separately and keep the raw files

@@ -8,8 +8,10 @@
  * has no corresponding sign-in credentials.
  *
  * Creates:
- * - Two Cognito users in the shared user pool: a demo "Asha" (OWNER) and "Vikram"
- *   (EDITOR), matching docs/PERMISSIONS.md's sharing moment.
+ * - One Cognito user in the shared user pool: a demo "Vikram" (EDITOR). The Owner slot
+ *   reuses your existing real, already-signed-up account (bhaskar.kumar.arya7@gmail.com)
+ *   instead of a fake persona, so alert emails have a real, SES-verified inbox to land in -
+ *   sign up with that address on the live site once before running this script.
  * - A "Mom's medicines" cabinet with those two as members.
  * - One disclosed mock strip medicine (docs/PRIVACY.md "Demo data") whose identity
  *   exactly matches the real CDSCO row in fixtures/demo/replay-1.json
@@ -28,6 +30,7 @@ import {
   AdminGetUserCommand,
   AdminSetUserPasswordCommand,
   CognitoIdentityProviderClient,
+  ListUsersCommand,
   UsernameExistsException,
 } from '@aws-sdk/client-cognito-identity-provider';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
@@ -47,11 +50,18 @@ function parseStage(): string {
   return stage;
 }
 
-/** Demo personas. Fake emails on a domain we own nothing real at - never a real person's data. */
-const PERSONAS = [
-  { key: 'asha', email: 'asha.demo@asli.internal', role: 'OWNER' as const },
-  { key: 'vikram', email: 'vikram.demo@asli.internal', role: 'EDITOR' as const },
-];
+/**
+ * The Owner slot in the demo cabinet is a REAL, already-signed-up account
+ * (bhaskar.kumar.arya7@gmail.com - a real, SES-verified inbox, see submission/DEMO_SCRIPT.md),
+ * not a fake @asli.internal persona, so services/notify/src/cognito.ts's lookupEmail resolves
+ * to an address the demo replay's alert email can actually be delivered to. Cognito enforces
+ * one email alias per pool (signInAliases.email), so this address can't also be attached to a
+ * separate fake user - reuse the real one instead.
+ */
+const OWNER_EMAIL = 'bhaskar.kumar.arya7@gmail.com';
+
+/** The Editor slot stays a fake demo persona - never a real person's data. */
+const EDITOR_PERSONA = { key: 'vikram', email: 'vikram.demo@asli.internal', role: 'EDITOR' as const };
 
 const DEMO_PASSWORD = 'AsliDemo!2026';
 const CABINET_ID = 'cab-demo-mom-001';
@@ -83,11 +93,7 @@ async function resolveUserPoolId(ssm: SSMClient, stage: string): Promise<string>
   return value;
 }
 
-async function ensureDemoUser(
-  cognito: CognitoIdentityProviderClient,
-  userPoolId: string,
-  email: string,
-): Promise<string> {
+async function ensureDemoUser(cognito: CognitoIdentityProviderClient, userPoolId: string, email: string): Promise<string> {
   try {
     await cognito.send(
       new AdminCreateUserCommand({
@@ -119,6 +125,20 @@ async function ensureDemoUser(
   return sub;
 }
 
+/** Looks up an existing, already-signed-up user's `sub` by email - does not create anything. */
+async function resolveExistingUserSub(cognito: CognitoIdentityProviderClient, userPoolId: string, email: string): Promise<string> {
+  const res = await cognito.send(
+    new ListUsersCommand({ UserPoolId: userPoolId, Filter: `email = "${email}"`, Limit: 1 }),
+  );
+  const sub = res.Users?.[0]?.Attributes?.find((a) => a.Name === 'sub')?.Value;
+  if (!sub) {
+    throw new Error(
+      `No existing Cognito user found for ${email} - sign up with this address on the live site once first, then rerun this script`,
+    );
+  }
+  return sub;
+}
+
 async function putIdempotent(
   ddb: DynamoDBDocumentClient,
   tableName: string,
@@ -141,10 +161,10 @@ async function main(): Promise<void> {
   const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({ region: REGION }));
 
   const userPoolId = await resolveUserPoolId(ssm, stage);
-  const subs: Record<string, string> = {};
-  for (const persona of PERSONAS) {
-    subs[persona.key] = await ensureDemoUser(cognito, userPoolId, persona.email);
-  }
+  const subs: Record<string, string> = {
+    asha: await resolveExistingUserSub(cognito, userPoolId, OWNER_EMAIL),
+    vikram: await ensureDemoUser(cognito, userPoolId, EDITOR_PERSONA.email),
+  };
 
   const tableName = `asli-${stage}-cabinets`;
   const now = new Date().toISOString();
@@ -157,14 +177,18 @@ async function main(): Promise<void> {
     createdAt: now,
   });
 
-  for (const persona of PERSONAS) {
+  const members = [
+    { key: 'asha', role: 'OWNER' as const },
+    { key: 'vikram', role: EDITOR_PERSONA.role },
+  ];
+  for (const member of members) {
     await putIdempotent(ddb, tableName, {
       PK: `CAB#${CABINET_ID}`,
-      SK: `MEMBER#${subs[persona.key]}`,
-      role: persona.role,
+      SK: `MEMBER#${subs[member.key]}`,
+      role: member.role,
       alertsEnabled: true,
       joinedAt: now,
-      GSI1PK: `USER#${subs[persona.key]}`,
+      GSI1PK: `USER#${subs[member.key]}`,
       GSI1SK: `CAB#${CABINET_ID}`,
     });
   }
@@ -200,9 +224,8 @@ async function main(): Promise<void> {
 
   console.log(`Seeded demo cabinet ${CABINET_ID} into ${tableName}`);
   console.log('Demo sign-in credentials (for recording only, not committed anywhere else):');
-  for (const persona of PERSONAS) {
-    console.log(`  ${persona.email} / ${DEMO_PASSWORD} (${persona.role}, sub=${subs[persona.key]})`);
-  }
+  console.log(`  ${OWNER_EMAIL} / <your existing real account password> (OWNER, sub=${subs.asha})`);
+  console.log(`  ${EDITOR_PERSONA.email} / ${DEMO_PASSWORD} (${EDITOR_PERSONA.role}, sub=${subs.vikram})`);
   console.log(
     `Both medicines start PENDING - F's retroactive check (DynamoDB stream on this put) will resolve them within ~10s if the cabinets stack is deployed and reachable, same as any other add-medicine flow. Trigger the actual demo moment with POST /v1/admin/demo/replay-month { "fixtureKey": "fixtures/demo/replay-1.json" } after running scripts/seed-demo-fixture.ts --stage ${stage}.`,
   );
