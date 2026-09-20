@@ -37,7 +37,18 @@ function errorResponse(statusCode: number, code: string, message: string): HttpA
 function isAdmin(event: HttpApiEvent): boolean {
   const claim = event.requestContext.authorizer?.jwt?.claims?.['cognito:groups'];
   if (Array.isArray(claim)) return claim.includes('admin');
-  if (typeof claim === 'string') return claim.split(',').includes('admin');
+  if (typeof claim === 'string') {
+    // API Gateway's HTTP API JWT authorizer serializes an array-valued claim like
+    // cognito:groups as "[admin]" or "[admin, other]" - square brackets, but NOT valid
+    // JSON (values aren't quoted). Confirmed by logging the real claims object against
+    // the live deployed endpoint; unit tests pass the claim as a real array or a plain
+    // comma string and never exercised this actual bracketed shape.
+    const stripped = claim.trim().replace(/^\[/, '').replace(/\]$/, '');
+    return stripped
+      .split(',')
+      .map((g) => g.trim())
+      .includes('admin');
+  }
   return false;
 }
 

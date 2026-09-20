@@ -30,6 +30,27 @@ describe('admin demo-replay handler', () => {
     expect(sfnSend).not.toHaveBeenCalled();
   });
 
+  it('accepts a caller whose group claim arrives as "[admin]" (real API Gateway HTTP API JWT authorizer shape, confirmed by logging the live claims object)', async () => {
+    const { handler } = await import('./handler');
+    const res = await handler(eventWithGroups('[admin]', { fixtureKey: 'fixtures/demo/replay-1.json' }));
+    expect(res.statusCode).toBe(200);
+    expect(sfnSend).toHaveBeenCalledTimes(1);
+  });
+
+  it('accepts a caller whose group claim arrives as "[member, admin]"', async () => {
+    const { handler } = await import('./handler');
+    const res = await handler(eventWithGroups('[member, admin]', { fixtureKey: 'fixtures/demo/replay-1.json' }));
+    expect(res.statusCode).toBe(200);
+    expect(sfnSend).toHaveBeenCalledTimes(1);
+  });
+
+  it('accepts a caller whose group claim arrives as a plain comma-joined string with no brackets', async () => {
+    const { handler } = await import('./handler');
+    const res = await handler(eventWithGroups('member, admin', { fixtureKey: 'fixtures/demo/replay-1.json' }));
+    expect(res.statusCode).toBe(200);
+    expect(sfnSend).toHaveBeenCalledTimes(1);
+  });
+
   it('accepts a caller in the admin group and starts the state machine with sourceType FIXTURE', async () => {
     const { handler } = await import('./handler');
     const res = await handler(eventWithGroups(['admin'], { fixtureKey: 'fixtures/demo/replay-1.json' }));
