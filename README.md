@@ -173,7 +173,8 @@ Everything runs in `ap-south-1`, is defined in AWS CDK, and scales to zero.
 | Textract | Photo-reading fallback; PDF ingestion fallback | Partly live |
 | Bedrock | Wired as a switchable photo reader and reason classifier | Blocked in our AWS account |
 | Verified Permissions (Cedar) | Cedar policies for Owner, Editor and Viewer roles | Blocked; a stub enforces the same role table |
-| Translate + Polly | Draft Hindi/Kannada templates and read-aloud | Blocked; templates are hand-drafted, read-aloud uses the browser |
+| Translate | Draft Hindi/Kannada templates | Blocked; templates are hand-drafted |
+| Polly | Pre-rendered English read-aloud MP3s, served via a presigned-URL redirect (`GET /v1/public/audio/{lang}/{keyFile}`) | Live for English; Polly has zero `hi-IN`/`kn-IN` voices in `ap-south-1`, so Hindi/Kannada read-aloud uses the browser's `speechSynthesis` instead, or hides the button if no voice exists for that language either |
 
 Photo reading currently uses the **Gemini API** from a Lambda (key in Secrets Manager), because
 Bedrock invocation is refused in our AWS account. The provider is an SSM parameter, so switching to

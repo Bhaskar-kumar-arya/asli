@@ -1,5 +1,26 @@
 # NOW.md — updated whenever a lane starts, stops, or finishes
 
+**2026-09-20 (update 6): read-aloud's Polly path is live, the Amplify SPA rewrite is fixed, and the
+admin-demo fix was confirmed already deployed.** Added `GET /v1/public/audio/{lang}/{keyFile}`
+(lane I) — a 302 to a presigned S3 GET URL — and deployed `LaneIStack-int` (additive only, `cdk diff`
+confirmed no changes to existing resources). Ran `pnpm content:audio --stage dev-shared` for real
+(only `en` gets Polly MP3s — zero `hi-IN`/`kn-IN` voices in `ap-south-1`, unchanged from T01's
+finding). Set `VITE_AUDIO_BASE_URL` on the live Amplify app (`d2ag2oukltn4mc`, region `us-east-1` —
+note this app lives in `us-east-1` even though the backend is `ap-south-1`) and released build 43.
+Verified the whole chain in a real Chrome session: clicking "Read aloud" on a VERIFY result hits the
+new route, 302s to S3, and plays the real Polly MP3 (button shows "READING…"). Confirms
+`LaneIStack-int` (like every other `-int`-named lane stack) actually imports shared resources from
+`SHARED_STAGE=dev-shared` (the unset default), not from `SharedStack-int` — the same root cause
+already noted for the live site pointing at `dev-shared`; `asli-int`'s own HTTP API has zero lane
+routes on it. Also fixed the Amplify SPA rewrite rule Z2 had flagged as "not applied by Claude (live
+infrastructure)" — the existing `404-200` catch-all wasn't firing because Amplify's S3 hosting
+301-redirects an extension-less path to a trailing slash before the 404 rule gets a chance; replaced
+it with the literal `200 (Rewrite)` regex rule, confirmed `/insights`, `/dashboard`, `/sign-in` all
+return 200 directly now. Checked (did not need to fix) commit `89e17f1`'s admin-demo `cognito:groups`
+bracket fix: `cdk diff LaneA2Stack-int` showed zero differences and the deployed Lambda's bundle
+already contains the fix. Full details and evidence in `submission/LEARNING_LOG.md`'s 2026-09-20
+22:53 IST entry. `pnpm -r lint && pnpm -r test` clean across all 25 workspace projects.
+
 **2026-09-20 (update 5): correction + a real live-site bug fixed. The live Amplify site
 (`https://main.d2ag2oukltn4mc.amplifyapp.com`) actually runs against `dev-shared`, not `int` as
 update 4 implied — confirmed via `aws amplify get-app`'s `environmentVariables`
@@ -37,7 +58,7 @@ left is human-only — see below.**
 |---|---|
 | A3 (PDF/Textract fallback) | Account-wide `SubscriptionRequiredException` on Textract *for the bulk-PDF-analysis path A3 uses*. Unmerged on `lane/A3`, not wired into A2's `build.ts`. Per the P2 cutting rule, recommended to stay unmerged unless this clears. (Note: C's `textract` scan-extraction fallback uses plain `DetectDocumentText`/`AnalyzeDocument`, a different call pattern, and that one works.) |
 | H (avp mode) | Verified Permissions blocked the same way; ships with `ENABLE_AVP=false` stub authz. |
-| I (Polly hi/kn read-aloud) | Translate/Polly blocked the same way; also Polly has zero hi-IN/kn-IN voices in `ap-south-1` regardless. Falls back to browser `speechSynthesis`. |
+| I (Polly hi/kn read-aloud) | English Polly read-aloud is live end-to-end (see 2026-09-20 update 6). hi/kn stay blocked: Polly has zero hi-IN/kn-IN voices in `ap-south-1` regardless of the account-wide restriction, so those languages fall back to browser `speechSynthesis` (or hide the button if no voice exists either). |
 
 ## Human-only follow-ups (everything else that remains in the whole project)
 - **Testset size (E):** 15/30 strips, 6/10 bills labelled (bills went from 1/10 to 6/10 this session — two team members provided their own real, redacted Tata 1mg pharmacy invoices, `testset/sources.md`'s "bills 002-006" note). Strips still need actual human-shot photos of real Indian medicine strips (`testset/README.md`); internet sourcing for strips has been exhausted (`testset/sources.md`'s "Coverage gaps" section). This is the only remaining item for E's task.

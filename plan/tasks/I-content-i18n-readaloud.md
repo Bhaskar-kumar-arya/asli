@@ -30,9 +30,14 @@ UI components.
 
 ---
 ## Handoff (the session updates this before stopping)
-**Status:** DONE (content package + API shipped; hi/kn translation review and live Polly/S3 upload still blocked on AWS account issues - see Gotchas)
-**Stage deployed:** none yet - `infra/lib/lanes/i-content.ts` is written and typechecks (`pnpm --filter infra build`) but not deployed to any stage this session (no `STAGE` set, and stage deploys are a separate human step per CLAUDE.md).
-**Done:**
+**Status:** DONE (content package + API shipped; audio now reachable end-to-end for English; hi/kn translation review still blocked on AWS account issues - see Gotchas)
+**Stage deployed:** `LaneIStack-int` deployed 2026-09-20 (additive only, `cdk diff` confirmed no changes to existing resources before deploying) - it imports shared resources from `SHARED_STAGE=dev-shared` (the unset default), same as every other `-int`-named lane stack; see submission/LEARNING_LOG.md's 2026-09-20 22:53 IST entry for how that was confirmed.
+**Done (this session, 2026-09-20):**
+- `GET /v1/public/audio/{lang}/{keyFile}` (`services/content/src/handlers/audio.ts`, wired in `infra/lib/lanes/i-content.ts`): the public bucket blocks all public access, so the browser couldn't reach the Polly MP3s `scripts/content/audio.ts` uploads directly. This 302-redirects to a 5-minute presigned S3 GET URL instead of streaming bytes itself (simpler than API Gateway HTTP APIs' binary-payload passthrough, and a plain `<audio>` element follows redirects transparently). Does not check the object exists first - a missing key still presigns and 404s on redirect, which `apps/web`'s `playAudioFile()` already treats as "fall back to speechSynthesis." 5 new handler tests (`audio.test.ts`).
+- Ran `pnpm content:audio --stage dev-shared` for real (had never been run for that stage) - uploaded all `en` MP3s, hi/kn skipped as expected (zero Polly voices in `ap-south-1`, unchanged).
+- Set `VITE_AUDIO_BASE_URL` on the live Amplify app and verified in a real Chrome session: clicking "Read aloud" on a VERIFY result hits the new route, 302s to S3, and plays the real Polly MP3.
+- Updated `docs/SAFETY_AND_CONTENT.md`'s Read-aloud section and `README.md`'s AWS table to describe the actual live path (redirect through lane I, not a direct bucket read).
+**Done (earlier sessions):**
 - `packages/content`: `render(key, lang, vars)` + `getTemplate`/`toGuidanceTemplate`, reviewed English source-of-truth templates for all 7 `guidanceKey` values `@asli/matching` returns (`result.flagged.nsq`, `result.flagged.spurious`, `result.verify.{near_batch,manufacturer_unknown,low_read_confidence,default}`, `result.no_alert_found` - see packages/matching/README.md), plus `notification.flagged`/`notification.verify` (docs/ALERTS.md wording), `REASON_PLAIN_TEXT_EN` for all 14 reason codes, and result-card UI strings (`Read aloud`, `Save to family medicines`, etc.) not owned by D1's shell i18n.
 - Hindi and Kannada drafts for every key above (hand-drafted from the reviewed English, see Gotchas) - unreviewed (`reviewedBy`/`reviewedAt` unset), `render()` falls back to English for them, review status is inspectable via `getTemplate(...).reviewedBy`.
 - `packages/content/src/banned-words.ts`: `findBannedWording`/`assertNoBannedWording` per language (en/hi/kn), with a deliverable-6 test in `src/index.test.ts` running every template/reason-text/UI-string in every language through it (22 tests, all passing).
@@ -42,11 +47,12 @@ UI components.
 - `pnpm -r lint && pnpm -r test` pass repo-wide except one pre-existing, unrelated flake in `services/ingestion/src/pdf/download.test.ts` (`Body is unusable: Body has already been read`) that predates this session and isn't in lane I's owned paths.
 **Remaining:**
 - Native-speaker review of every hi/kn string per `scripts/content/review.md`, then set `reviewedBy`/`reviewedAt`.
-- Run `pnpm content:translate` and `pnpm content:audio` for real once Translate/Polly access clears (or against an account that already has it), and deploy `LaneIStack` to a stage.
+- Run `pnpm content:translate` for real once Translate access clears (still `SubscriptionRequiredException`). `pnpm content:audio` has now run for real against `dev-shared` (English only - Polly has zero `hi-IN`/`kn-IN` voices in `ap-south-1`, an account-region fact, not an access block, so this stays true even if Translate/Bedrock access clears).
 - D2 (`apps/web/src/features/scan/lib/content.ts`) and G1 (`services/notify/src/templates/*`) both currently ship their own hardcoded English stand-ins with comments saying to swap to this package/endpoint - that swap is those lanes' work, not done here (out of lane I's owned paths).
 **Gotchas / decisions:**
 - Amazon Translate returns `SubscriptionRequiredException` on this AWS account (plan/tasks/T01-spikes.md spike 7) - `translate.ts` is written for when that clears but couldn't produce real drafts this session, so hi/kn text in `packages/content/src` is hand-drafted directly from the reviewed English and explicitly marked unreviewed.
 - Polly has **zero** voices for `hi-IN` and `kn-IN` in `ap-south-1` (same T01 spike) - contradicts docs/SAFETY_AND_CONTENT.md's assumption that Hindi uses pre-rendered Polly MP3s. `audio.ts` only ever produces `en` audio on this account; D2's `readAloud.ts` already falls back to browser `speechSynthesis` for any language whose MP3 is missing, so this doesn't block read-aloud, just makes hi/kn read-aloud client-synthesized instead of Polly-recorded. Logged in submission/LEARNING_LOG.md.
+- English Polly read-aloud is now live end-to-end (2026-09-20) via the new presigned-redirect route - see "Done (this session)" above.
 - `GuidanceTemplateSchema` (packages/contracts, frozen) has `whatToDoNext`, not `steps`/`placeholders` - the wire response drops the internal `placeholders` field (client interpolates `{tokens}` itself using its own `CheckItemResult`/`AlertEvent` data; the endpoint returns the raw, uninterpolated template).
 - VERIFY's four guidance keys share one body template with the mismatch phrase baked in per key (not a `{mismatchPlain}` placeholder) - matches `@asli/matching`'s and D2's stand-in's existing design.
 **Contract change requests:**
