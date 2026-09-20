@@ -21,6 +21,21 @@ export interface RequestOptions {
 }
 
 /**
+ * Some routes answer with a bare status and no body (docs/API.md: POST
+ * /v1/push/test is a 202, DELETE /v1/push/subscriptions a 204), and a failing
+ * gateway can answer with something that is not JSON at all. res.json() throws
+ * in both cases, so treat an unparseable body as no body and let the status
+ * decide the outcome.
+ */
+async function readBody(res: Response): Promise<unknown> {
+  try {
+    return (await res.json()) as unknown;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
  * Thin typed fetch wrapper: attaches the Cognito JWT, maps the ApiError
  * envelope (docs/API.md) to ApiRequestError. Callers parse the JSON body
  * with the relevant Zod schema from @asli/contracts.
@@ -37,7 +52,7 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
     signal: options.signal,
   });
 
-  const json: unknown = res.status === 204 ? undefined : await res.json();
+  const json = await readBody(res);
 
   if (!res.ok) {
     if (json && typeof json === 'object' && 'error' in json) {

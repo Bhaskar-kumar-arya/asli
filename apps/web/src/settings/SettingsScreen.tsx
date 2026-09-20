@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Page } from '../shell/components/Page';
@@ -9,7 +9,7 @@ import { applyTextSize, getStoredTextSize, type TextSize } from '../theme/textSi
 import { signOut } from '../auth/session';
 import { useAuth } from '../auth/AuthProvider';
 import { api } from '../api/endpoints';
-import { subscribeToPush, unsubscribeFromPush } from './push';
+import { isSubscribedToPush, pushSupported, subscribeToPush, unsubscribeFromPush } from './push';
 
 const LANGUAGE_LABEL: Record<SupportedLanguage, string> = { en: 'English', hi: 'हिन्दी', kn: 'ಕನ್ನಡ' };
 const TEXT_SIZE_LABEL: Record<TextSize, string> = { normal: 'Normal', large: 'Large', 'extra-large': 'Extra large' };
@@ -21,6 +21,18 @@ export function SettingsScreen() {
   const [pushEnabled, setPushEnabled] = useState(false);
   const navigate = useNavigate();
   const { refresh } = useAuth();
+
+  // The subscription lives in the browser, not in our state, so read it back
+  // on mount instead of assuming the toggle starts off.
+  useEffect(() => {
+    let active = true;
+    void isSubscribedToPush().then((subscribed) => {
+      if (active) setPushEnabled(subscribed);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   async function handleToggleNotifications() {
     setNotice(undefined);
@@ -51,6 +63,16 @@ export function SettingsScreen() {
 
   async function handleTestPush() {
     setNotice(undefined);
+    if (!pushSupported()) {
+      setNotice('This device or browser does not support notifications.');
+      return;
+    }
+    // The server sends to whatever subscriptions it holds and answers 202
+    // either way, so check here rather than report a send that reached nobody.
+    if (!(await isSubscribedToPush())) {
+      setNotice('Turn on notifications on this device first, then send a test.');
+      return;
+    }
     try {
       await api.sendTestPush();
       setNotice('Test notification sent.');
