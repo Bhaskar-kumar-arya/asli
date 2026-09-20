@@ -30,6 +30,12 @@ describe('HomeMedicineList', () => {
     expect(screen.getByText(/mom - fever tablet/i)).toBeInTheDocument();
     expect(screen.getAllByRole('status')).toHaveLength(2);
     await waitFor(() => expect(onSummary).toHaveBeenCalledWith({ entryCount: 2, latestAlertMonth: '2025-05' }));
+
+    // The cabinet sheet - and members and sharing behind it - had no entry point before.
+    expect(screen.getByRole('link', { name: /Mom's medicines/i })).toHaveAttribute(
+      'href',
+      '/cabinets/cab-mom-001',
+    );
   });
 
   it('shows a friendly error when the cabinet list fails to load', async () => {

@@ -2,6 +2,7 @@ import { useRoutes, useLocation, Navigate, type RouteObject } from 'react-router
 import { AuthProvider } from '../auth/AuthProvider';
 import { ProtectedRoute } from '../auth/ProtectedRoute';
 import { SignInScreen } from '../auth/SignInScreen';
+import { SignUpScreen } from '../auth/SignUpScreen';
 import { SettingsScreen } from '../settings/SettingsScreen';
 import { OfflineBanner } from '../shell/components/OfflineBanner';
 import { BottomNav } from '../shell/components/BottomNav';
@@ -10,6 +11,7 @@ import { featureRoutes } from './routes';
 
 const routes: RouteObject[] = [
   { path: '/sign-in', element: <SignInScreen /> },
+  { path: '/sign-up', element: <SignUpScreen /> },
   {
     path: '/',
     element: (
@@ -33,7 +35,8 @@ const routes: RouteObject[] = [
 function Shell() {
   const location = useLocation();
   const element = useRoutes(routes);
-  const hideNav = location.pathname === '/sign-in';
+  // The tab bar points at protected screens, so it stays off the doorstep.
+  const hideNav = location.pathname === '/sign-in' || location.pathname === '/sign-up';
 
   return (
     <>

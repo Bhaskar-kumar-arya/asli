@@ -1,14 +1,16 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Page } from '../shell/components/Page';
 import { Field } from '../shell/components/Field';
 import { Button } from '../shell/components/Button';
-import { emailSignIn } from './session';
+import { RegisterIndex } from '../shell/components/RegisterIndex';
+import { UNCONFIRMED, authErrorMessage, emailSignIn, errorName } from './session';
 import { useAuth } from './AuthProvider';
 
 export function SignInScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string>();
   const [submitting, setSubmitting] = useState(false);
   const { refresh } = useAuth();
@@ -22,8 +24,16 @@ export function SignInScreen() {
       await emailSignIn(email, password);
       refresh();
       navigate('/');
-    } catch {
-      setError('We could not sign you in. Check your email and password and try again.');
+    } catch (err) {
+      // An account that never finished confirming belongs on the code step, not
+      // stranded behind a wrong-password message it can never satisfy.
+      if (errorName(err) === UNCONFIRMED) {
+        navigate('/sign-up', { state: { confirmEmail: email } });
+        return;
+      }
+      setError(
+        authErrorMessage(err, 'We could not sign you in. Check your email and password and try again.'),
+      );
     } finally {
       setSubmitting(false);
     }
@@ -50,21 +60,48 @@ export function SignInScreen() {
         />
         <Field
           label="Password"
-          type="password"
+          type={showPassword ? 'text' : 'password'}
           autoComplete="current-password"
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        <button type="button" className="reg-textbtn" onClick={() => setShowPassword((v) => !v)}>
+          {showPassword ? 'Hide password' : 'Show password'}
+        </button>
         {error ? (
-          <p role="alert" className="reg-note reg-note--flagged" style={{ margin: '0 0 1rem' }}>
+          <p role="alert" className="reg-note reg-note--flagged" style={{ margin: '0.6rem 0 1rem' }}>
             {error}
           </p>
         ) : null}
-        <Button type="submit" fullWidth disabled={submitting}>
+        <Button type="submit" fullWidth disabled={submitting} style={{ marginTop: '1rem' }}>
           {submitting ? 'Signing in…' : 'Sign in'}
         </Button>
       </form>
+
+      {/* A new user has no other way in, so this is a struck action, not an inline link. */}
+      <p className="reg-prose reg-prose--muted" style={{ margin: '1.8rem 0 0.4rem' }}>
+        New to Asli?
+      </p>
+      <Link to="/sign-up" className="reg-btn reg-btn--wide">
+        Create an account
+      </Link>
+
+      <RegisterIndex
+        title="Open to anyone"
+        entries={[
+          {
+            to: '/insights',
+            name: 'How common is this?',
+            gloss: 'CDSCO alert counts by month and reason. No sign-in needed.',
+          },
+          {
+            to: '/dashboard',
+            name: 'How well does Asli work?',
+            gloss: 'Measured accuracy and running cost. No sign-in needed.',
+          },
+        ]}
+      />
     </Page>
   );
 }

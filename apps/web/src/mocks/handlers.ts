@@ -7,15 +7,20 @@ import type {
   CheckResponse,
   CreateUploadRequest,
   MedicineWithStatus,
+  PublicStats,
   ScanRequest,
 } from '@asli/contracts';
+import type { InsightsDetail } from '../features/insights/types';
+import type { DashboardMetrics } from '../features/dashboard/types';
 import { getScanFixture, scanFixtures, type ScanFixtureState } from './fixtures';
 
 const BASE = '/v1';
 
 const MOCK_CABINET = {
   cabinetId: 'mock-cabinet-1',
-  name: "My family's medicines",
+  // Not "My family's medicines" — that is the list heading on Home, and a cabinet
+  // named the same as the heading above it reads as a duplicate rather than a place.
+  name: 'Sharma family',
   createdBy: 'mock-user',
   createdAt: '2026-02-11T09:00:00.000Z',
 };
@@ -95,6 +100,108 @@ function stateFromUploadId(uploadId: string): ScanFixtureState {
   return match?.state ?? 'NO_ALERT_FOUND';
 }
 
+/* ---------- the public returns ---------- */
+
+/** A year of alert counts so the charts read as a trend rather than two bars. */
+const MOCK_BY_MONTH_CATEGORY = [
+  { month: '2025-08', NSQ: 31, SPURIOUS: 6 },
+  { month: '2025-09', NSQ: 28, SPURIOUS: 4 },
+  { month: '2025-10', NSQ: 36, SPURIOUS: 9 },
+  { month: '2025-11', NSQ: 24, SPURIOUS: 5 },
+  { month: '2025-12', NSQ: 33, SPURIOUS: 7 },
+  { month: '2026-01', NSQ: 41, SPURIOUS: 11 },
+  { month: '2026-02', NSQ: 29, SPURIOUS: 6 },
+  { month: '2026-03', NSQ: 38, SPURIOUS: 8 },
+  { month: '2026-04', NSQ: 35, SPURIOUS: 5 },
+  { month: '2026-05', NSQ: 44, SPURIOUS: 12 },
+  { month: '2026-06', NSQ: 30, SPURIOUS: 7 },
+  { month: '2026-07', NSQ: 37, SPURIOUS: 10 },
+];
+
+const MOCK_TOTAL_NSQ = MOCK_BY_MONTH_CATEGORY.reduce((n, m) => n + m.NSQ, 0);
+const MOCK_TOTAL_SPURIOUS = MOCK_BY_MONTH_CATEGORY.reduce((n, m) => n + m.SPURIOUS, 0);
+
+const MOCK_STATS: PublicStats = {
+  generatedAt: '2026-08-02T04:00:00.000Z',
+  monthsCovered: MOCK_BY_MONTH_CATEGORY.length,
+  latestMonth: '2026-07',
+  totalFlaggedBatches: MOCK_TOTAL_NSQ + MOCK_TOTAL_SPURIOUS,
+  cabinetsProtected: 1284,
+  medicinesTracked: 5602,
+};
+
+const MOCK_INSIGHTS: InsightsDetail = {
+  generatedAt: MOCK_STATS.generatedAt,
+  byCategory: { NSQ: MOCK_TOTAL_NSQ, SPURIOUS: MOCK_TOTAL_SPURIOUS },
+  byMonth: MOCK_BY_MONTH_CATEGORY.map((m) => ({ month: m.month, count: m.NSQ + m.SPURIOUS })),
+  topReasonCodes: [
+    { reasonCode: 'ASSAY', count: 118 },
+    { reasonCode: 'DISSOLUTION', count: 96 },
+    { reasonCode: 'DESCRIPTION', count: 61 },
+    { reasonCode: 'UNIFORMITY', count: 43 },
+    { reasonCode: 'STERILITY', count: 28 },
+  ],
+  byMonthCategory: MOCK_BY_MONTH_CATEGORY,
+  byReportingSource: [
+    { reportingSource: 'Central Drugs Laboratory, Kolkata', count: 141 },
+    { reportingSource: 'Central Drugs Testing Laboratory, Mumbai', count: 112 },
+    { reportingSource: 'Regional Drugs Testing Laboratory, Chandigarh', count: 87 },
+    { reportingSource: 'Central Drugs Laboratory, Kasauli', count: 64 },
+  ],
+  withinExpiry: { rows: 504, withinExpiry: 311, missingExpiry: 42, withinExpiryShare: 311 / 504 },
+  mfgToAlertLagMonths: { n: 504, mean: 9.4, median: 8, p10: 4, p90: 16, max: 29 },
+  alertToExpiryRemainingMonths: { n: 462, mean: 7.1, median: 6, p10: 1, p90: 14, max: 23 },
+};
+
+const MOCK_METRICS: DashboardMetrics = {
+  accuracy: { sampleSize: 120, measuredAt: '2026-08-01T12:00:00.000Z' },
+  cost: { costPer1000ScansUsd: 1.94, measuredAt: '2026-08-02T00:00:00.000Z' },
+  accuracyDetail: {
+    runId: 'acc-2026-08-01',
+    measuredAt: '2026-08-01T12:00:00.000Z',
+    tierCorrectnessRate: 0.975,
+    byMethod: [
+      { method: 'strip_vision', count: 60, batchExactRate: 0.9 },
+      { method: 'bill_vision', count: 34, batchExactRate: 0.824 },
+      { method: 'qr', count: 14, batchExactRate: 1 },
+      { method: 'manual', count: 12, batchExactRate: 1 },
+    ],
+    byCondition: [
+      { condition: 'lighting', value: 'good', count: 71, batchExactRate: 0.944 },
+      { condition: 'lighting', value: 'dim', count: 31, batchExactRate: 0.806 },
+      { condition: 'strip', value: 'creased', count: 18, batchExactRate: 0.722 },
+    ],
+  },
+  costDetail: {
+    window: { start: '2026-07-02T00:00:00.000Z', end: '2026-08-02T00:00:00.000Z' },
+    scanCount: 4120,
+    perScanUsd: { bedrockUsd: 0.00121, lambdaUsd: 0.00009, apiGatewayUsd: 0.0000035, s3Usd: 0.0000042, totalUsd: 0.00194 },
+    perIngestionRun: {
+      stepFunctionsUsd: 0.00025,
+      dynamoUsd: 0.0131,
+      s3Usd: 0.0004,
+      textractUsd: 0.045,
+      lambdaUsd: 0.0021,
+      totalUsd: 0.0609,
+      rows: 512,
+    },
+    tenThousandFamilyProjection: {
+      assumptions: {
+        projectedFamilies: 10_000,
+        avgMedicinesPerFamily: 5,
+        scansPerFamilyPerMonth: 2,
+        newAlertFanoutsPerMonth: 4,
+        familiesNotifiedPerFanout: 50,
+        notificationsPerFamily: 2,
+      },
+      retroactiveCheckUsd: 4.62,
+      monthlyScansUsd: 38.8,
+      fanoutUsd: 1.14,
+      totalUsd: 44.56,
+    },
+  },
+};
+
 export const handlers = [
   http.post(`${BASE}/uploads`, async ({ request }) => {
     const body = (await request.json()) as CreateUploadRequest & { mockState?: ScanFixtureState };
@@ -127,6 +234,11 @@ export const handlers = [
   }),
 
   http.get(`${BASE}/push/vapid-public-key`, () => HttpResponse.json({ publicKey: 'mock-vapid-public-key' })),
+
+  /* Public, no auth. Without these the two open pages render only their error line. */
+  http.get(`${BASE}/public/stats`, () => HttpResponse.json(MOCK_STATS)),
+  http.get(`${BASE}/public/insights`, () => HttpResponse.json(MOCK_INSIGHTS)),
+  http.get(`${BASE}/public/metrics`, () => HttpResponse.json(MOCK_METRICS)),
 
   http.get(`${BASE}/cabinets`, () =>
     HttpResponse.json({ cabinets: [{ ...MOCK_CABINET, role: 'OWNER' }] } satisfies CabinetList),

@@ -353,6 +353,10 @@ a:hover {
   letter-spacing: 0.02em;
   text-transform: uppercase;
   line-height: 0.94;
+  /* The clamp floor is set in rem, so it grows with the text-size setting while the
+     sheet's margin stays a fixed px width - at the largest setting a title with a
+     long word (e.g. "Accuracy") no longer fits and needs to be able to break. */
+  overflow-wrap: anywhere;
 }
 
 .reg-masthead__indic {
@@ -377,6 +381,7 @@ a:hover {
   font-weight: 800;
   text-transform: uppercase;
   line-height: 1.05;
+  overflow-wrap: anywhere;
 }
 
 .reg-back {
@@ -508,6 +513,7 @@ a:hover {
   font-stretch: 96%;
   letter-spacing: var(--track-caps);
   text-transform: uppercase;
+  text-decoration: none;
   cursor: pointer;
   transition:
     background var(--press),
@@ -628,7 +634,11 @@ a:hover {
   letter-spacing: var(--track-legend);
   text-transform: uppercase;
   line-height: 1.15;
-  white-space: nowrap;
+  /* Not nowrap: at the largest text size "Listed by CDSCO", rotated, no longer fits
+     a cabinet row's column and pushed the sheet wider than the viewport. --lg below
+     already wraps for the same reason; the inline mark needs the same give. */
+  max-width: 100%;
+  white-space: normal;
 }
 
 .reg-stamp--flagged {
@@ -702,7 +712,8 @@ a:hover {
   color: var(--text-2);
   border-bottom: 1px solid var(--rule-strong);
   padding-bottom: 0.15rem;
-  white-space: nowrap;
+  max-width: 100%;
+  text-wrap: balance;
 }
 
 /* ---------- result sheet ---------- */
@@ -853,6 +864,9 @@ a:hover {
 
 .reg-details > summary {
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  min-height: var(--tap-target-min);
   padding: 0.7rem 0;
   font-family: var(--face-print);
   font-size: var(--step-legend);
@@ -1065,6 +1079,7 @@ a:hover {
   bottom: 0;
   z-index: 20;
   display: flex;
+  width: 100%;
   max-width: var(--sheet-max);
   margin: 0 auto;
   background: var(--sheet);
@@ -1073,6 +1088,8 @@ a:hover {
 
 .reg-tab {
   flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1098,6 +1115,98 @@ a:hover {
 .reg-tab[aria-current='page'] {
   background: var(--text);
   color: var(--sheet);
+}
+
+/* The back matter: an index of the other returns this register can open.
+   Quieter than .reg-open-entry — these are cross-references, not the next line. */
+.reg-index {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--rule-strong);
+}
+
+.reg-index > li {
+  border-bottom: 1px solid var(--rule);
+}
+
+.reg-index__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: var(--tap-target-min);
+  padding: 0.72rem 0.1rem 0.72rem 0;
+  background: none;
+  border: 0;
+  color: var(--text);
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.reg-index__item:hover .reg-index__name {
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+  text-decoration-color: var(--margin);
+}
+
+.reg-index__name {
+  font-family: var(--face-print);
+  font-size: var(--step-body);
+  font-weight: 700;
+  font-stretch: 96%;
+}
+
+.reg-index__gloss {
+  display: block;
+  margin-top: 0.12rem;
+  font-family: var(--face-print);
+  font-size: var(--step-small);
+  font-weight: 400;
+  font-stretch: 100%;
+  color: var(--text-2);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* The cross-reference mark in the index margin, pointing off this sheet. */
+.reg-index__mark {
+  flex: none;
+  font-family: var(--face-record);
+  font-size: var(--step-body);
+  line-height: 1;
+  color: var(--margin);
+}
+
+/* A quiet action that belongs to the field above it, not to the sheet. */
+.reg-textbtn {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-target-min);
+  padding: 0 0.15rem 0 0;
+  background: none;
+  border: 0;
+  color: var(--text);
+  font-family: var(--face-print);
+  font-size: var(--step-small);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--margin);
+  text-underline-offset: 0.22em;
+  cursor: pointer;
+}
+
+.reg-textbtn:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* Recharts parks its inactive tooltip outside the plot area, which widened the page
+   by ~100px on a 390px phone and made every chart sheet scroll sideways. Clipping to
+   the container is safe: an active tooltip is held inside the view box by default. */
+.recharts-responsive-container {
+  overflow: clip;
 }
 
 /* ---------- utility ---------- */

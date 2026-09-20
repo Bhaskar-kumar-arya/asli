@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Page } from '../shell/components/Page';
 import { Button } from '../shell/components/Button';
+import { RegisterIndex } from '../shell/components/RegisterIndex';
 import { SUPPORTED_LANGUAGES, setLanguage, type SupportedLanguage } from '../i18n';
 import { applyTextSize, getStoredTextSize, type TextSize } from '../theme/textSize';
 import { signOut } from '../auth/session';
@@ -118,6 +119,27 @@ export function SettingsScreen() {
           </p>
         ) : null}
       </section>
+
+      <RegisterIndex
+        title="Other returns"
+        entries={[
+          {
+            to: '/insights',
+            name: 'How common is this?',
+            gloss: 'CDSCO alert counts by month and reason. Open to anyone.',
+          },
+          {
+            to: '/dashboard',
+            name: 'How well does Asli work?',
+            gloss: 'Measured accuracy and running cost. Open to anyone.',
+          },
+          {
+            to: '/pharmacy',
+            name: 'Pharmacy mode',
+            gloss: 'Check a whole invoice or stock list at once.',
+          },
+        ]}
+      />
 
       <div style={{ marginTop: '2.2rem' }}>
         <Button variant="danger" fullWidth onClick={() => void handleSignOut()}>
