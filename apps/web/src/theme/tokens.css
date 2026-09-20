@@ -97,20 +97,9 @@
  * them into a warm cream greys them out; these ratios are the most saturated
  * that still hold 4.5:1 on the iron ground (oxide 5.0, violet 4.9).
  */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --ink-stock: #12130f;
-    --ink-carbon: color-mix(in srgb, #ecebe1 94%, #16150f);
-    --ink-rule: color-mix(in srgb, #ecebe1 24%, #12130f);
-    --ink-oxide: color-mix(in oklch, #b0342a 76%, white);
-    --ink-violet: color-mix(in oklch, #5b3e8e 68%, white);
-
-    --sheet-edge: color-mix(in srgb, var(--ink-carbon) 7%, var(--ink-stock));
-
-    color-scheme: dark;
-  }
-}
-
+/* Light is the default regardless of OS/browser preference - there is no in-app
+   theme toggle yet, so following prefers-color-scheme left dark mode on with no
+   way to opt back into light. Dark still exists, just opt-in via data-theme. */
 :root[data-theme='dark'] {
   --ink-stock: #12130f;
   --ink-carbon: color-mix(in srgb, #ecebe1 94%, #16150f);
