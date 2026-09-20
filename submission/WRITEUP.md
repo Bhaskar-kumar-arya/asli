@@ -1,4 +1,4 @@
-# Asli — Know your batch
+# Asli - Know your batch
 
 **Team bskry · WeMakeDevs × AWS "First Commit" · Ship It track (also considered for Build It's
 criteria and Best UI, per the event's "one submission, all tracks" rule)**

@@ -1,4 +1,4 @@
-# Asli — Is this medicine batch flagged by CDSCO?
+# Asli - Is this medicine batch flagged by CDSCO?
 
 > Built for WeMakeDevs × AWS "First Commit" (Ship It track), by team bskry.
 
@@ -21,12 +21,12 @@ The long-form answers are in `submission/WRITEUP.md`; the video plan is `submiss
 ## The problem
 India's Central Drugs Standard Control Organisation (CDSCO) publishes monthly lists of drug
 batches that failed quality tests (Not of Standard Quality) or were found Spurious. Families
-almost never see them — the lists are published as government tables and PDFs, not pushed to
+almost never see them - the lists are published as government tables and PDFs, not pushed to
 anyone who actually owns the medicine.
 
 In a hand check of 171 flagged batches from three CDSCO central-lab alerts (Sep 2024, Jan 2025,
 Mar 2025), **170 (99.4%) were still within their expiry date when announced**, with an average of
-about 9.6 months between manufacture and announcement — meaning the batch was very likely still
+about 9.6 months between manufacture and announcement - meaning the batch was very likely still
 sitting in a medicine cabinet by the time CDSCO published the alert.
 
 We confirmed this against a full real ingestion run on `int` (2026-09-19, 21 months of CDSCO
@@ -49,7 +49,7 @@ and the live numbers.
 - Save a family's medicines in a shared cabinet, checked against the whole CDSCO history, and
   re-checked automatically every time a new list is published
 - Alert every caregiver in the cabinet by web push and email when a new CDSCO list matches
-- Explain what to do next in plain language (English, Hindi, Kannada, with read-aloud) — never
+- Explain what to do next in plain language (English, Hindi, Kannada, with read-aloud) - never
   "safe", always "this batch", always cite the source, and never advise stopping a prescribed
   medicine without a doctor
 - Bulk-check a pharmacy's stock from a CSV (pharmacy mode) and route problem reports to India's
@@ -91,7 +91,7 @@ flowchart LR
     SNS --> MAIL[Lambda SES email sender]
   end
 ```
-Matching is fully deterministic — `packages/matching` decides the tier (FLAGGED / VERIFY /
+Matching is fully deterministic - `packages/matching` decides the tier (FLAGGED / VERIFY /
 NO_ALERT_FOUND). No LLM ever decides or influences a tier; Bedrock is only used to extract fields
 from a photo, never to judge safety. See `docs/ARCHITECTURE.md` for the full service-choice
 rationale and `docs/MATCHING.md` for the tier rules.
@@ -102,20 +102,20 @@ Exported image (GitHub renders the mermaid block above natively, but here's a st
 
 ## Screenshots
 Captured live against the deployed PWA at **https://main.d2ag2oukltn4mc.amplifyapp.com**, signed
-in as the seeded demo user — real data, not mocked. These are the screens that carry the most
+in as the seeded demo user - real data, not mocked. These are the screens that carry the most
 weight in `submission/DEMO_SCRIPT.md`:
 
-1. **Flagged result card** (0:55–1:25 in the script) — the red "On a CDSCO alert list" card with
+1. **Flagged result card** (0:55–1:25 in the script) - the red "On a CDSCO alert list" card with
    the CDSCO alert month, reporting lab, reason, and source link, showing "this batch" wording,
    not a brand or manufacturer callout.
 
    ![Flagged result card](docs/screenshots/flagged-result.png)
 
-2. **"No alert found" result card** (0:30–0:55) — the neutral result, to show it never says "safe".
+2. **"No alert found" result card** (0:30–0:55) - the neutral result, to show it never says "safe".
 
    ![No alert found result card](docs/screenshots/no-alert-result.png)
 
-3. **Home screen: family's medicines** (1:45–2:35) — both the clean and flagged medicine saved to
+3. **Home screen: family's medicines** (1:45–2:35) - both the clean and flagged medicine saved to
    "Mom's medicines", matching the real seeded demo data used for `submission/DEMO_SCRIPT.md`, with
    the last CDSCO update month shown. The full "second phone/caregiver alert arriving" moment is
    best shown live in the video rather than a static screenshot.
@@ -139,7 +139,7 @@ docs, plan, submission   Specs, build plan, submission material
 ## Status
 All engineering lanes (ingestion, matching, scan/check API, cabinet sharing, alerts, permissions,
 content/i18n, dashboard, QR, PvPI reporting, insights, pharmacy mode, hardening) are merged to
-`main` and deployed to the shared `int` stage, verified against real AWS infrastructure — not just
+`main` and deployed to the shared `int` stage, verified against real AWS infrastructure - not just
 unit tests. The one open engineering gap is account-wide: Bedrock, Textract bulk-PDF analysis,
 Translate and Verified Permissions are blocked in this AWS account behind a `ValidationException` /
 `SubscriptionRequiredException` unrelated to IAM. So PDF fallback ingestion, Cedar authorization
@@ -155,7 +155,7 @@ is live: the reader is the Gemini API, switchable to Bedrock by one SSM paramete
   sample: 15 strips and 6 bills against a target of 30 and 10.
 - **Cost:** the AWS pricing table (`packages/contracts/src/pricing.ts`) is filled in for
   `ap-south-1` (all 13 tracked SKUs except `bedrockOutputTokenPer1k`, which has no SKU in any
-  region — no Anthropic Bedrock model is priced in `ap-south-1` at all, so a production vision
+  region - no Anthropic Bedrock model is priced in `ap-south-1` at all, so a production vision
   Lambda would need a cross-region inference profile). Per-scan cost isn't yet computable from
   real traffic, since no live scan has hit `int` in the trailing CloudWatch window (same Bedrock
   restriction). `GET /v1/public/metrics` (the `/dashboard` page) shows the real ingestion, alert
@@ -172,11 +172,11 @@ STAGE=int pnpm --filter infra cdk deploy --all
 ```
 
 ## AI tools used
-- **Claude Code (Anthropic)** — used during the coding process, alongside work we did by hand. We
+- **Claude Code (Anthropic)** - used during the coding process, alongside work we did by hand. We
   ran it one session per area from the written specs in `docs/` and `plan/`. Commits made with its
   help carry a `Co-Authored-By: Claude` trailer, so the extent of its use is visible in the git
   history (`git log --grep 'Co-Authored-By: Claude'`).
-- **Gemini API (Google)** — used at runtime as the vision API that reads a strip or bill photo into
+- **Gemini API (Google)** - used at runtime as the vision API that reads a strip or bill photo into
   fields (batch, manufacturer, expiry). It never decides a match: `packages/matching` alone decides
   the tier. The provider is switchable to Bedrock by one SSM parameter.
 
@@ -184,15 +184,15 @@ The full disclosure is in `submission/WRITEUP.md`. `submission/LEARNING_LOG.md` 
 and what we measured along the way.
 
 ## Licence
-MIT — see [`LICENSE`](./LICENSE). Copyright holder is `bskry`.
+MIT - see [`LICENSE`](./LICENSE). Copyright holder is `bskry`.
 
 ## Credits / team
 Team **bskry**: four people, two shared laptops for almost the whole build and one more near the end
 (so git author names are laptops, not people). One owner per area:
-- **Bhaskar Kumar Arya** — backend and the data pipeline (ingestion, matching, the API Lambdas)
-- **Pushya Jain** — frontend (the React PWA)
-- **Heet Shah** — design and product content (visual system, UX, wording, guidance templates)
-- **Yashas Yogindra** — architecture, AWS infrastructure and delivery (CDK, deploys, cost, submission)
+- **Bhaskar Kumar Arya** - backend and the data pipeline (ingestion, matching, the API Lambdas)
+- **Pushya Jain** - frontend (the React PWA)
+- **Heet Shah** - design and product content (visual system, UX, wording, guidance templates)
+- **Yashas Yogindra** - architecture, AWS infrastructure and delivery (CDK, deploys, cost, submission)
 
 See `submission/WRITEUP.md` ("Who did what") for the detail.
 
@@ -212,7 +212,7 @@ Each lane = one Claude Code session working in its own git worktree and branch.
    pnpm install
    pnpm -r build && pnpm -r test
    ```
-4. To add infrastructure, drop one file into `infra/lib/lanes/<id>.ts` exporting `register(app, stage)` — see `infra/lib/lanes/README.md`. Nobody else edits `infra/bin/app.ts`.
+4. To add infrastructure, drop one file into `infra/lib/lanes/<id>.ts` exporting `register(app, stage)` - see `infra/lib/lanes/README.md`. Nobody else edits `infra/bin/app.ts`.
 5. Deploy your own stack, importing shared resources from `SHARED_STAGE` (default `dev-shared`):
    ```
    STAGE=dev-<id> pnpm --filter infra cdk deploy --all
