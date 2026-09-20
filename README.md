@@ -1,9 +1,15 @@
 # Asli - Know your batch
 
-Asli checks whether a medicine your family owns belongs to a batch that India's drug regulator, the
-Central Drugs Standard Control Organisation (CDSCO), has declared Not of Standard Quality or Spurious.
-Scan a strip, a pharmacy bill or a QR code, keep the family's medicines in one shared cabinet, and get
-alerted when a new CDSCO list matches.
+**Every month India's drug regulator publishes a list of medicine batches that failed quality
+testing. We ingested 21 months of those lists, 3,326 flagged batches, and found that 99.47% were
+still inside their expiry date on the day they were flagged.**
+
+The medicine is almost always still in someone's cabinet when the alert goes out, and nobody tells
+the family. Asli closes that gap.
+
+Scan a strip, a pharmacy bill or a QR code. Asli checks the batch against every CDSCO Not of Standard
+Quality and Spurious list, keeps your family's medicines in one shared cabinet, and alerts every
+caregiver when a new list matches one of them.
 
 Built for the WeMakeDevs × AWS "First Commit" hackathon (Ship It track) by team bskry.
 
@@ -194,11 +200,14 @@ Screens from the deployed app, using the sample data behind guest mode.
 ![The family's medicines](docs/screenshots/shared-cabinet.png)
 
 ## Measured results
-- **Tier matching:** 44 of 44 seeded cases correct, built from real CDSCO rows.
+- **Tier matching: 44 of 44 seeded cases correct**, built from real CDSCO rows. This is the figure
+  that matters most. The tier is decided by deterministic code, so it is fully testable and it cannot
+  drift when a model changes underneath it.
 - **Photo reading (15 strips, 6 bills):** batch number exact on 80.0% of strips (12 of 15),
   manufacturer identified strongly on 86.7%, expiry month exact on 40.0%, bill line recall 50.0%.
   Average scan latency about 5.7 seconds. This is a small sample, and the figures are on the public
-  `/dashboard`.
+  `/dashboard`. A misread here costs a wrong lookup, never a wrong verdict, which is the whole reason
+  matching was kept out of the model's hands.
 - **Latency:** saving a medicine to a CDSCO match and alert fan-out took well under 10 seconds on real
   data. A 200-row pharmacy CSV checks in 3.0 to 3.4 seconds.
 - **Cost:** not yet measured per scan. No Anthropic model is priced in `ap-south-1`, and no scans landed
@@ -210,9 +219,11 @@ Screens from the deployed app, using the sample data behind guest mode.
   statement that a batch is safe.
 - Low-confidence photo reads are capped at VERIFY rather than guessed into a firm tier. Expiry-month
   reading is the weakest field.
-- Bedrock, Textract bulk-PDF analysis, Translate and Verified Permissions are blocked in the AWS
-  account used for the build (a `ValidationException` or `SubscriptionRequiredException`, not an IAM
-  issue). Code for them is written and tested against fixtures, but not verified against live calls.
+- Bedrock, Textract bulk-PDF analysis, Translate and Verified Permissions are blocked at the account
+  level for this build (a `ValidationException` or `SubscriptionRequiredException`, not an IAM issue
+  we could fix from inside). Each one is written, tested and wired behind a swappable interface: the
+  photo reader moves from Gemini to Bedrock with one SSM parameter and no redeploy, and Cedar sharing
+  rules run today through a stub implementing the same policy table. Not verified against live calls.
 - Hindi and Kannada guidance is hand-drafted and awaits native-speaker review.
 - The accuracy test set is small (15 strips, 6 bills).
 
