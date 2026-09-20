@@ -1,10 +1,14 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MedicineIdentityForm } from './MedicineIdentityForm';
 import type { MedicineIdentity } from '@asli/contracts';
 
 describe('MedicineIdentityForm', () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+  });
+
   it('requires a batch number', async () => {
     const onSubmit = vi.fn();
     render(<MedicineIdentityForm submitLabel="Check" onSubmit={onSubmit} />);
@@ -34,5 +38,28 @@ describe('MedicineIdentityForm', () => {
       { productName: 'Amoxicillin', batchNumber: 'GTL9999', manufacturer: '' },
       true,
     );
+  });
+
+  it('suggests a known medicine name as the user types a prefix', async () => {
+    render(<MedicineIdentityForm submitLabel="Check" onSubmit={vi.fn()} />);
+    const nameField = screen.getByRole('combobox', { name: /medicine name/i });
+    await userEvent.type(nameField, 'amox');
+    expect(await screen.findByRole('option', { name: /amoxicillin 500mg capsules/i })).toBeInTheDocument();
+  });
+
+  it('tolerates a minor typo and still surfaces the intended name', async () => {
+    render(<MedicineIdentityForm submitLabel="Check" onSubmit={vi.fn()} />);
+    const nameField = screen.getByRole('combobox', { name: /medicine name/i });
+    await userEvent.type(nameField, 'paracetmol');
+    expect(await screen.findByRole('option', { name: /paracetamol 500mg tablets/i })).toBeInTheDocument();
+  });
+
+  it('fills the field when a suggestion is picked', async () => {
+    render(<MedicineIdentityForm submitLabel="Check" onSubmit={vi.fn()} />);
+    const nameField = screen.getByRole('combobox', { name: /medicine name/i });
+    await userEvent.type(nameField, 'amox');
+    const option = await screen.findByRole('option', { name: /amoxicillin 500mg capsules/i });
+    await userEvent.click(option);
+    expect(nameField).toHaveValue('Amoxicillin 500mg Capsules');
   });
 });

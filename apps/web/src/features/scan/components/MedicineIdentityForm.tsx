@@ -2,6 +2,8 @@ import { useState } from 'react';
 import type { MedicineIdentity } from '@asli/contracts';
 import { Field } from '../../../shell/components/Field';
 import { Button } from '../../../shell/components/Button';
+import { MedicineNameField } from './MedicineNameField';
+import { recordMedicineSearch } from '../lib/medicineNames';
 
 const LOW_CONFIDENCE_THRESHOLD = 0.7;
 
@@ -36,17 +38,17 @@ export function MedicineIdentityForm({ initial, submitLabel, onSubmit }: Medicin
       setBatchError('The batch number is required - it is usually labelled "B.No" or "Batch".');
       return;
     }
-    onSubmit({ productName: productName.trim(), batchNumber: batchNumber.trim(), manufacturer: manufacturer.trim() }, batchEdited);
+    const trimmedProductName = productName.trim();
+    recordMedicineSearch(trimmedProductName);
+    onSubmit({ productName: trimmedProductName, batchNumber: batchNumber.trim(), manufacturer: manufacturer.trim() }, batchEdited);
   }
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      <Field
-        label="Medicine name"
+      <MedicineNameField
         value={productName}
-        onChange={(e) => setProductName(e.target.value)}
+        onChange={setProductName}
         lowConfidence={isLowConfidence(initial, 'productName')}
-        placeholder="e.g. Amoxicillin 500mg Capsules"
       />
       <Field
         label="Batch number"

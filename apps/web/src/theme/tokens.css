@@ -605,6 +605,44 @@ a:hover {
   color: var(--flagged);
 }
 
+/* ---------- type-ahead suggestions ---------- */
+
+.reg-field--combobox {
+  position: relative;
+}
+
+.reg-suggest-list {
+  position: absolute;
+  z-index: 20;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin: 0.15rem 0 0;
+  padding: 0.25rem 0;
+  list-style: none;
+  max-height: calc(var(--tap-target-min) * 4.5);
+  overflow-y: auto;
+  background: var(--sheet);
+  border: 1px solid var(--rule-strong);
+  box-shadow: 0 6px 14px color-mix(in srgb, var(--ink-carbon) 18%, transparent);
+}
+
+.reg-suggest-option {
+  display: flex;
+  align-items: center;
+  min-height: var(--tap-target-min);
+  padding: 0.4rem 0.75rem;
+  font-family: var(--face-record);
+  font-size: var(--step-body);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.reg-suggest-option--active {
+  background: var(--sheet-sunk);
+  color: var(--margin);
+}
+
 /* ---------- the stamp ---------- */
 
 .reg-stamp {
