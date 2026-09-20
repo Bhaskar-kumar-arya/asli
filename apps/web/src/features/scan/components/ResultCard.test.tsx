@@ -1,7 +1,24 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ResultCard } from './ResultCard';
 import { scanFixtures } from '../../../mocks/fixtures';
+
+// jsdom implements neither piece of the Web Speech API at all - see the
+// matching comment in lib/readAloud.test.ts.
+class FakeUtterance extends EventTarget {
+  lang = '';
+  constructor(public text: string) {
+    super();
+  }
+}
+
+afterEach(() => {
+  vi.unstubAllEnvs();
+  for (const prop of ['speechSynthesis', 'SpeechSynthesisUtterance'] as const) {
+    Object.defineProperty(window, prop, { configurable: true, value: undefined });
+    delete (window as unknown as Record<string, unknown>)[prop];
+  }
+});
 
 const BANNED_WORDS = [/\bsafe\b/i, /\bgenuine\b/i, /\bverified\b/i];
 
@@ -61,5 +78,30 @@ describe('ResultCard', () => {
     render(<ResultCard result={result} onSave={() => (saved = true)} />);
     await userEvent.click(screen.getByRole('button', { name: /save to family medicines/i }));
     expect(saved).toBe(true);
+  });
+
+  describe('Read aloud', () => {
+    const result = scanFixtures.find((f) => f.state === 'NO_ALERT_FOUND')!.response.results[0]!;
+
+    it('is hidden for a language with neither a configured audio source nor a browser voice (docs/SAFETY_AND_CONTENT.md)', () => {
+      render(<ResultCard result={result} lang="kn" />);
+      expect(screen.queryByRole('button', { name: /read aloud/i })).not.toBeInTheDocument();
+    });
+
+    it('is offered, and speaks the result, once a browser voice exists for the language', async () => {
+      const { default: userEvent } = await import('@testing-library/user-event');
+      const speak = vi.fn((utterance: FakeUtterance) => utterance.dispatchEvent(new Event('end')));
+      Object.defineProperty(window, 'SpeechSynthesisUtterance', { configurable: true, value: FakeUtterance });
+      Object.defineProperty(window, 'speechSynthesis', {
+        configurable: true,
+        value: { getVoices: () => [{ lang: 'en-IN' }], speak },
+      });
+
+      render(<ResultCard result={result} lang="en" />);
+      await userEvent.click(screen.getByRole('button', { name: /read aloud/i }));
+
+      expect(speak).toHaveBeenCalledOnce();
+      expect(await screen.findByRole('button', { name: /read aloud/i })).toBeInTheDocument();
+    });
   });
 });

@@ -5,7 +5,7 @@ import { Icon } from '../../../shell/components/Icon';
 import { Verdict } from '../../../shell/components/Verdict';
 import { ReportProblemButton } from '../../report';
 import { getResultCopy } from '../lib/content';
-import { playReadAloud } from '../lib/readAloud';
+import { canReadAloud, playReadAloud } from '../lib/readAloud';
 import { DemoLabel } from './DemoLabel';
 
 const VERDICT_CLASS: Record<CheckItemResult['tier'], string> = {
@@ -28,6 +28,7 @@ export interface ResultCardProps {
  */
 export function ResultCard({ result, lang = 'en', onSave, saveLabel = 'Save to family medicines' }: ResultCardProps) {
   const [reading, setReading] = useState(false);
+  const readAloudAvailable = canReadAloud(lang);
   const copy = getResultCopy(result, lang);
   const match = result.matches[0];
   const batch = result.identity.batchNumber;
@@ -102,10 +103,12 @@ export function ResultCard({ result, lang = 'en', onSave, saveLabel = 'Save to f
           batch into the monthly re-check, so it leads. */}
       <div className="reg-stack">
         {onSave ? <Button onClick={onSave}>{saveLabel}</Button> : null}
-        <Button variant="secondary" onClick={() => void handleReadAloud()} disabled={reading}>
-          <Icon name="aloud" size={18} />
-          {reading ? 'Reading…' : 'Read aloud'}
-        </Button>
+        {readAloudAvailable ? (
+          <Button variant="secondary" onClick={() => void handleReadAloud()} disabled={reading}>
+            <Icon name="aloud" size={18} />
+            {reading ? 'Reading…' : 'Read aloud'}
+          </Button>
+        ) : null}
         <ReportProblemButton identity={result.identity} alertRef={match?.alertRef} />
       </div>
     </section>
