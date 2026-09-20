@@ -90,17 +90,21 @@ isn't:
   `ap-south-1` at all, so a production Bedrock vision path would need a cross-region inference
   profile. `GET /v1/public/metrics` (our public `/dashboard`) shows real, measured ingestion and
   alert fan-out cost and volume from actual pipeline runs.
-- **Accuracy:** not yet measurable end-to-end. The accuracy harness (`tools/accuracy`) is built and
-  unit tested — labeling CLI, scoring against the same normalize functions matching uses, tier-
-  correctness probes, JSON/markdown reports — but a full accuracy run needs a real photo set scored
-  through a live scan path, and we ran out of hackathon clock before completing that pass.
+- **Accuracy:** measured with our harness (`tools/accuracy`) against the deployed stage. All 44
+  seeded tier-correctness probes were right. On 15 real strip photos the batch number was read
+  exactly 80.0% of the time (12 of 15; 3 of 3 flat-on, 9 of 12 tilted), the manufacturer was
+  identified strongly on 86.7%, and the expiry month was exact on only 40.0% — our weakest field.
+  On 6 real, redacted pharmacy bills, line recall was 50.0%. Average scan latency was about 5.7
+  seconds. It is a small sample (15 strips and 6 bills against a target of 30 and 10), and the
+  numbers are on the public `/dashboard`.
 
-We'd rather say "not yet measured" than round a placeholder up into a real-looking number.
+We'd rather show a small honest sample than an invented number, which is also why there is no
+per-scan cost figure: no scans landed in the CloudWatch window, and Bedrock is unpriced in our region.
 
 ## What's next
 
-- Run the accuracy harness against a real strip/bill photo set, now that the scan path is live via
-  Gemini.
+- Grow the test set to the 30 strips and 10 bills we planned, shot by hand in poor light and at
+  angles, and re-run the harness.
 - Onboard real pharmacy partners onto the CSV bulk-check path, which is already verified at
   production-relevant speed.
 - Native-speaker review of the current hand-drafted Hindi and Kannada guidance templates, and more

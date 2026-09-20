@@ -34,8 +34,18 @@ CLAUDE.md, submission/DEMO_SCRIPT.md, submission/WRITEUP.md, submission/LEARNING
 - Linked `BLOG_POST.md` from the top of `WRITEUP.md` with a `{{BUILDER_CENTER_BLOG_URL}}` placeholder for the human to fill in once published.
 - `pnpm -r lint && pnpm -r test` run: no-op as expected (docs/LICENSE/PNG-only changes, no app code touched).
 
+**Done (2026-09-20, aligning the package to the organisers' final-day notice and rubric):**
+- `submission/WRITEUP.md` rewritten: links table, "Open the live app without signing up" (public `/insights` + `/dashboard`, seeded demo login, two manual-check inputs verified against the live API today: E9AIY029 → FLAGGED, an unlisted batch → NO_ALERT_FOUND), who-did-what from git history, AWS table with a live/blocked status column, real accuracy numbers from the 2026-09-19 harness run (the old "not yet measurable" text was stale), a new "AWS feedback" section, and a rubric map. Previously said Bedrock reads photos; it is Gemini in practice, now stated plainly.
+- `submission/DEMO_SCRIPT.md` rewritten to the 3:00 cap with only measured numbers, an "say and show honestly" list (no "Bedrock reads the strip", no "Verified Permissions" on camera, no cost-per-scan), a replay fallback, and a pre-record checklist that includes opening the live URL in a private window.
+- New `submission/FORM_ANSWERS.md` (paste-ready form answers). The form itself is not readable without signing in, so field names are inferred from the notice.
+- `README.md`: added "Try it (no sign-up)", fixed stale accuracy/status text, removed a stray `Deliverable 6.}}` fragment. `submission/BLOG_POST.md`: replaced the stale accuracy paragraph with the real figures.
+- AI-tools credit corrected: trailers are Sonnet 5 (63), Opus 5 (11), Haiku 4.5 (1); previously omitted Opus 5.
+- Verified the demo login works (Cognito `USER_PASSWORD_AUTH`) and `GET /v1/public/metrics` returns real accuracy data.
+
+**Still `{{CONFIRM}}` / `{{...}}` (human only, do not submit with these):** `{{YOUTUBE_URL}}`, `{{BUILDER_CENTER_BLOG_URL}}`, `{{BUILDER_CENTER_PROFILE_LINKS}}`, Pushya's and Yashas's contribution lines. Git shows Heet 57 commits, `devestrator` (Bhaskar) 30, Yashas 1, Pushya 0, which does not match the recorded roles (Backend/Frontend/Design/Architecture), so the writeup states roles as recorded and commits as found.
+
 **Remaining (all human-only):**
-- Screenshots/GIF for the README — needs a browser against the live Amplify URL (this session had no browser/display available).
+- ~~Screenshots/GIF for the README~~ — done, `docs/screenshots/` exists and is linked (this line was stale).
 - Video: record per `submission/DEMO_SCRIPT.md`, ≤3:00, captions, mock-strip disclosure on screen, upload and link.
 - Publish `submission/BLOG_POST.md` to AWS Builder Center and fill in `{{BUILDER_CENTER_BLOG_URL}}` in `WRITEUP.md`.
 - Team names/roles, Builder Center profile links (Deliverable 6, fast-track eligibility), and the `{{TEAM_NAME}}` copyright holder in `LICENSE`/README — all still `{{...}}` placeholders, needs the human team.

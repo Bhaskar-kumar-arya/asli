@@ -1,9 +1,18 @@
 # Asli — Is this medicine batch flagged by CDSCO?
 
-> Built in 48 hours for WeMakeDevs × AWS "First Commit" (Ship It track).
->
-> **TODO (human, before final submission):** demo video thumbnail/GIF goes here once
-> `submission/DEMO_SCRIPT.md` is recorded.
+> Built for WeMakeDevs × AWS "First Commit" (Ship It track), by team bskry.
+
+## Try it (no sign-up)
+**Live app:** https://main.d2ag2oukltn4mc.amplifyapp.com · **Demo video:** {{YOUTUBE_URL}}
+
+- `/insights` and `/dashboard` are public: no account, no sign-in.
+- Full app: sign in with the seeded demo account `asha.demo@asli.internal` / `AsliDemo!2026`
+  (fake data only). It opens on a "Mom's medicines" cabinet.
+- To see a FLAGGED result, choose *Check a medicine → Type details* and enter product
+  `Montelukast & Levocetirizine`, batch `E9AIY029`, manufacturer `Pharma Force Lab` (a real row from
+  CDSCO's Feb-2026 list). Any other batch gives "No alert found for this batch".
+
+The long-form answers are in `submission/WRITEUP.md`; the video plan is `submission/DEMO_SCRIPT.md`.
 
 ## The problem
 India's Central Drugs Standard Control Organisation (CDSCO) publishes monthly lists of drug
@@ -127,17 +136,19 @@ docs, plan, submission   Specs, build plan, submission material
 All engineering lanes (ingestion, matching, scan/check API, cabinet sharing, alerts, permissions,
 content/i18n, dashboard, QR, PvPI reporting, insights, pharmacy mode, hardening) are merged to
 `main` and deployed to the shared `int` stage, verified against real AWS infrastructure — not just
-unit tests. The one open engineering gap is account-wide: Bedrock, Textract, Translate and
-Verified Permissions are blocked in this AWS account behind a `ValidationException` /
-`SubscriptionRequiredException` unrelated to IAM, so real photo scanning, PDF fallback ingestion,
-Cedar authorization and Polly hi/kn read-aloud are code-complete and fixture-tested but not yet
-verified against live calls to those services. See `plan/INTEGRATION_LOG.md` for the full,
-evidence-backed lane-by-lane status.
+unit tests. The one open engineering gap is account-wide: Bedrock, Textract bulk-PDF analysis,
+Translate and Verified Permissions are blocked in this AWS account behind a `ValidationException` /
+`SubscriptionRequiredException` unrelated to IAM. So PDF fallback ingestion, Cedar authorization
+(a stub enforces the same role table) and Polly hi/kn read-aloud (the browser's `speechSynthesis`
+is used) are code-complete and fixture-tested but not verified against live calls. Photo scanning
+is live: the reader is the Gemini API, switchable to Bedrock by one SSM parameter. See
+`plan/INTEGRATION_LOG.md` for the full, evidence-backed lane-by-lane status.
 
 ## Measured cost and accuracy
-- **Accuracy:** not yet measurable — the accuracy harness (`tools/accuracy`) is built and unit
-  tested, but scoring it needs real strip/bill photos and a live scan path, both blocked by the
-  account restriction above. {{Fill in once E's harness has run against real photos.}}
+- **Accuracy (real run against the deployed stage, on `/dashboard`):** 44/44 seeded tier checks
+  correct; strip batch number exact 80.0% (12 of 15), manufacturer identified strongly 86.7%,
+  expiry month exact 40.0%; bill line recall 50.0% (6 bills); ~5.7 s average scan latency. A small
+  sample: 15 strips and 6 bills against a target of 30 and 10.
 - **Cost:** the AWS pricing table (`packages/contracts/src/pricing.ts`) is filled in for
   `ap-south-1` (all 13 tracked SKUs except `bedrockOutputTokenPer1k`, which has no SKU in any
   region — no Anthropic Bedrock model is priced in `ap-south-1` at all, so a production vision
@@ -171,8 +182,8 @@ Team **bskry**:
 - Heet Shah — Design
 - Yashas Yogindra — Architecture
 
-See `submission/WRITEUP.md` for the full AI-tools credit.
-Deliverable 6.}}
+Roles are the team's own; `submission/WRITEUP.md` ("Who did what") has what the repository history
+shows for each person, and the full AI-tools credit.
 
 ## Running a lane
 
